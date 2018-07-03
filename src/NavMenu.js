@@ -11,6 +11,9 @@ import Collections from '@material-ui/icons/Collections';
 import Divider from '@material-ui/core/Divider';
 import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
+import MusicCircle from 'mdi-material-ui/MusicCircle';
+import MovieRoll from 'mdi-material-ui/MovieRoll';
+import Theater from 'mdi-material-ui/Theater';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
 import yellow from '@material-ui/core/colors/yellow';
@@ -60,12 +63,16 @@ export const NavMenuList2 = (
             <ListItemText inset primary='Home'/>
         </ListItem>
         <ListItem button onClick={() => {alert("Concert")}}>
-            <ListItemIcon><Bookmark/></ListItemIcon>
+            <ListItemIcon><MusicCircle/></ListItemIcon>
             <ListItemText inset primary='Concert'/>
         </ListItem>
         <ListItem button onClick={() => {alert("Show")}}>
-            <ListItemIcon><Bookmark/></ListItemIcon>
+            <ListItemIcon><Theater/></ListItemIcon>
             <ListItemText inset primary='Show'/>
+        </ListItem>
+        <ListItem button>
+            <ListItemIcon><MovieRoll/></ListItemIcon>
+            <ListItemText inset primary='Movie'/>
         </ListItem>
         <Divider/>
         <ListItem button>

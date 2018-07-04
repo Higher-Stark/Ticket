@@ -4,19 +4,19 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import {NavMenuList1, NavMenuList2} from "./NavMenu";
+import {NavMenuList1} from "./NavMenu";
 
 const drawerWidth = 240;
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
+        height: 430,
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
@@ -65,7 +65,7 @@ class ResponsiveDrawer extends React.Component {
             <div>
                 <div className={classes.toolbar} />
                 <Divider />
-                {NavMenuList2}
+                {NavMenuList1}
             </div>
         );
 
@@ -98,7 +98,7 @@ class ResponsiveDrawer extends React.Component {
                         ModalProps={{
                             keepMounted: true, // Better open performance on mobile.
                         }}
-                    >
+                    >i
                         {drawer}
                     </Drawer>
                 </Hidden>

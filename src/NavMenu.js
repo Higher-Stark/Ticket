@@ -10,31 +10,19 @@ import Collections from '@material-ui/icons/Collections';
 import Divider from '@material-ui/core/Divider';
 import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
-import FormDialog from "./FormDialog";
+import SignDialog from "./SignDialog";
+import LogDialog from "./LogDialog";
 
 // not login
 export const NavMenuList1 = (
     <div>
         <ListItem>
             <ListItemIcon><AccountCircle/></ListItemIcon>
-            <FormDialog/>
-            <ListItemText inset primary=''/>
+            <SignDialog/>
         </ListItem>
-        <ListItem button onClick={() => {alert("Login")}}>
-            <ListItemIcon><AccountCircle/></ListItemIcon>
-            <ListItemText inset primary='Sign in'/>
-        </ListItem>
-        <ListItem button onClick={() => {alert("Market")}}>
-            <ListItemIcon><Home color='primary'/></ListItemIcon>
-            <ListItemText inset primary='Home'/>
-        </ListItem>
-        <ListItem button onClick={() => {alert("Concert")}}>
-            <ListItemIcon><Bookmark color='secondary'/></ListItemIcon>
-            <ListItemText inset primary='Concert'/>
-        </ListItem>
-        <ListItem button onClick={() => {alert("Show")}}>
-            <ListItemIcon><Bookmark color="error"/></ListItemIcon>
-            <ListItemText inset primary='Show'/>
+        <ListItem>
+            <ListItemIcon><Bookmark/></ListItemIcon>
+            <LogDialog/>
         </ListItem>
     </div>
 );
@@ -55,20 +43,32 @@ export const NavMenuList2 = (
             <ListItemText inset primary='Collection'/>
         </ListItem>
         <Divider/>
-        <ListItem button onClick={() => {alert("Market")}}>
+        <ListItem button onClick={() => {
+            alert("Market")
+        }}>
             <ListItemIcon><Home/></ListItemIcon>
             <ListItemText inset primary='Home'/>
         </ListItem>
-        <ListItem button onClick={() => {alert("Concert")}}>
+        <ListItem button onClick={() => {
+            alert("Concert")
+        }}>
             <ListItemIcon><Bookmark/></ListItemIcon>
             <ListItemText inset primary='Concert'/>
         </ListItem>
-        <ListItem button onClick={() => {alert("Show")}}>
+        <ListItem button onClick={() => {
+            alert("Show")
+        }}>
             <ListItemIcon><Bookmark/></ListItemIcon>
             <ListItemText inset primary='Show'/>
         </ListItem>
         <Divider/>
-        <ListItem button>
+        <ListItem button onClick={() => {
+            document.getElementById('not').style.display = 'block';
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('welcome').style.display = 'block';
+            document.getElementById('ticket').style.display = 'none';
+            document.getElementById('recipe').style.display='none';
+        }}>
             <ListItemIcon><LogoutVariant/></ListItemIcon>
             <ListItemText inset primary='Logout'/>
         </ListItem>

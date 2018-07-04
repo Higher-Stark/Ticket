@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,6 +10,8 @@ import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import {NavMenuList1} from "./NavMenu";
+import {NavMenuList2} from "./NavMenu";
+import RecipeReviewCard from "./RecipeReviewCard"
 
 const drawerWidth = 240;
 
@@ -55,17 +57,24 @@ class ResponsiveDrawer extends React.Component {
     };
 
     handleDrawerToggle = () => {
-        this.setState(state => ({ mobileOpen: !state.mobileOpen }));
+        this.setState(state => ({mobileOpen: !state.mobileOpen}));
     };
 
     render() {
-        const { classes, theme } = this.props;
+        const {classes, theme} = this.props;
 
         const drawer = (
             <div>
-                <div className={classes.toolbar} />
-                <Divider />
-                {NavMenuList1}
+                <div id="not">
+                    <div className={classes.toolbar}/>
+                    <Divider/>
+                    {NavMenuList1}
+                </div>
+                <div id="login" style={{display:"none"}}>
+                    <div className={classes.toolbar}/>
+                    <Divider/>
+                    {NavMenuList2}
+                </div>
             </div>
         );
 
@@ -79,10 +88,10 @@ class ResponsiveDrawer extends React.Component {
                             onClick={this.handleDrawerToggle}
                             className={classes.navIconHide}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Typography variant="title" color="inherit" noWrap>
-                            聚票网
+                            Ticket
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -114,8 +123,10 @@ class ResponsiveDrawer extends React.Component {
                     </Drawer>
                 </Hidden>
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
-                    <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+                    <div className={classes.toolbar}/>
+                    <Typography noWrap id="welcome">{'Welcome to Ticket, please sign up/in.'}</Typography>
+                    <Typography noWrap id="ticket" style={{display:"none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
+                    <RecipeReviewCard   />
                 </main>
             </div>
         );
@@ -127,4 +138,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default withStyles(styles, {withTheme: true})(ResponsiveDrawer);

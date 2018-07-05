@@ -24,7 +24,7 @@ const styles = theme => ({
     }
 });
 
-class Signup extends Component{
+class Login extends Component{
     verification = {
         verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
         code: '',
@@ -63,7 +63,7 @@ class Signup extends Component{
     };
 
 
-    signup = () => {
+    login = () => {
         /*
             fetch ('login', method: {
                 method: 'POST'
@@ -79,47 +79,17 @@ class Signup extends Component{
             alert("Password empty, please input");
             return;
         }
-        let email = document.getElementById("Email").value;
-        if (email.length === 0) {
-            alert("Email empty, please input");
-            return;
-        }
-        let authcode = document.getElementById("AuthCode").value;
-        if (authcode.length === 0) {
-            alert("AuthCode empty, please input");
-            return;
-        }
         for (let user of this.state.users) {
-            if (user[0] === username) {
-                alert("Username used , please change");
+            if (user[0] === username && user[2] === password) {
+                alert("Log in successfully");
+                document.getElementById('not').style.display='none';
+                document.getElementById('login').style.display='block';
+                document.getElementById('ticket').style.display='block';
+                this.props.history.push('/');
                 return;
             }
         }
-        let reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
-
-        if (!reg.test(email)) {
-            alert("Email invalid, please change");
-        }
-
-        else if (!password.match(/\d/) || !password.match(/[a-zA-Z]/)) {
-            alert("Password must contain both numbers and letters");
-        }
-        else if (this.state.verifyCodes!==authcode)
-        {
-            alert("Wrong authcode");
-        }
-        else {
-            /*
-            pretend to add into the database
-            let newuser = [];
-            newuser.push(username);
-            newuser.push(email);
-            newuser.push(password);
-            this.state.users.push(newuser);
-            */
-            alert("Sign up successfully");
-            this.props.history.push('/login');
-        }
+        alert("Wrong username or password");
     };
 
     render() {
@@ -127,7 +97,7 @@ class Signup extends Component{
 
         return (
             <div>
-                <Typography noWrap>Sign up</Typography>
+                <Typography noWrap>Log in</Typography>
                 <br/>
                 <form className={classes.container} autoComplete='off'>
                 <TextField placeholder='User Name' id='Username' name='name'
@@ -145,14 +115,6 @@ class Signup extends Component{
                            required
                            onChange={this.handleChange('password')}/>
                     <br/>
-                <TextField placeholder='Email Address' id='Email' name='email'
-                           value={this.state.email} label='Email'
-                           className={classes.textField}
-                           margin='normal'
-                           type='email'
-                           required
-                           onChange={this.handleChange('email')}/>
-                    <br/>
                 <TextField id='AuthCode' name='authCode'
                            value={this.state.authCode} label='Verification Code'
                            className={classes.textField}
@@ -163,11 +125,11 @@ class Signup extends Component{
                          onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
                          className={classes.verifyImg}/>
                     <br/>
-                <Button color='primary' onClick={this.signup}>Sign Up</Button>
+                <Button color='primary' onClick={this.login}>Log in</Button>
                 </form>
             </div>
         )
     }
 }
 
-export default withStyles(styles)(Signup);
+export default withStyles(styles)(Login);

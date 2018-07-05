@@ -10,39 +10,45 @@ import Collections from '@material-ui/icons/Collections';
 import Divider from '@material-ui/core/Divider';
 import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
-
-import MusicCircle from 'mdi-material-ui/MusicCircle';
-import MovieRoll from 'mdi-material-ui/MovieRoll';
-import Theater from 'mdi-material-ui/Theater';
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-import yellow from '@material-ui/core/colors/yellow';
-import grey from '@material-ui/core/colors/grey';
-import purple from '@material-ui/core/colors/purple';
 import {NavLink} from 'react-router-dom';
 
 
 // not login
 export const NavMenuList1 = (
     <div>
-        <ListItem >
-            <ListItemIcon><AccountCircle/></ListItemIcon>
-        </ListItem>
-        <ListItem>
-            <ListItemIcon><Bookmark/></ListItemIcon>
-        </ListItem>
+        <NavLink to='/signup' onClick={() => {
+            document.getElementById('welcome').style.display = 'none';
+        }}>
+            <ListItem button>
+                <ListItemIcon><AccountCircle/></ListItemIcon>
+                <ListItemText inset primary='Signup'/>
+            </ListItem>
+        </NavLink>
+        <NavLink to='/login' onClick={() => {
+            document.getElementById('welcome').style.display = 'none';
+        }}>
+            <ListItem button>
+                <ListItemIcon><Bookmark/></ListItemIcon>
+                <ListItemText inset primary='Signin'/>
+            </ListItem>
+        </NavLink>
+        <NavLink to='/'>
+            <ListItem button>
+                <ListItemIcon><Home/></ListItemIcon>
+                <ListItemText inset primary='Home'/>
+            </ListItem>
+        </NavLink>
     </div>
 );
 
 // login
 export const NavMenuList2 = (
     <div>
-        <NavLink to='/signup'>
-            <ListItem button>
-                <ListItemIcon><Person/></ListItemIcon>
-                <ListItemText inset primary='Account'/>
-            </ListItem>
-        </NavLink>
+        <ListItem button>
+            <ListItemIcon><Person/></ListItemIcon>
+            <ListItemText inset primary='Account'/>
+        </ListItem>
+
         <ListItem button>
             <ListItemIcon><ShoppingCart/></ListItemIcon>
             <ListItemText inset primary='Cart'/>

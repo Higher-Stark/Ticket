@@ -12,6 +12,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
+import Login from './Login'
 
 
 const drawerWidth = 240;
@@ -71,7 +72,7 @@ class ResponsiveDrawer extends React.Component {
                     <Divider/>
                     {NavMenuList1}
                 </div>
-                <div id="login" style={{display:"none"}}>
+                <div id="login" style={{display: "none"}}>
                     <div className={classes.toolbar}/>
                     <Divider/>
                     {NavMenuList2}
@@ -82,63 +83,60 @@ class ResponsiveDrawer extends React.Component {
         return (
 
             <Router>
-            <div className={classes.root}>
+                <div className={classes.root}>
 
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={this.handleDrawerToggle}
-                            className={classes.navIconHide}
+                    <AppBar className={classes.appBar}>
+                        <Toolbar>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={this.handleDrawerToggle}
+                                className={classes.navIconHide}
+                            >
+                                <MenuIcon/>
+                            </IconButton>
+                            <Typography class="animated fadeIn" variant="title" color="inherit" noWrap>
+                                Ticket
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Hidden mdUp>
+                        <Drawer
+                            variant="temporary"
+                            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                            open={this.state.mobileOpen}
+                            onClose={this.handleDrawerToggle}
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                            ModalProps={{
+                                keepMounted: true, // Better open performance on mobile.
+                            }}
+                        >i
+                            {drawer}
+                        </Drawer>
+                    </Hidden>
+                    <Hidden smDown implementation="css">
+                        <Drawer
+                            variant="permanent"
+                            open
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
                         >
-                            <MenuIcon/>
-                        </IconButton>
-                        <Typography class="animated fadeIn" variant="title" color="inherit" noWrap>
-                            Ticket
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                <Hidden mdUp>
-                    <Drawer
-                        variant="temporary"
-                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-                        open={this.state.mobileOpen}
-                        onClose={this.handleDrawerToggle}
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                    >i
-                        {drawer}
-                    </Drawer>
-                </Hidden>
-                <Hidden smDown implementation="css">
-                    <Drawer
-                        variant="permanent"
-                        open
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                    >
-                        {drawer}
-                    </Drawer>
-                </Hidden>
-                <main className={classes.content}>
-
-                    <div className={classes.toolbar} />
-                    {
-                        /*
-                    <Typography noWrap id="welcome"  class="animated fadeIn">{'Welcome to Ticket, please sign up/in.'}</Typography>
-                    <Typography noWrap id="ticket" style={{display:"none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
-                         */
-                    }
-                    <Route path='/signup' component={Signup}/>
-
-                </main>
-            </div>
+                            {drawer}
+                        </Drawer>
+                    </Hidden>
+                    <main className={classes.content}>
+                        <div className={classes.toolbar}/>
+                        <Typography noWrap id="welcome"
+                                    class="animated fadeIn">{'Welcome to Ticket, please sign up/in.'}</Typography>
+                        <Typography noWrap id="ticket"
+                                    style={{display: "none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
+                        <Route path='/signup' component={Signup}/>
+                        <Route path='/login' component={Login}/>
+                    </main>
+                </div>
             </Router>
         );
     }

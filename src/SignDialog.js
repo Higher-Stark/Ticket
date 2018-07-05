@@ -73,8 +73,8 @@ export default class SignDialog extends React.Component {
 
     render() {
         return (
-            <div>
-                <Button  onClick={this.handleClickOpen} >Sign up</Button>
+            <div  class="animated fadeIn" >
+                <Button onClick={this.handleClickOpen} >Sign up</Button>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

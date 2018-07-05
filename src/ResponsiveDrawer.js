@@ -11,7 +11,6 @@ import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import {NavMenuList1} from "./NavMenu";
 import {NavMenuList2} from "./NavMenu";
-import RecipeReviewCard from "./RecipeReviewCard"
 
 const drawerWidth = 240;
 
@@ -79,7 +78,7 @@ class ResponsiveDrawer extends React.Component {
         );
 
         return (
-            <div className={classes.root}>
+            <div className={classes.root} >
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <IconButton
@@ -90,7 +89,7 @@ class ResponsiveDrawer extends React.Component {
                         >
                             <MenuIcon/>
                         </IconButton>
-                        <Typography variant="title" color="inherit" noWrap>
+                        <Typography class="animated fadeIn" variant="title" color="inherit" noWrap>
                             Ticket
                         </Typography>
                     </Toolbar>
@@ -124,9 +123,8 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar}/>
-                    <Typography noWrap id="welcome">{'Welcome to Ticket, please sign up/in.'}</Typography>
+                    <Typography noWrap id="welcome"  class="animated fadeIn">{'Welcome to Ticket, please sign up/in.'}</Typography>
                     <Typography noWrap id="ticket" style={{display:"none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
-                    <RecipeReviewCard   />
                 </main>
             </div>
         );

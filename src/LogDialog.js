@@ -53,7 +53,6 @@ export default class LogDialog extends React.Component {
                 document.getElementById('login').style.display='block';
                 document.getElementById('welcome').style.display='none';
                 document.getElementById('ticket').style.display='block';
-                document.getElementById('recipe').style.display='block';
                 return;
             }
         }
@@ -62,7 +61,7 @@ export default class LogDialog extends React.Component {
 
     render() {
         return (
-            <div>
+            <div  class="animated fadeIn">
                 <Button onClick={this.handleClickOpen}>Sign in</Button>
                 <Dialog
                     open={this.state.open}

@@ -16,7 +16,7 @@ import LogDialog from "./LogDialog";
 // not login
 export const NavMenuList1 = (
     <div>
-        <ListItem>
+        <ListItem >
             <ListItemIcon><AccountCircle/></ListItemIcon>
             <SignDialog/>
         </ListItem>
@@ -67,7 +67,6 @@ export const NavMenuList2 = (
             document.getElementById('login').style.display = 'none';
             document.getElementById('welcome').style.display = 'block';
             document.getElementById('ticket').style.display = 'none';
-            document.getElementById('recipe').style.display='none';
         }}>
             <ListItemIcon><LogoutVariant/></ListItemIcon>
             <ListItemText inset primary='Logout'/>

@@ -10,7 +10,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
+import Signup from './Signup';
 
 const drawerWidth = 240;
 
@@ -70,6 +72,7 @@ class ResponsiveDrawer extends React.Component {
         );
 
         return (
+            <Router>
             <div className={classes.root}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
@@ -115,9 +118,15 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
+                    {
+                        /*
                     <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+                         */
+                    }
+                    <Route path='/signup' component={Signup}/>
                 </main>
             </div>
+            </Router>
         );
     }
 }

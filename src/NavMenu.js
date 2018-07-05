@@ -19,6 +19,7 @@ import red from '@material-ui/core/colors/red';
 import yellow from '@material-ui/core/colors/yellow';
 import grey from '@material-ui/core/colors/grey';
 import purple from '@material-ui/core/colors/purple';
+import {NavLink} from 'react-router-dom';
 
 // not login
 export const NavMenuList1 = (
@@ -45,10 +46,12 @@ export const NavMenuList1 = (
 // login
 export const NavMenuList2 = (
     <div>
-        <ListItem button>
-            <ListItemIcon><Person/></ListItemIcon>
-            <ListItemText inset primary='Account'/>
-        </ListItem>
+        <NavLink to='/signup'>
+            <ListItem button>
+                <ListItemIcon><Person/></ListItemIcon>
+                <ListItemText inset primary='Account'/>
+            </ListItem>
+        </NavLink>
         <ListItem button>
             <ListItemIcon><ShoppingCart/></ListItemIcon>
             <ListItemText inset primary='Cart'/>

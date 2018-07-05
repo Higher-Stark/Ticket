@@ -13,7 +13,7 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
 import Login from './Login'
-
+import Homepage from './Homepage'
 
 const drawerWidth = 240;
 
@@ -129,10 +129,7 @@ class ResponsiveDrawer extends React.Component {
                     </Hidden>
                     <main className={classes.content}>
                         <div className={classes.toolbar}/>
-                        <Typography noWrap id="welcome"
-                                    class="animated fadeIn">{'Welcome to Ticket, please sign up/in.'}</Typography>
-                        <Typography noWrap id="ticket"
-                                    style={{display: "none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
+                        <Route path='/' component={Homepage}/>
                         <Route path='/signup' component={Signup}/>
                         <Route path='/login' component={Login}/>
                     </main>

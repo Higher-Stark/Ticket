@@ -17,7 +17,7 @@ import {NavLink} from 'react-router-dom';
 export const NavMenuList1 = (
     <div>
         <NavLink to='/signup' onClick={() => {
-            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('ticket').style.display = 'none';
         }}>
             <ListItem button>
                 <ListItemIcon><AccountCircle/></ListItemIcon>
@@ -25,7 +25,7 @@ export const NavMenuList1 = (
             </ListItem>
         </NavLink>
         <NavLink to='/login' onClick={() => {
-            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('ticket').style.display = 'none';
         }}>
             <ListItem button>
                 <ListItemIcon><Bookmark/></ListItemIcon>
@@ -33,7 +33,9 @@ export const NavMenuList1 = (
             </ListItem>
         </NavLink>
         <NavLink to='/'>
-            <ListItem button>
+            <ListItem button onClick={() => {
+                document.getElementById('welcome').style.display = 'block';
+            }}>
                 <ListItemIcon><Home/></ListItemIcon>
                 <ListItemText inset primary='Home'/>
             </ListItem>
@@ -80,7 +82,6 @@ export const NavMenuList2 = (
         <ListItem button onClick={() => {
             document.getElementById('not').style.display = 'block';
             document.getElementById('login').style.display = 'none';
-            document.getElementById('welcome').style.display = 'block';
             document.getElementById('ticket').style.display = 'none';
         }}>
             <ListItemIcon><LogoutVariant/></ListItemIcon>

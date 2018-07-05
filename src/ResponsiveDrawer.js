@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
@@ -14,11 +13,13 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
 
+
 const drawerWidth = 240;
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
+        height: 430,
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
@@ -57,23 +58,32 @@ class ResponsiveDrawer extends React.Component {
     };
 
     handleDrawerToggle = () => {
-        this.setState(state => ({ mobileOpen: !state.mobileOpen }));
+        this.setState(state => ({mobileOpen: !state.mobileOpen}));
     };
 
     render() {
-        const { classes, theme } = this.props;
+        const {classes, theme} = this.props;
 
         const drawer = (
             <div>
-                <div className={classes.toolbar} />
-                <Divider />
-                {NavMenuList2}
+                <div id="not">
+                    <div className={classes.toolbar}/>
+                    <Divider/>
+                    {NavMenuList1}
+                </div>
+                <div id="login" style={{display:"none"}}>
+                    <div className={classes.toolbar}/>
+                    <Divider/>
+                    {NavMenuList2}
+                </div>
             </div>
         );
 
         return (
+
             <Router>
             <div className={classes.root}>
+
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <IconButton
@@ -82,10 +92,10 @@ class ResponsiveDrawer extends React.Component {
                             onClick={this.handleDrawerToggle}
                             className={classes.navIconHide}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
-                        <Typography variant="title" color="inherit" noWrap>
-                            聚票网
+                        <Typography class="animated fadeIn" variant="title" color="inherit" noWrap>
+                            Ticket
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -101,7 +111,7 @@ class ResponsiveDrawer extends React.Component {
                         ModalProps={{
                             keepMounted: true, // Better open performance on mobile.
                         }}
-                    >
+                    >i
                         {drawer}
                     </Drawer>
                 </Hidden>
@@ -117,13 +127,16 @@ class ResponsiveDrawer extends React.Component {
                     </Drawer>
                 </Hidden>
                 <main className={classes.content}>
+
                     <div className={classes.toolbar} />
                     {
                         /*
-                    <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+                    <Typography noWrap id="welcome"  class="animated fadeIn">{'Welcome to Ticket, please sign up/in.'}</Typography>
+                    <Typography noWrap id="ticket" style={{display:"none"}}>{'Welcome to Ticket, here are the tickets.'}</Typography>
                          */
                     }
                     <Route path='/signup' component={Signup}/>
+
                 </main>
             </div>
             </Router>
@@ -136,4 +149,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default withStyles(styles, {withTheme: true})(ResponsiveDrawer);

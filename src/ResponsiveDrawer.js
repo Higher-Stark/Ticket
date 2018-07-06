@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,9 +9,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Route} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
+import Login from './Login'
 
 const drawerWidth = 240;
 
@@ -57,7 +58,7 @@ class ResponsiveDrawer extends React.Component {
     };
 
     handleDrawerToggle = () => {
-        this.setState(state => ({ mobileOpen: !state.mobileOpen }));
+        this.setState(state => ({mobileOpen: !state.mobileOpen}));
     };
 
     toggleLogin = (user) => {
@@ -67,7 +68,7 @@ class ResponsiveDrawer extends React.Component {
     };
 
     render() {
-        const { classes, theme } = this.props;
+        const {classes, theme} = this.props;
 
         const drawer = (
             <div>
@@ -125,6 +126,7 @@ class ResponsiveDrawer extends React.Component {
                     <div className={classes.toolbar} />
                     <Route path='/' exact/>
                     <Route path='/signup' component={Signup}/>
+                    <Route path='/signin' component={Login}/>
                 </main>
             </div>
         );
@@ -136,4 +138,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default withStyles(styles, {withTheme: true})(ResponsiveDrawer);

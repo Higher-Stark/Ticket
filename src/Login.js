@@ -44,14 +44,14 @@ const styles = theme => ({
         width: 510,
     },
     header : {
-        paddingBottom: theme.spacing.unit ,
+        marginBottom: theme.spacing.unit * 2,
     },
     reminder: {
         marginTop: theme.spacing.unit * 2,
     },
 });
 
-class Signup extends Component{
+class Login extends Component{
     verification = {
         verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
         code: '',
@@ -66,7 +66,6 @@ class Signup extends Component{
             email: '',
             authCode: '',
             verifyCodes: '',
-            formError: false,
         }
     }
 
@@ -83,69 +82,34 @@ class Signup extends Component{
         });
     };
 
-    /*
-     * check username
-     */ 
-    check_name = () => {
-        let pattern = /^[\w-]{5,25}$/;
-        return pattern.test(this.state.name);
-    };
 
-    /*
-     * Password must contains digits and characters
-     */
-    check_pwd = () => {
-        let pattern = /^[\w-$%#]{6,25}$/;
-        let test = pattern.test(this.state.password);
-        test = test && (this.state.password.match(/\d/) !== null);
-        test = test && (this.state.password.match(/\w/) !== null);
-        return test;
-    };
-
-    /* 
-     * Validate Email layout
-     */
-    check_email = () => {
-        let pattern = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
-        return pattern.test(this.state.email);
-    };
-
-    /*
-     * Check if the username is already registered
-     */
-    check_replicate = () => {
-        const {name} = this.state;
-        for (let i = 0; i !== User.length; i++) {
-            if (name === User[i].name) return false;
-        }
-        return true;
-    }
-
-    verify = () => {
-        return this.state.verifyCodes === this.state.authCode;
-    };
-
-    signup = () => {
+    login = () => {
         /*
             fetch ('login', method: {
                 method: 'POST'
                 }
          */
-        if (this.check_name() && this.check_pwd() && this.verify() && this.check_replicate() ) {
-            alert("Sign up succeed");
-            User.push({
-                name: this.state.name,
-                password: this.state.passive,
-                email: this.state.email,
-            });
-            this.props.history.push('/');
+        let username = this.state.name;
+        if (username.length === 0) {
+            alert("Username empty, please input");
+            return;
         }
-        else {
-            console.log(this.check_name());
-            console.log(this.check_pwd());
-            console.log(this.verify());
-            alert("Sign up failed")
-        };
+        let password = this.state.password;
+        if (password.length === 0) {
+            alert("Password empty, please input");
+            return;
+        }
+        for (let user of User) {
+            if (user.name === username && user.password === password) {
+                alert("Log in successfully");
+                this.props.userIn({
+                    name: username,
+                });
+                this.props.history.push('/');
+                return;
+            }
+        }
+        alert("Wrong username or password");
     };
 
     render() {
@@ -153,44 +117,36 @@ class Signup extends Component{
 
         return (
             <div className={classes.content2}>
-                <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
+                <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Log in</Typography>
                 <form className={classes.container} autoComplete='off'>
-                    <TextField placeholder='User Name' id='name' name='name'
+                    <TextField placeholder='User Name' id='Username' name='name'
                                value={this.state.name} label='User name'
                                className={classes.textField}
                                margin='normal'
                                required
                                onChange={this.handleChange('name')}/>
-                    <TextField placeholder='Password' id='password' name='password'
+                    <TextField placeholder='Password' id='Password' name='password'
                                value={this.state.password} label='Password'
                                className={classes.textField}
                                margin='normal'
                                type='password'
                                required
                                onChange={this.handleChange('password')}/>
-                    <TextField placeholder='Email Address' id='email' name='email'
-                               value={this.state.email} label='Email'
-                               className={classes.textField}
-                               margin='normal'
-                               type='email'
-                               required
-                               onChange={this.handleChange('email')}/>
-                    <TextField id='authCode' name='authCode'
+                    <TextField id='AuthCode' name='authCode'
                                value={this.state.authCode} label='Verification Code'
                                className={classes.authInput}
                                margin='normal'
                                onChange={this.handleChange('authCode')}/>
-                    <img src={this.state.verifyUrl} alt="img"
+                    <img src={this.state.verifyUrl}
+                         alt=""
                          onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
                          className={classes.verifyImg}/>
                     <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
-                    <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
-                        Sign Up
-                    </Button>
+                    <Button color='primary' onClick={this.login} className={classes.button} variant='contained'>Log in</Button>
                 </form>
                 <div>
                     <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Already have an account? <a href='signin'>Sign in</a>
+                        Don't have an account? <a href='/signup'>Sign up</a>
                     </Typography>
                 </div>
             </div>
@@ -198,8 +154,8 @@ class Signup extends Component{
     }
 }
 
-Signup.propTypes = {
+Login.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Signup);
+export default withStyles(styles)(Login);

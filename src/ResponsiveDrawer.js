@@ -12,7 +12,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import {Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
-import Login from './Login'
+import Login from './Login';
+import {CurrentUser} from "./test-data/user";
 
 const drawerWidth = 240;
 
@@ -56,6 +57,12 @@ class ResponsiveDrawer extends React.Component {
         mobileOpen: false,
         user: null,
     };
+
+    shouldComponentUpdate () {
+        this.setState({
+            user: CurrentUser,
+        });
+    }
 
     handleDrawerToggle = () => {
         this.setState(state => ({mobileOpen: !state.mobileOpen}));
@@ -126,7 +133,12 @@ class ResponsiveDrawer extends React.Component {
                     <div className={classes.toolbar} />
                     <Route path='/' exact/>
                     <Route path='/signup' component={Signup}/>
-                    <Route path='/signin' component={Login}/>
+                    <Route path='/signin'
+                           component={props => {
+                               let obj = Object.assign({}, {toggleLogin: (user) => this.toggleLogin}, props)
+                               return <Login {...obj}/>
+                           }}
+                    />
                 </main>
             </div>
         );

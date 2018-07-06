@@ -19,7 +19,7 @@ import {NavLink} from 'react-router-dom';
 // not login
 export const NavMenuList1 = (
         <div>
-            <ListItem button component={NavLink} to='/signup'>
+            <ListItem button component={NavLink} to='/signin'>
                 <ListItemIcon><AccountCircle/></ListItemIcon>
                 <ListItemText inset primary='Sign in/up'/>
             </ListItem>

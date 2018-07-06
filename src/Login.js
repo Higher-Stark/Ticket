@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {NavLink} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -102,7 +101,7 @@ class Login extends Component{
         for (let user of User) {
             if (user.name === username && user.password === password) {
                 alert("Log in successfully");
-                this.props.userIn({
+                this.props.toggleLogin({
                     name: username,
                 });
                 this.props.history.push('/');

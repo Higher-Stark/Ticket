@@ -5,7 +5,9 @@ import Typography from '@material-ui/core/Typography';
 class Homepage extends Component {
     render() {
         return (
-                <Typography noWrap id="ticket">{'Welcome to Ticket, here are the tickets.'}</Typography>
+            <div>
+                <Typography noWrap>Welcome to Ticket, here are the tickets.</Typography>
+            </div>
         )
     }
 }

@@ -82,10 +82,9 @@ class Login extends Component{
         for (let user of this.state.users) {
             if (user[0] === username && user[2] === password) {
                 alert("Log in successfully");
-                /*document.getElementById('not').style.display='none';
+                document.getElementById('not').style.display='none';
                 document.getElementById('login').style.display='block';
-                document.getElementById('ticket').style.display='block';*/
-                this.props.history.push('/recipereviewcard');
+                this.props.history.push('/');
                 return;
             }
         }

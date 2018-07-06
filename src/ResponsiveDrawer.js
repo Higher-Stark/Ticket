@@ -15,12 +15,12 @@ import Signup from './Signup';
 import Login from './Login'
 import Homepage from './Homepage'
 
+
 const drawerWidth = 240;
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
-        height: 430,
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
@@ -129,7 +129,7 @@ class ResponsiveDrawer extends React.Component {
                     </Hidden>
                     <main className={classes.content}>
                         <div className={classes.toolbar}/>
-                        <Route path='/' component={Homepage}/>
+                        <Route exact path='/' component={Homepage}/>
                         <Route path='/signup' component={Signup}/>
                         <Route path='/login' component={Login}/>
                     </main>

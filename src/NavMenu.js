@@ -10,36 +10,30 @@ import Collections from '@material-ui/icons/Collections';
 import Divider from '@material-ui/core/Divider';
 import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
-import {NavLink} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
 // not login
 export const NavMenuList1 = (
     <div>
-        <NavLink to='/signup' onClick={() => {
-            document.getElementById('ticket').style.display = 'none';
-        }}>
+        <Link to='/signup' >
             <ListItem button>
                 <ListItemIcon><AccountCircle/></ListItemIcon>
                 <ListItemText inset primary='Signup'/>
             </ListItem>
-        </NavLink>
-        <NavLink to='/login' onClick={() => {
-            document.getElementById('ticket').style.display = 'none';
-        }}>
+        </Link>
+        <Link to='/login' >
             <ListItem button>
                 <ListItemIcon><Bookmark/></ListItemIcon>
                 <ListItemText inset primary='Signin'/>
             </ListItem>
-        </NavLink>
-        <NavLink to='/'>
-            <ListItem button onClick={() => {
-                document.getElementById('welcome').style.display = 'block';
-            }}>
+        </Link>
+        <Link to='/'>
+            <ListItem button >
                 <ListItemIcon><Home/></ListItemIcon>
                 <ListItemText inset primary='Home'/>
             </ListItem>
-        </NavLink>
+        </Link>
     </div>
 );
 
@@ -82,7 +76,6 @@ export const NavMenuList2 = (
         <ListItem button onClick={() => {
             document.getElementById('not').style.display = 'block';
             document.getElementById('login').style.display = 'none';
-            document.getElementById('ticket').style.display = 'none';
         }}>
             <ListItemIcon><LogoutVariant/></ListItemIcon>
             <ListItemText inset primary='Logout'/>

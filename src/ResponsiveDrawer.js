@@ -4,13 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import { Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
 
@@ -54,10 +53,17 @@ const styles = theme => ({
 class ResponsiveDrawer extends React.Component {
     state = {
         mobileOpen: false,
+        user: null,
     };
 
     handleDrawerToggle = () => {
         this.setState(state => ({ mobileOpen: !state.mobileOpen }));
+    };
+
+    toggleLogin = (user) => {
+        this.setState({
+            user: user,
+        });
     };
 
     render() {
@@ -67,12 +73,11 @@ class ResponsiveDrawer extends React.Component {
             <div>
                 <div className={classes.toolbar} />
                 <Divider />
-                {NavMenuList2}
+                {this.state.user === null ? NavMenuList1 : NavMenuList2 }
             </div>
         );
 
         return (
-            <Router>
             <div className={classes.root}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
@@ -118,15 +123,10 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    {
-                        /*
-                    <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
-                         */
-                    }
+                    <Route path='/' exact/>
                     <Route path='/signup' component={Signup}/>
                 </main>
             </div>
-            </Router>
         );
     }
 }

@@ -42,32 +42,32 @@ export const NavMenuList1 = (
 // login
 export const NavMenuList2 = (
     <div>
-        <ListItem button component={NavLink} to='/account'>
+        <ListItem button component={NavLink} to='/homepage/account'>
             <ListItemIcon><Person/></ListItemIcon>
             <ListItemText inset primary='Account'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/cart'>
+        <ListItem button component={NavLink} to='/homepage/cart'>
             <ListItemIcon><ShoppingCart/></ListItemIcon>
             <ListItemText inset primary='Cart'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/collection'>
+        <ListItem button component={NavLink} to='/homepage/collection'>
             <ListItemIcon><Collections/></ListItemIcon>
             <ListItemText inset primary='Collection'/>
         </ListItem>
         <Divider/>
-        <ListItem button component={NavLink} to='/'>
+        <ListItem button component={NavLink} to='/homepage/'>
             <ListItemIcon><Home/></ListItemIcon>
             <ListItemText inset primary='Home'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/concert'>
+        <ListItem button component={NavLink} to='/homepage/concert'>
             <ListItemIcon><MusicCircle/></ListItemIcon>
             <ListItemText inset primary='Concert'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/show'>
+        <ListItem button component={NavLink} to='/homepage/show'>
             <ListItemIcon><Theater/></ListItemIcon>
             <ListItemText inset primary='Show'/>
         </ListItem>
-        <ListItem button component={NavLink} to='movie'>
+        <ListItem button component={NavLink} to='/homepage/movie'>
             <ListItemIcon><MovieRoll/></ListItemIcon>
             <ListItemText inset primary='Movie'/>
         </ListItem>

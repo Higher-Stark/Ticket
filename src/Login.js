@@ -73,6 +73,7 @@ class Login extends Component{
             verifyUrl : this.verification.verifyUrl + "find",
             verifyCodes:'find'
         });
+        console.log(this.props);
     }
 
     handleChange = name => event => {
@@ -101,10 +102,14 @@ class Login extends Component{
         for (let user of User) {
             if (user.name === username && user.password === password) {
                 alert("Log in successfully");
-                this.props.userIn({
-                    name: username,
-                });
-                this.props.history.push('/');
+                let date = new Date();
+                let utcDate = date.toUTCString();
+                let currentUser = {
+                    name: user.name,
+                    time: utcDate,
+                }
+                this.props.toggleLogin(currentUser);
+                this.props.history.push('/homepage');
                 return;
             }
         }

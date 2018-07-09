@@ -50,7 +50,7 @@ const styles = theme => ({
     },
 });
 
-class Signup extends Component{
+class SignUp extends Component{
     verification = {
         verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
         code: '',
@@ -197,8 +197,8 @@ class Signup extends Component{
     }
 }
 
-Signup.propTypes = {
+SignUp.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Signup);
+export default withStyles(styles)(SignUp);

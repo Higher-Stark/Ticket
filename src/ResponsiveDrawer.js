@@ -11,9 +11,10 @@ import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import {Route, Redirect} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
-import Signup from './Signup';
+import SignUp from './SignUp';
 import Login from './Login';
 import Account from './Account';
+import Home from './Home';
 
 const drawerWidth = 240;
 
@@ -125,8 +126,8 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <Route path='/' exact/>
-                    <Route path='/signup' component={Signup}/>
+                    <Route path='/' exact component={Home}/>
+                    <Route path='/signup' component={SignUp}/>
                     <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)

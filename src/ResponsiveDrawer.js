@@ -13,6 +13,7 @@ import {Route} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import Signup from './Signup';
 import Login from './Login'
+import Homepage from "./Homepage";
 
 const drawerWidth = 240;
 
@@ -124,9 +125,9 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <Route path='/' exact/>
-                    <Route path='/signup' component={Signup}/>
-                    <Route path='/signin' component={Login}/>
+                    <Route path='/homepage' exact component={Homepage}/>
+                    <Route path='/homepage/signup' component={Signup}/>
+                    <Route path='/homepage/signin' component={Login}/>
                 </main>
             </div>
         );

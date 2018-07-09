@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {NavLink} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -138,7 +137,7 @@ class Signup extends Component{
                 password: this.state.passive,
                 email: this.state.email,
             });
-            this.props.history.push('/');
+            this.props.history.push('/homepage/signin');
         }
         else {
             console.log(this.check_name());

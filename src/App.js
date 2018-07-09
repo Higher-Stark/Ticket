@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ResponsiveDrawer from './ResponsiveDrawer';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
@@ -6,6 +6,8 @@ import red from '@material-ui/core/colors/red';
 import cyan from '@material-ui/core/colors/cyan';
 import lime from '@material-ui/core/colors/lime';
 import {BrowserRouter as Router} from 'react-router-dom';
+import {Route} from 'react-router-dom';
+import Welcome from "./Welcome";
 
 
 const theme = createMuiTheme({
@@ -61,7 +63,10 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    <ResponsiveDrawer/>
+                    <div>
+                        <Route path='/' exact component={Welcome}/>
+                        <Route path='/homepage' component={ResponsiveDrawer}/>
+                    </div>
                 </Router>
             </MuiThemeProvider>
         );

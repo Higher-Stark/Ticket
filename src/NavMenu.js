@@ -19,20 +19,20 @@ import {NavLink} from 'react-router-dom';
 // not login
 export const NavMenuList1 = (
         <div>
-            <ListItem button component={NavLink} to='/signup'>
+            <ListItem button component={NavLink} to='/homepage/signup'>
                 <ListItemIcon><AccountCircle/></ListItemIcon>
                 <ListItemText inset primary='Sign in/up'/>
             </ListItem>
             <Divider/>
-            <ListItem button component={NavLink} to='/'>
+            <ListItem button component={NavLink} to='/homepage/'>
                 <ListItemIcon><Home color='primary'/></ListItemIcon>
                 <ListItemText inset primary='Home'/>
             </ListItem>
-            <ListItem button component={NavLink} to='/concert'>
+            <ListItem button component={NavLink} to='/homepage/concert'>
                 <ListItemIcon><Bookmark color='secondary'/></ListItemIcon>
                 <ListItemText inset primary='Concert'/>
             </ListItem>
-            <ListItem button component={NavLink} to='/show'>
+            <ListItem button component={NavLink} to='/homepage/show'>
                 <ListItemIcon><Bookmark color="error"/></ListItemIcon>
                 <ListItemText inset primary='Show'/>
             </ListItem>

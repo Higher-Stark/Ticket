@@ -28,7 +28,7 @@ export const NavMenuList1 = (
                 <ListItemText inset primary='Signin'/>
             </ListItem>
         </Link>
-        <Link to='/'>
+        <Link to='/homepage'>
             <ListItem button >
                 <ListItemIcon><Home/></ListItemIcon>
                 <ListItemText inset primary='Home'/>

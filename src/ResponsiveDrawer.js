@@ -112,7 +112,7 @@ class ResponsiveDrawer extends React.Component {
                             ModalProps={{
                                 keepMounted: true, // Better open performance on mobile.
                             }}
-                        >i
+                        >
                             {drawer}
                         </Drawer>
                     </Hidden>
@@ -129,7 +129,7 @@ class ResponsiveDrawer extends React.Component {
                     </Hidden>
                     <main className={classes.content}>
                         <div className={classes.toolbar}/>
-                        <Route exact path='/' component={Homepage}/>
+                        <Route exact path='/homepage' component={Homepage}/>
                         <Route path='/signup' component={Signup}/>
                         <Route path='/login' component={Login}/>
                     </main>

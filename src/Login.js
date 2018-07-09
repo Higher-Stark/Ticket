@@ -84,7 +84,7 @@ class Login extends Component{
                 alert("Log in successfully");
                 document.getElementById('not').style.display='none';
                 document.getElementById('login').style.display='block';
-                this.props.history.push('/');
+                this.props.history.push('/homepage');
                 return;
             }
         }

@@ -3,10 +3,12 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
 class Account extends Component {
+    /*
     constructor(props) {
         super(props);
 
     };
+    */
 
     render() {
         return (

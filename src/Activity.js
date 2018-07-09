@@ -19,8 +19,13 @@ import StarIcon from 'mdi-material-ui/Star';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
+import PlaceIcon from '@material-ui/icons/Place';
+
 
 const styles = theme => ({
+    root: {
+        padding: theme.spacing.unit,
+    },
     card: {
         maxWidth: 345,
     },
@@ -34,13 +39,22 @@ const styles = theme => ({
     header: {
         height: '100%',
     },
+    imageSec: {
+        height: 195,
+    },
     image: {
         width: '100%',
         maxHeight: 200,
+        margin: 'auto 0',
+    },
+    brief: {
+        height: 100,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
     buttonIcon: {
         marginRight: theme.spacing.unit,
-        color: '#ff1100',
+        color: '#ffebee',
     },
 });
 
@@ -52,7 +66,28 @@ class Activity extends Component {
         };
     };
 
-    toggleLike = () => this.setState({like: !this.state.like})
+    toggleLike = () => this.setState({like: !this.state.like});
+
+    toggleCart = (id) => {
+        /*
+         * fetch ("/add_to_cart?id="+id
+         */
+        fetch ('/add_to_cart?id='+id, {method: "GET", credentials: "include"})
+            .then(response => {
+                if (response.status !== 200) throw {msg: "Add to Cart failed!"};
+                else alert("Add to cart succeed");
+            })
+            .catch(e => console.log(e));
+    };
+
+    toggleBuy = (id) => {
+        fetch("/buy?id="+id, {method: "GET", credentials: "include"})
+            .then(response => {
+                if (response.status !== 200) throw {msg: "Buy failed"};
+                else alert("Add to cart succeed");
+            })
+            .catch(e => console.log(e));
+    };
 
     render() {
         const {classes, card} = this.props;
@@ -67,7 +102,7 @@ class Activity extends Component {
 
         const titledImage = (
             <div>
-                <GridListTile>
+                <GridListTile component='div' className={classes.imageSec}>
                     <img className={classes.image}
                          src={card.src}
                          alt={card.title}/>
@@ -80,15 +115,18 @@ class Activity extends Component {
         );
 
         return (
-            <div>
+            <div className={classes.root}>
                 <Card className={classes.card} >
                     <CardMedia className={classes.media} component={() => titledImage}
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent>
+                    <CardContent className={classes.brief}>
                         <Typography gutterBottom variant='headline' component='h2'>
                             {card.title}
+                        </Typography>
+                        <Typography variant='subheading' component='h3' gutterBottom>
+                            <PlaceIcon/>{card.location}{' '}{card.date}
                         </Typography>
                         <Typography component='p'>
                             {card.brief}
@@ -100,11 +138,11 @@ class Activity extends Component {
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like
                         </Button>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon}>
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={() => this.toggleCart(card.id)}>
                             <CartPlusIcon/>
-                            Add to Cart
+                            Add
                         </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon}>
+                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
                             <ShoppingIcon/>
                             Pay
                         </Button>

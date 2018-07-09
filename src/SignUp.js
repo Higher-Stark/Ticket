@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {NavLink} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -51,7 +50,7 @@ const styles = theme => ({
     },
 });
 
-class Signup extends Component{
+class SignUp extends Component{
     verification = {
         verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
         code: '',
@@ -198,8 +197,8 @@ class Signup extends Component{
     }
 }
 
-Signup.propTypes = {
+SignUp.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Signup);
+export default withStyles(styles)(SignUp);

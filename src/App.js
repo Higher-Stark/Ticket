@@ -5,6 +5,7 @@ import purple from '@material-ui/core/colors/purple';
 import red from '@material-ui/core/colors/red';
 import cyan from '@material-ui/core/colors/cyan';
 import lime from '@material-ui/core/colors/lime';
+
 import {BrowserRouter as Router} from 'react-router-dom';
 
 
@@ -53,7 +54,7 @@ const theme = createMuiTheme({
         accent2: lime.A200,
         optional: '#FFC107',
     },
-
+    shadow: ['#000000', '#030303', '#050505', '#090909', '#0a0a0a', '#0b0b0b'],
 });
 
 class App extends Component {

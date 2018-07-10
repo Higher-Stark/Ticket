@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
+import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import MovieIcon from 'mdi-material-ui/Movie';
 import TheaterIcon from 'mdi-material-ui/Theater';
@@ -20,7 +21,7 @@ import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
 import PlaceIcon from '@material-ui/icons/Place';
-
+import DetailModal from './DetailModal';
 
 const styles = theme => ({
     root: {
@@ -63,6 +64,7 @@ class Activity extends Component {
         super(props);
         this.state = {
             like: this.props.like,
+            open: false,
         };
     };
 
@@ -87,6 +89,14 @@ class Activity extends Component {
                 else alert("Add to cart succeed");
             })
             .catch(e => console.log(e));
+    };
+
+    handleOpen = () => this.setState({open: true});
+
+    handleClose = () => {
+        this.setState({
+            open: false,
+        });
     };
 
     render() {
@@ -121,12 +131,12 @@ class Activity extends Component {
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent className={classes.brief}>
+                    <CardContent className={classes.brief} onClick={this.handleOpen}>
                         <Typography gutterBottom variant='headline' component='h2'>
                             {card.title}
                         </Typography>
                         <Typography variant='subheading' component='h3' gutterBottom>
-                            <PlaceIcon/>{card.location}{' '}{card.date}
+                            <PlaceIcon/>{card.location}{' '}
                         </Typography>
                         <Typography component='p'>
                             {card.brief}
@@ -147,6 +157,11 @@ class Activity extends Component {
                             Pay
                         </Button>
                     </CardActions>
+                    <Modal ariaLabelledy="simple-model-title" ariaDescribeby="simple-modal-description"
+                           open={this.state.open} onClose={this.handleClose}
+                    >
+                        <DetailModal card={card}/>
+                    </Modal>
                 </Card>
             </div>
         );
@@ -155,6 +170,7 @@ class Activity extends Component {
 
 Activity.propTypes = {
     classes: PropTypes.object.isRequired,
+    card: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Activity);

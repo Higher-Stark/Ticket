@@ -9,6 +9,19 @@ export const Cards = [
         brief: 'メンヘラちゃん',
         icon: 'music',
         like: false,
+        dates: ['2018/08/09 12:00', '2018/08/09 16:40', '2018/08/09 22:20'],
+        seats: [
+            {
+                class: 'vip',
+                remain: 100,
+                price: 2000,
+            },
+            {
+                class: 'gold',
+                remain: 368,
+                price: 1500,
+            },
+        ],
     },
     {
         id: 1001,
@@ -20,6 +33,7 @@ export const Cards = [
         brief: 'While sailing to Port Royal, Jamaica, Governor Weatherby Swann, his daughter Elizabeth, and Lieutenant James Norrington encounter a shipwreck and recover a boy, Will Turner. Elizabeth discovers a golden pirate medallion around his neck, and keeps it in order to protect him.',
         icon: 'movie',
         like: true,
+        dates: ['2018/07/23', '2018/07/30'],
     },
     {
         id: 1002,

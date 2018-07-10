@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Activity from './Activity';
 import {Cards} from './test-data/Cards';
 import Typography from '@material-ui/core/Typography';
+import Sliders from './Sliders/components/Sliders';
 
 const styles = theme => ({
     root: {
@@ -14,6 +15,12 @@ const styles = theme => ({
     },
 });
 
+const Img=[
+    require('./Sliders/img/AAE8E3AD657B93F4597B9136A535A5EFD7276A59_size27_w757_h391.jpeg'),
+    require('./Sliders/img/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg'),
+    require('./Sliders/img/steamuserimages-a.akamaihd.net.jpeg'),
+];
+
 class Home extends Component {
 
     render() {
@@ -22,6 +29,13 @@ class Home extends Component {
         return (
             <div>
                 <Typography noWrap>Welcome to Ticket, here are the tickets.</Typography>
+                <Sliders
+                    images={Img}
+                    speed={1}
+                    delay={2}
+                    autoPlay={true}
+                    autoParse={true}
+                />
                 <div className={classes.root}>
                     {
                         Cards.map((s, i) => {

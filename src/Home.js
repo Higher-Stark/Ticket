@@ -27,8 +27,7 @@ class Home extends Component {
         const {classes} = this.props;
 
         return (
-            <div>
-                <Typography noWrap>Welcome to Ticket, here are the tickets.</Typography>
+            <div >
                 <Sliders
                     images={Img}
                     speed={1}
@@ -36,6 +35,11 @@ class Home extends Component {
                     autoPlay={true}
                     autoParse={true}
                 />
+                <br/>
+                <Typography variant="title" color="inherit"  style={{textAlign:'center'}} noWrap>
+                    热门票品
+                </Typography>
+                <br/>
                 <div className={classes.root}>
                     {
                         Cards.map((s, i) => {

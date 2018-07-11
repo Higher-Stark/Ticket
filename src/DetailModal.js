@@ -77,7 +77,7 @@ class DetailModal extends Component {
          */
         fetch ('/add_to_cart?id='+id, {method: "GET", credentials: "include"})
             .then(response => {
-                if (response.status !== 200) throw {msg: "Add to Cart failed!"};
+                if (response.status !== 200) throw new Error("Add to Cart failed!");
                 else alert("Add to cart succeed");
             })
             .catch(e => console.log(e));
@@ -86,7 +86,7 @@ class DetailModal extends Component {
     toggleBuy = (id) => {
         fetch("/buy?id="+id, {method: "GET", credentials: "include"})
             .then(response => {
-                if (response.status !== 200) throw {msg: "Buy failed"};
+                if (response.status !== 200) throw new Error("Buy failed");
                 else alert("Add to cart succeed");
             })
             .catch(e => console.log(e));

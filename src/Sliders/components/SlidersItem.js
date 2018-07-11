@@ -3,8 +3,8 @@ import React,{Component} from 'react';
 export default class SlidersItem extends Component{
     render(){
         let style={
-            width:this.props.images.length*1000+'px',
-            left:this.props.index*-1000+'px',
+            width:100+'%',
+            left:this.props.index*-100+'%',
             transitionDuration:this.props.speed+'s'
         };
         return (

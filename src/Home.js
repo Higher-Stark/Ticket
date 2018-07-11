@@ -12,6 +12,8 @@ const styles = theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         overflow: 'hidden',
+        paddingLeft: theme.spacing.unit * 30,
+        paddingRight:theme.spacing.unit * 30,
     },
 });
 

@@ -21,6 +21,7 @@ const styles = theme => ({
         position: 'relative',
         display: 'flex',
         width: '100%',
+        height: '100%',
     },
     appBar: {
         position: 'absolute',
@@ -42,7 +43,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.default,
-        padding: theme.spacing.unit * 3,
+        /*padding: theme.spacing.unit * 3,*/
     },
 });
 

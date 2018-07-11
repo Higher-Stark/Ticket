@@ -32,8 +32,7 @@ const styles = theme => ({
     button : {
         width : '50%',
         textAlign: 'center',
-        paddingLeft: theme.spacing.unit,
-        paddingRight: theme.spacing.unit,
+        padding: '0 auto',
         marginTop : theme.spacing.unit,
         alignItems: 'center',
         margin: 'auto',

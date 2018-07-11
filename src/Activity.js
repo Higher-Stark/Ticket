@@ -11,16 +11,21 @@ import Typography from '@material-ui/core/Typography';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
+import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import MovieIcon from 'mdi-material-ui/Movie';
 import TheaterIcon from 'mdi-material-ui/Theater';
 import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';
 import StarIcon from 'mdi-material-ui/Star';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
-import CartPlusIcon from 'mdi-material-ui/CartPlus';
-import ShoppingIcon from 'mdi-material-ui/Shopping';
+import PlaceIcon from '@material-ui/icons/Place';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
+import DetailModal from './DetailModal';
 
 const styles = theme => ({
+    root: {
+        padding: theme.spacing.unit,
+    },
     card: {
         maxWidth: 345,
     },
@@ -34,13 +39,22 @@ const styles = theme => ({
     header: {
         height: '100%',
     },
+    imageSec: {
+        height: 195,
+    },
     image: {
         width: '100%',
         maxHeight: 200,
+        margin: 'auto 0',
+    },
+    brief: {
+        height: 100,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
     buttonIcon: {
         marginRight: theme.spacing.unit,
-        color: '#ff1100',
+        color: '#ffebee',
     },
 });
 
@@ -49,10 +63,19 @@ class Activity extends Component {
         super(props);
         this.state = {
             like: this.props.like,
+            open: false,
         };
     };
 
-    toggleLike = () => this.setState({like: !this.state.like})
+    toggleLike = () => this.setState({like: !this.state.like});
+
+    handleOpen = () => this.setState({open: true});
+
+    handleClose = () => {
+        this.setState({
+            open: false,
+        });
+    };
 
     render() {
         const {classes, card} = this.props;
@@ -67,7 +90,7 @@ class Activity extends Component {
 
         const titledImage = (
             <div>
-                <GridListTile>
+                <GridListTile component='div' className={classes.imageSec}>
                     <img className={classes.image}
                          src={card.src}
                          alt={card.title}/>
@@ -80,15 +103,18 @@ class Activity extends Component {
         );
 
         return (
-            <div>
+            <div className={classes.root}>
                 <Card className={classes.card} >
                     <CardMedia className={classes.media} component={() => titledImage}
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent>
+                    <CardContent className={classes.brief} onClick={this.handleOpen}>
                         <Typography gutterBottom variant='headline' component='h2'>
                             {card.title}
+                        </Typography>
+                        <Typography variant='subheading' component='h3' gutterBottom>
+                            <PlaceIcon/>{card.location}{' '}
                         </Typography>
                         <Typography component='p'>
                             {card.brief}
@@ -100,15 +126,15 @@ class Activity extends Component {
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like
                         </Button>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon}>
-                            <CartPlusIcon/>
-                            Add to Cart
-                        </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon}>
-                            <ShoppingIcon/>
-                            Pay
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.handleOpen}>
+                            <MoreHoriz/>
                         </Button>
                     </CardActions>
+                    <Modal arialabelledy="simple-model-title" ariadescribeby="simple-modal-description"
+                           open={this.state.open} onClose={this.handleClose}
+                    >
+                        <DetailModal card={card}/>
+                    </Modal>
                 </Card>
             </div>
         );
@@ -117,6 +143,7 @@ class Activity extends Component {
 
 Activity.propTypes = {
     classes: PropTypes.object.isRequired,
+    card: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Activity);

@@ -10,10 +10,9 @@ const styles = theme => ({
     root: {
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        justifyContent: 'normal',
         overflow: 'hidden',
-        paddingLeft: theme.spacing.unit * 30,
-        paddingRight:theme.spacing.unit * 30,
+        // alignItems: 'start'
     },
 });
 
@@ -24,6 +23,11 @@ const Img=[
 ];
 
 class Home extends Component {
+    /*
+    constructor(props) {
+        super(props);
+    }
+    */
 
     render() {
         const {classes} = this.props;

@@ -21,7 +21,7 @@ const styles = theme => ({
         position: 'relative',
         display: 'flex',
         width: '100%',
-        height: '100%',
+        background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 1), rgba(255, 0, 0, 0.15)), url(https://mir-s3-cdn-cf.behance.net/project_modules/fs/37ca1352939141.592593e534024.png)',
     },
     appBar: {
         position: 'absolute',
@@ -42,8 +42,8 @@ const styles = theme => ({
     },
     content: {
         flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        /*padding: theme.spacing.unit * 3,*/
+        // backgroundColor: theme.palette.background.default,
+        padding: theme.spacing.unit * 3,
     },
 });
 

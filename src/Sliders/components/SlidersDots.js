@@ -12,6 +12,7 @@ export default class SlidersDots extends Component{
                             className={"dot "+(index===this.props.index?'active':'')}
                             onClick={()=>this.props.turn(index-this.props.index)}
                         >
+                            <img src={item} alt=""/>
                         </span>
                     ))
                 }

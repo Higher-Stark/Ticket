@@ -47,6 +47,8 @@ export default class Sliders extends Component {
                     />
                     <SlidersArrows
                         turn={this.turn}
+                        images={this.props.images}
+                        index={this.state.index}
                     />
                     <SlidersDots
                         images={this.props.images}

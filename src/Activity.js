@@ -18,9 +18,8 @@ import TheaterIcon from 'mdi-material-ui/Theater';
 import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';
 import StarIcon from 'mdi-material-ui/Star';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
-import CartPlusIcon from 'mdi-material-ui/CartPlus';
-import ShoppingIcon from 'mdi-material-ui/Shopping';
 import PlaceIcon from '@material-ui/icons/Place';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import DetailModal from './DetailModal';
 
 const styles = theme => ({
@@ -69,27 +68,6 @@ class Activity extends Component {
     };
 
     toggleLike = () => this.setState({like: !this.state.like});
-
-    toggleCart = (id) => {
-        /*
-         * fetch ("/add_to_cart?id="+id
-         */
-        fetch ('/add_to_cart?id='+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw {msg: "Add to Cart failed!"};
-                else alert("Add to cart succeed");
-            })
-            .catch(e => console.log(e));
-    };
-
-    toggleBuy = (id) => {
-        fetch("/buy?id="+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw {msg: "Buy failed"};
-                else alert("Add to cart succeed");
-            })
-            .catch(e => console.log(e));
-    };
 
     handleOpen = () => this.setState({open: true});
 
@@ -148,16 +126,11 @@ class Activity extends Component {
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like
                         </Button>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={() => this.toggleCart(card.id)}>
-                            <CartPlusIcon/>
-                            Add
-                        </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
-                            <ShoppingIcon/>
-                            Pay
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.handleOpen}>
+                            <MoreHoriz/>
                         </Button>
                     </CardActions>
-                    <Modal ariaLabelledy="simple-model-title" ariaDescribeby="simple-modal-description"
+                    <Modal arialabelledy="simple-model-title" ariadescribeby="simple-modal-description"
                            open={this.state.open} onClose={this.handleClose}
                     >
                         <DetailModal card={card}/>

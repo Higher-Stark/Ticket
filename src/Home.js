@@ -8,8 +8,9 @@ const styles = theme => ({
     root: {
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        justifyContent: 'normal',
         overflow: 'hidden',
+        // alignItems: 'start'
     },
 });
 

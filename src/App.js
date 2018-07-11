@@ -54,7 +54,14 @@ const theme = createMuiTheme({
         accent2: lime.A200,
         optional: '#FFC107',
     },
-    shadow: ['#000000', '#030303', '#050505', '#090909', '#0a0a0a', '#0b0b0b'],
+    shadow: [
+        '#f5f5f5',
+        '#e0e0e0',
+        '#9e9e9e',
+        '#757575',
+        '#616161',
+        '#424242'
+    ],
 });
 
 class App extends Component {

@@ -112,7 +112,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                         <Typography variant="title" color="inherit" noWrap>
                             {
-                                this.props.location ? this.props.location.pathname : 'Ticket'
+                                '聚票网'
                             }
                         </Typography>
                     </Toolbar>

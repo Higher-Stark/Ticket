@@ -4,10 +4,9 @@ import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import cyan from '@material-ui/core/colors/cyan';
 import lime from '@material-ui/core/colors/lime';
-import deepOrange from '@material-ui/core/colors/deepOrange';
 import grey from '@material-ui/core/colors/grey';
+import pink from '@material-ui/core/colors/pink';
 import {BrowserRouter as Router} from 'react-router-dom';
-
 
 const theme = createMuiTheme({
     typography: {
@@ -33,9 +32,9 @@ const theme = createMuiTheme({
     },
     palette: {
         primary: {
-            light: deepOrange[300],
-            main: deepOrange[600],
-            dark: deepOrange[800],
+            light: pink[100],
+            main: pink[300],
+            dark: pink[500],
             // contrastText: getContrastText(purple[500]),
         },
         secondary: {

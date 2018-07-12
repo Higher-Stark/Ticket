@@ -40,6 +40,9 @@ const styles = theme => ({
     content2: {
         margin: '0 auto',
         width: 510,
+        background: 'rgba(255,255,255,0.8)',
+        borderRadius: theme.spacing.unit / 2,
+        padding: `0 ${theme.spacing.unit}px`,
     },
     header : {
         paddingBottom: theme.spacing.unit ,

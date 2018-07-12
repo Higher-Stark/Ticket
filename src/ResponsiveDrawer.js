@@ -7,8 +7,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
-import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
+import Avatar from '@material-ui/core/Avatar';
+import ReceiptIcon from '@material-ui/icons/Receipt';
 import {Route, Redirect} from 'react-router-dom';
 import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import SignUp from './SignUp';
@@ -26,7 +27,6 @@ const styles = theme => ({
         position: 'relative',
         display: 'flex',
         width: '100%',
-        background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 1), rgba(255, 0, 0, 0.15)), url(https://mir-s3-cdn-cf.behance.net/project_modules/fs/37ca1352939141.592593e534024.png)',
     },
     appBar: {
         position: 'absolute',
@@ -49,8 +49,20 @@ const styles = theme => ({
     },
     content: {
         flexGrow: 1,
-        // backgroundColor: theme.palette.background.default,
+        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(to bottom right, rgba(255, 255, 240, .5), rgba(244, 81, 30, .1))',
+        // backgroundImage: 'url(http://www.seekgif.com/download/fire-background-template-3135)',
         padding: theme.spacing.unit * 3,
+    },
+    avatar: {
+        margin: 10,
+        background: 'rgba(255, 255, 240, 0.2)',
+        color: '#ff9320',
+    },
+    icon: {
+        color: 'rgba(255,255, 0, 1)',
+        width: 50,
+        height: 50,
     },
 });
 
@@ -75,8 +87,13 @@ class ResponsiveDrawer extends React.Component {
 
         const drawer = (
             <div>
-                <div className={classes.toolbar} />
-                <Divider />
+                <div className={classes.toolbar}>
+                    <Avatar className={classes.avatar}>
+                        <IconButton>
+                            <ReceiptIcon/>
+                        </IconButton>
+                    </Avatar>
+                </div>
                 {this.state.user === null ? NavMenuList1 : NavMenuList2 }
             </div>
         );
@@ -94,7 +111,9 @@ class ResponsiveDrawer extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="title" color="inherit" noWrap>
-                            聚票网
+                            {
+                                this.props.location ? this.props.location.pathname : 'Ticket'
+                            }
                         </Typography>
                     </Toolbar>
                 </AppBar>

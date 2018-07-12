@@ -7,8 +7,6 @@ import lime from '@material-ui/core/colors/lime';
 import grey from '@material-ui/core/colors/grey';
 import pink from '@material-ui/core/colors/pink';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {Route} from 'react-router-dom';
-// import Welcome from "./Welcome";
 
 const theme = createMuiTheme({
     typography: {
@@ -91,9 +89,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    <div>
-                        <Route path='/' exact component={this.state.com ? ResponsiveDrawer : () => Welcome}/>
-                    </div>
+                    {this.state.com ? <ResponsiveDrawer/> : Welcome}
                 </Router>
             </MuiThemeProvider>
         );

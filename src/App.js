@@ -8,7 +8,7 @@ import grey from '@material-ui/core/colors/grey';
 import pink from '@material-ui/core/colors/pink';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {Route} from 'react-router-dom';
-import Welcome from "./Welcome";
+// import Welcome from "./Welcome";
 
 const theme = createMuiTheme({
     typography: {
@@ -66,13 +66,33 @@ const theme = createMuiTheme({
 });
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            com: false,
+        };
+    }
+
+    componentDidMount() {
+        setTimeout(() => this.setState({com: true}), 5000);
+    }
     render() {
+        const Welcome = (
+            <div onClick={() => this.setState({com: true})} id='background'>
+                <div className="bg"/>
+                <div className="bg bg2"/>
+                <div className="bg bg3"/>
+                <div className="content">
+                    <h1 className="animated rotateIn">Ticket Website</h1>
+                </div>
+            </div>
+        );
+
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
                     <div>
-                        <Route path='/' exact component={Welcome}/>
-                        <Route path='/homepage' component={ResponsiveDrawer}/>
+                        <Route path='/' exact component={this.state.com ? ResponsiveDrawer : () => Welcome}/>
                     </div>
                 </Router>
             </MuiThemeProvider>

@@ -27,7 +27,7 @@ const styles = theme => ({
         padding: theme.spacing.unit,
     },
     card: {
-        maxWidth: 345,
+        maxWidth: 336,
     },
     icon: {
         color: '#eeeeee',
@@ -40,21 +40,26 @@ const styles = theme => ({
         height: '100%',
     },
     imageSec: {
-        height: 195,
+        height: 189,
     },
     image: {
         width: '100%',
-        maxHeight: 200,
+        maxHeight: '100%',
         margin: 'auto 0',
     },
+    intro: {
+        overflow: 'hidden',
+        textOverflow: 'fade(10px)',
+    },
     brief: {
-        height: 100,
+        width: 'inherit',
+        height: 60,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
     },
     buttonIcon: {
         marginRight: theme.spacing.unit,
-        color: '#ffebee',
+        color: '#FFF9C4',
     },
 });
 
@@ -109,19 +114,19 @@ class Activity extends Component {
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent className={classes.brief} onClick={this.handleOpen}>
+                    <CardContent className={classes.intro} onClick={this.handleOpen}>
                         <Typography gutterBottom variant='headline' component='h2'>
                             {card.title}
                         </Typography>
                         <Typography variant='subheading' component='h3' gutterBottom>
                             <PlaceIcon/>{card.location}{' '}
                         </Typography>
-                        <Typography component='p'>
-                            {card.brief}
+                        <Typography component='p' className={classes.brief}>
+                            {card.intro}
                         </Typography>
                     </CardContent>
                     <Divider/>
-                    <CardActions>
+                    <CardActions className={classes.cardAction}>
                         <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.toggleLike}>
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like

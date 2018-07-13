@@ -120,7 +120,7 @@ class DetailModal extends Component {
                     </Typography>
                     <Collapse in={this.state.open} timeout='auto' unmountOnExit>
                         <Typography variant='body1' component='p'>
-                            {card.brief}
+                            {card.intro}
                         </Typography>
                     </Collapse>
                     <div>

@@ -6,6 +6,8 @@ import lime from '@material-ui/core/colors/lime';
 import indigo from '@material-ui/core/colors/indigo';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import {BrowserRouter as Router} from 'react-router-dom';
+import 'animate.css/animate.css';
+import './css/index.css';
 
 const theme = createMuiTheme({
     typography: {

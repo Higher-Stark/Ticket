@@ -103,10 +103,10 @@ class Activity extends Component {
             <div>
                 <GridListTile component='div' className={classes.imageSec}>
                     <img className={classes.image}
-                         src={card.src}
+                         src={card.image}
                          alt={card.title}/>
                     <GridListTileBar title={card.title}
-                                     subtitle={<span>{card.subtitle}</span>}
+                                     subtitle={<span>{card.city}</span>}
                                      actionIcon={<IconButton className={classes.icon}>{actIcon()}</IconButton>}
                     />
                 </GridListTile>
@@ -125,7 +125,7 @@ class Activity extends Component {
                             {card.title}
                         </Typography>
                         <Typography variant='subheading' component='h3' gutterBottom>
-                            <PlaceIcon/>{card.location}{' '}
+                            <PlaceIcon/>{card.venue}{' '}
                         </Typography>
                         <Typography component='p' className={classes.brief}>
                             {card.intro}

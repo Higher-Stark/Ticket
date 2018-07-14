@@ -106,14 +106,14 @@ class DetailModal extends Component {
         return (
             <div style={{top: '50%', left: '50%', transform: `translate(-50%, -50%)`}} className={classes.paper}>
                 <div className={classes.modal}>
-                    <img src={card.src} alt={card.title} className={classes.image}/>
+                    <img src={card.image} alt={card.title} className={classes.image}/>
                 </div>
                 <div className={classes.paper2}>
                     <Typography variant='title' component='h2' color='primary' gutterBottom>
                         {card.title}
                     </Typography>
                     <Typography variant='subheading' component='h3' color='secondary'>
-                        {card.subtitle}
+                        {card.city}
                     </Typography>
                     <Typography variant='title' component='h2' color='secondary'>
                         <PlaceIcon/>
@@ -137,7 +137,7 @@ class DetailModal extends Component {
                         <CalendarToday/>{'Date: '}
                                 </Grid>
                                 <Grid item className={classes.subgrid}>
-                            {card.dates.map((s, i) => {
+                            {card.dates.split(",").map((s, i) => {
                                 const {dates} = this.state;
                                 dates.push(false);
                                 return (
@@ -151,7 +151,7 @@ class DetailModal extends Component {
                                             key={i}
                                             disableRipple
                                     >
-                                        {s}
+                                        {s.replace(/\s/, '')}
                                     </Button>
                                 )
                             })}
@@ -159,6 +159,8 @@ class DetailModal extends Component {
                             </Grid>
                         </Grid>
                     </div>
+                    {
+                        /*
                     <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
@@ -235,6 +237,9 @@ class DetailModal extends Component {
                             Pay
                         </Button>
                     </div>
+
+                         */
+                    }
                 </div>
             </div>
         )

@@ -34,24 +34,34 @@ const styles = theme => ({
 });
 
 class Home extends Component {
-    /*
     constructor(props) {
         super(props);
+        this.state = {
+            data: [],
+            page: 1,
+        }
     }
-    */
 
     componentDidMount() {
         console.log(this.props.width);
+        const url = 'http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=1';
+        fetch (url, {
+            method: 'GET',
+            credentials: "include",
+        })
+            .then(response => response.json())
+            .then(data => this.setState({data: data}))
+            .catch(e => console.log(e));
     }
 
     render() {
-        const {classes} = this.props;
+        const {classes, data} = this.props;
 
         return (
             <div className={classes.root}>
                 <div id='content' className={classes.content}>
                 {
-                    Cards.map((s, i) => {
+                    data.map((s, i) => {
                         return (
                             <Activity card={s} key={i}/>
                         );

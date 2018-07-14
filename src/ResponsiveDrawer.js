@@ -7,15 +7,20 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import ReceiptIcon from '@material-ui/icons/Receipt';
-import {Route, Redirect} from 'react-router-dom';
-import {NavMenuList1, NavMenuList2} from "./NavMenu";
-import SignUp from './SignUp';
-import Login from './Login';
+import {Route, Redirect, withRouter} from 'react-router-dom';
+import {NavMenuList1, NavMenuList2} from "./com/NavMenu";
+import SignUp from './page/SignUp';
+import Login from './page/Login';
 import Account from './Account';
-import Home from './Home';
+import Home from './page/Home';
+import Category from './page/Category';
+import Search from './page/Search';
 
 const drawerWidth = 240;
 
@@ -34,6 +39,7 @@ const styles = theme => ({
         [theme.breakpoints.up('md')]: {
             width: `calc(100% - ${drawerWidth}px)`,
         },
+        display: 'flex',
     },
     navIconHide: {
         [theme.breakpoints.up('md')]: {
@@ -50,8 +56,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundAttachment: 'fixed',
-        background: 'linear-gradient(to bottom right, rgba(255, 255, 240, .5), rgba(244, 81, 30, .1))',
-        // backgroundImage: 'url(http://www.seekgif.com/download/fire-background-template-3135)',
+        background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
         padding: theme.spacing.unit * 3,
     },
     avatar: {
@@ -64,13 +69,22 @@ const styles = theme => ({
         width: 50,
         height: 50,
     },
+    search: {
+        margin: `0 ${theme.spacing.unit}px`,
+        position: 'absolute',
+        right: '0px',
+    },
 });
 
 class ResponsiveDrawer extends React.Component {
-    state = {
-        mobileOpen: false,
-        user: null,
-    };
+    constructor(props){
+        super(props);
+        this.state = {
+            mobileOpen: false,
+            user: null,
+            search: null,
+        };
+    }
 
     handleDrawerToggle = () => {
         this.setState(state => ({mobileOpen: !state.mobileOpen}));
@@ -79,6 +93,17 @@ class ResponsiveDrawer extends React.Component {
     toggleLogin = (user) => {
         this.setState({
             user: user,
+        });
+    };
+
+    handleChange = (e) => {
+        this.setState({search: e.target.value});
+    };
+
+    toggleSearch = () => {
+        this.props.history.push({
+            pathname: '/search',
+            search: `s=${this.state.search}`,
         });
     };
 
@@ -110,11 +135,23 @@ class ResponsiveDrawer extends React.Component {
                         >
                             <MenuIcon />
                         </IconButton>
+                        <Hidden smDown implementation='css'>
                         <Typography variant="title" color="inherit" noWrap>
                             {
                                 '聚票网'
                             }
                         </Typography>
+                        </Hidden>
+                        <TextField className={classes.search} id='search_input'
+                                   label="Search"
+                                   InputProps={{startAdornment: (
+                                       <InputAdornment position="end">
+                                           <SearchIcon onClick={this.toggleSearch}/>
+                                       </InputAdornment>
+                                       ),
+                                   }}
+                                   onChange={this.handleChange}
+                        />
                     </Toolbar>
                 </AppBar>
                 <Hidden mdUp>
@@ -152,6 +189,8 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
+                    <Route path='/category/:sort' component={Category}/>
+                    <Route path='/search' component={Search}/>
                 </main>
             </div>
         );
@@ -163,4 +202,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(ResponsiveDrawer);
+export default withStyles(styles, {withTheme: true})(withRouter(ResponsiveDrawer));

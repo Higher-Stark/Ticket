@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import ResponsiveDrawer from './ResponsiveDrawer';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
-import cyan from '@material-ui/core/colors/cyan';
 import lime from '@material-ui/core/colors/lime';
-import grey from '@material-ui/core/colors/grey';
-import pink from '@material-ui/core/colors/pink';
+import indigo from '@material-ui/core/colors/indigo';
+import deepOrange from '@material-ui/core/colors/deepOrange';
 import {BrowserRouter as Router} from 'react-router-dom';
 
 const theme = createMuiTheme({
@@ -32,22 +31,19 @@ const theme = createMuiTheme({
     },
     palette: {
         primary: {
-            light: pink[100],
-            main: pink[300],
-            dark: pink[500],
-            // contrastText: getContrastText(purple[500]),
+            light: '#6f74dd',
+            main: indigo[600],
+            dark: '#00227b',
         },
         secondary: {
-            light: cyan[200],
-            main: grey[900],
-            dark: cyan[700],
-            // contrastText: getContrastText(cyan[500]),
+            light: '#ff844c',
+            main: deepOrange[600],
+            dark: '#b91400',
         },
         error: {
             light: red[200],
             main: red[500],
             dark: red[700],
-            // contrastText: getContrastText(red[500]),
         },
         accent: lime.A100,
         accent2: lime.A200,

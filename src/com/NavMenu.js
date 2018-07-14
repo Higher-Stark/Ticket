@@ -11,9 +11,29 @@ import Collections from '@material-ui/icons/Collections';
 import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
-import MovieRoll from 'mdi-material-ui/MovieRoll';
 import Theater from 'mdi-material-ui/Theater';
 import {NavLink} from 'react-router-dom';
+
+const styles = {
+    home: {
+        color: '#2196f3',
+    },
+    music: {
+        color: '#ff5722',
+    },
+    show: {
+        color: '#00e676',
+    },
+    opera: {
+        color: '#8bc34a',
+    },
+    sports: {
+        color: '#f44336',
+    },
+    dance: {
+        color: '#e040fb'
+    },
+};
 
 // not login
 export const NavMenuList1 = (
@@ -24,16 +44,28 @@ export const NavMenuList1 = (
             </ListItem>
             <Divider/>
             <ListItem button component={NavLink} to='/'>
-                <ListItemIcon><Home color='primary'/></ListItemIcon>
+                <ListItemIcon><Home style={styles.home}/></ListItemIcon>
                 <ListItemText inset primary='Home'/>
             </ListItem>
-            <ListItem button component={NavLink} to='/concert'>
-                <ListItemIcon><Bookmark color='secondary'/></ListItemIcon>
+            <ListItem button component={NavLink} to='/category/music'>
+                <ListItemIcon><MusicCircle style={styles.music}/></ListItemIcon>
                 <ListItemText inset primary='Concert'/>
             </ListItem>
-            <ListItem button component={NavLink} to='/show'>
-                <ListItemIcon><Bookmark color="error"/></ListItemIcon>
+            <ListItem button component={NavLink} to='/category/show'>
+                <ListItemIcon><Bookmark style={styles.show}/></ListItemIcon>
                 <ListItemText inset primary='Show'/>
+            </ListItem>
+            <ListItem button component={NavLink} to='/category/opera'>
+                <ListItemIcon><Theater style={styles.opera}/></ListItemIcon>
+                <ListItemText inset primary='Opera'/>
+            </ListItem>
+            <ListItem button component={NavLink} to='/category/sports'>
+                <ListItemIcon><Bookmark style={styles.sports}/></ListItemIcon>
+                <ListItemText inset primary='Sports'/>
+            </ListItem>
+            <ListItem button component={NavLink} to='/category/dance'>
+                <ListItemIcon><Bookmark style={styles.dance}/></ListItemIcon>
+                <ListItemText inset primary='Dance'/>
             </ListItem>
         </div>
 );
@@ -55,20 +87,28 @@ export const NavMenuList2 = (
         </ListItem>
         <Divider/>
         <ListItem button component={NavLink} to='/'>
-            <ListItemIcon><Home/></ListItemIcon>
+            <ListItemIcon><Home style={styles.home}/></ListItemIcon>
             <ListItemText inset primary='Home'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/concert'>
-            <ListItemIcon><MusicCircle/></ListItemIcon>
+        <ListItem button component={NavLink} to='/category/music'>
+            <ListItemIcon><MusicCircle style={styles.music}/></ListItemIcon>
             <ListItemText inset primary='Concert'/>
         </ListItem>
-        <ListItem button component={NavLink} to='/show'>
-            <ListItemIcon><Theater/></ListItemIcon>
+        <ListItem button component={NavLink} to='/category/show'>
+            <ListItemIcon><Bookmark style={styles.show}/></ListItemIcon>
             <ListItemText inset primary='Show'/>
         </ListItem>
-        <ListItem button component={NavLink} to='movie'>
-            <ListItemIcon><MovieRoll/></ListItemIcon>
-            <ListItemText inset primary='Movie'/>
+        <ListItem button component={NavLink} to='/category/opera'>
+            <ListItemIcon><Theater style={styles.opera}/></ListItemIcon>
+            <ListItemText inset primary='Opera'/>
+        </ListItem>
+        <ListItem button component={NavLink} to='/category/sports'>
+            <ListItemIcon><Bookmark style={styles.sports}/></ListItemIcon>
+            <ListItemText inset primary='Sports'/>
+        </ListItem>
+        <ListItem button component={NavLink} to='/category/dance'>
+            <ListItemIcon><Bookmark style={styles.dance}/></ListItemIcon>
+            <ListItemText inset primary='Dance'/>
         </ListItem>
         <Divider/>
         <ListItem button onClick={() => {alert("logout")}}>

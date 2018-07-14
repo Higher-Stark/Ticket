@@ -58,8 +58,14 @@ const styles = theme => ({
         textOverflow: 'ellipsis',
     },
     buttonIcon: {
+        flexGrow: 1,
         marginRight: theme.spacing.unit,
         color: '#FFF9C4',
+        maxWidth: '25%',
+    },
+    cardAction: {
+        display: 'flex',
+        justifyContent: 'space-between',
     },
 });
 
@@ -114,7 +120,7 @@ class Activity extends Component {
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent className={classes.intro} onClick={this.handleOpen}>
+                    <CardContent className={classes.intro}>
                         <Typography gutterBottom variant='headline' component='h2'>
                             {card.title}
                         </Typography>

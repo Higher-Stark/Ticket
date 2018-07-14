@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
-import {User} from '../test-data/user';
 
 const styles = theme => ({
     container: {
@@ -53,7 +52,7 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
-        verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
+        verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
         code: '',
         uuid: ''
     };
@@ -65,15 +64,11 @@ class Login extends Component{
             password: '',
             email: '',
             authCode: '',
-            verifyCodes: '',
         }
     }
 
     componentWillMount() {
-        this.setState({
-            verifyUrl : this.verification.verifyUrl + "find",
-            verifyCodes:'find'
-        });
+        this.changeVerifyImg();
     }
 
     handleChange = name => event => {
@@ -82,23 +77,66 @@ class Login extends Component{
         });
     };
 
+    changeVerifyImg = () => {
+        let now = new Date();
+        let timestamp = now.toUTCString();
+        this.setState({
+            verifyUrl: this.verification.verifyUrl + `?timestamp=${timestamp}`,
+        })
+    };
 
     login = () => {
-        /*
-            fetch ('login', method: {
-                method: 'POST'
-                }
-         */
-        let username = this.state.name;
-        if (username.length === 0) {
-            alert("Username empty, please input");
+        const {name, password, authCode} = this.state;
+        if (name.length === 0) {
+            alert("用户名不能为空");
             return;
         }
-        let password = this.state.password;
         if (password.length === 0) {
-            alert("Password empty, please input");
+            alert("密码不能为空");
             return;
         }
+        if (authCode.length === 0) {
+            alert("验证码不能为空");
+            return;
+        }
+        fetch('/Sign/In', {
+            method: 'POST',
+            body: {
+                username: name,
+                password: password,
+                answer: authCode,
+            },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+            }),
+            credentials: "include",
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text => {
+                if (text === "success") {
+                    let date = new Date();
+                    let utcTime = date.toUTCString();
+                    let currentUser = {
+                        name: name,
+                        time: utcTime,
+                    };
+                    this.props.toggleLogin(currentUser);
+                    this.props.history.push('/');
+                    return;
+                }
+                else if (text === "code"){
+                    alert("验证码错误");
+                }
+                else if (text === "password") {
+                    alert("密码错误");
+                }
+                this.changeVerifyImg();
+                return;
+            })
+        /*
         for (let user of User) {
             if (user.name === username && user.password === password) {
                 alert("Log in successfully");
@@ -114,6 +152,7 @@ class Login extends Component{
             }
         }
         alert("Wrong username or password");
+        */
     };
 
     render() {
@@ -143,7 +182,7 @@ class Login extends Component{
                                onChange={this.handleChange('authCode')}/>
                     <img src={this.state.verifyUrl}
                          alt=""
-                         onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
+                         onClick={this.changeVerifyImg}
                          className={classes.verifyImg}/>
                     <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
                     <Button color='primary' onClick={this.login} className={classes.button} variant='contained'>Log in</Button>

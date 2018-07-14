@@ -20,6 +20,7 @@ import Login from './page/Login';
 import Account from './Account';
 import Home from './page/Home';
 import Category from './page/Category';
+import Search from './page/Search';
 
 const drawerWidth = 240;
 
@@ -55,7 +56,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundAttachment: 'fixed',
-        background: 'linear-gradient(to bottom right, rgba(255, 255, 240, .5), rgba(244, 81, 30, .1))',
+        background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
         padding: theme.spacing.unit * 3,
     },
     avatar: {
@@ -189,6 +190,7 @@ class ResponsiveDrawer extends React.Component {
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
                     <Route path='/category/:sort' component={Category}/>
+                    <Route path='/search' component={Search}/>
                 </main>
             </div>
         );

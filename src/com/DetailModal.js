@@ -9,6 +9,7 @@ import Collapse from '@material-ui/core/Collapse';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
+import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -56,6 +57,12 @@ const styles = theme => ({
     section3: {
         margin: theme.spacing.unit,
         padding: theme.spacing.unit,
+    },
+    grid: {
+        display: 'flex',
+    },
+    subgrid: {
+        flexGrow: 1,
     },
 });
 
@@ -108,7 +115,7 @@ class DetailModal extends Component {
                     <Typography variant='subheading' component='h3' color='secondary'>
                         {card.subtitle}
                     </Typography>
-                    <Typography variant='subheading' component='h3' color='secondary'>
+                    <Typography variant='title' component='h2' color='secondary'>
                         <PlaceIcon/>
                         {card.location}
                     </Typography>
@@ -124,7 +131,12 @@ class DetailModal extends Component {
                         </Typography>
                     </Collapse>
                     <div>
+                        <Grid container>
+                            <Grid item xs={12} className={classes.grid}>
+                                <Grid item className={classes.subgrid}>
                         <CalendarToday/>{'Date: '}
+                                </Grid>
+                                <Grid item className={classes.subgrid}>
                             {card.dates.map((s, i) => {
                                 const {dates} = this.state;
                                 dates.push(false);
@@ -143,6 +155,9 @@ class DetailModal extends Component {
                                     </Button>
                                 )
                             })}
+                                </Grid>
+                            </Grid>
+                        </Grid>
                     </div>
                     <Table className={classes.table}>
                         <TableHead>

@@ -43,16 +43,14 @@ class Home extends Component {
 
     componentDidMount() {
         console.log(this.props.width);
-        const url = 'http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=1';
+        const {page} = this.state;
+        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch (url, {
             method: 'GET',
             credentials: "include",
         })
             .then(response => response.json())
-            .then(data => {
-                if (data === undefined) return;
-                this.setState({data: data.content});
-            })
+            .then(data => this.setState({data: data.content}))
             .catch(e => console.log(e));
     };
 

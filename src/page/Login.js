@@ -52,8 +52,8 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
+        prepareVerify: 'http://120.79.58.85:30001/Code/Prepare/',
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
-        code: '',
         uuid: ''
     };
 
@@ -78,11 +78,10 @@ class Login extends Component{
     };
 
     changeVerifyImg = () => {
-        let now = new Date();
-        let timestamp = now.toUTCString();
+        let date = new Date();
         this.setState({
-            verifyUrl: this.verification.verifyUrl + `?timestamp=${timestamp}`,
-        })
+            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
+        });
     };
 
     login = () => {
@@ -99,15 +98,12 @@ class Login extends Component{
             alert("验证码不能为空");
             return;
         }
-        fetch('/Sign/In', {
+        let s = `username=${name}&password=${password}&answer=${authCode}`;
+        fetch('http://120.79.58.85:30004/Sign/In', {
             method: 'POST',
-            body: {
-                username: name,
-                password: password,
-                answer: authCode,
-            },
+            body: s,
             headers: new Headers({
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             }),
             credentials: "include",
         })
@@ -116,6 +112,7 @@ class Login extends Component{
                 return response.text();
             })
             .then(text => {
+                /*
                 if (text === "success") {
                     let date = new Date();
                     let utcTime = date.toUTCString();
@@ -127,32 +124,25 @@ class Login extends Component{
                     this.props.history.push('/');
                     return;
                 }
-                else if (text === "code"){
+                */
+                if (text === "code"){
                     alert("验证码错误");
+                    return;
                 }
-                else if (text === "password") {
+                else if (text === "fail") {
                     alert("密码错误");
+                    return;
                 }
-                this.changeVerifyImg();
-                return;
-            })
-        /*
-        for (let user of User) {
-            if (user.name === username && user.password === password) {
-                alert("Log in successfully");
                 let date = new Date();
-                let utcDate = date.toUTCString();
+                let utcTime = date.toUTCString();
                 let currentUser = {
-                    name: user.name,
-                    time: utcDate,
+                    name: name,
+                    time: utcTime,
                 };
                 this.props.toggleLogin(currentUser);
                 this.props.history.push('/homepage');
                 return;
-            }
-        }
-        alert("Wrong username or password");
-        */
+            })
     };
 
     render() {
@@ -184,7 +174,6 @@ class Login extends Component{
                          alt=""
                          onClick={this.changeVerifyImg}
                          className={classes.verifyImg}/>
-                    <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
                     <Button color='primary' onClick={this.login} className={classes.button} variant='contained'>Log in</Button>
                 </form>
                 <div>

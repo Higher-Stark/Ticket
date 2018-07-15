@@ -62,6 +62,7 @@ class SignUp extends Component{
             password: '',
             email: '',
             authCode: '',
+            verifyUrl: '',
             formError: false,
         }
     }
@@ -77,11 +78,10 @@ class SignUp extends Component{
     };
 
     changeVerifyImg = () => {
-        let now = new Date();
-        let timestamp = now.toUTCString();
+        let date = new Date();
         this.setState({
-            verifyUrl: this.verification.verifyUrl + `?timestamp=${timestamp}`,
-        })
+            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
+        });
     };
 
     /*
@@ -111,17 +111,6 @@ class SignUp extends Component{
         return pattern.test(this.state.email);
     };
 
-    /*
-     * Check if the username is already registered
-    check_replicate = () => {
-        const {name} = this.state;
-        for (let i = 0; i !== User.length; i++) {
-            if (name === User[i].name) return false;
-        }
-        return true;
-    }
-     */
-
     getCookie(key) {
         const cookies = document.cookie;
         let idx = cookies.indexOf(key);
@@ -137,20 +126,16 @@ class SignUp extends Component{
                 }
          */
         console.log(document.cookie);
-        console.log(this.getCookie("CodeUUID"));
+        // console.log(this.getCookie("CodeUUID"));
         if (this.check_name() && this.check_pwd() && this.check_email()) {
             const {name, password, email, authCode} = this.state;
+            console.log(this.state);
             fetch ('http://120.79.58.85:30004/Sign/Up', {
                 method: 'POST',
                 headers: new Headers({
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 }),
-                body: {
-                    username: name,
-                    password: password,
-                    email: email,
-                    answer: authCode,
-                },
+                body: `username=${name}&password=${password}&email=${email}&answer=${authCode}`,
                 credentials: "include",
             })
                 .then(response => response.text())
@@ -211,9 +196,8 @@ class SignUp extends Component{
                                margin='normal'
                                onChange={this.handleChange('authCode')}/>
                     <img src={this.state.verifyUrl} alt="img"
-                         onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
+                         onClick={this.changeVerifyImg}
                          className={classes.verifyImg}/>
-                    <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
                     <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
                         Sign Up
                     </Button>

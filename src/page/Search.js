@@ -100,9 +100,11 @@ const styles = theme => ({
         display: 'flex',
     },
     category: {
+        display: 'inline-block',
         flexGrow: 1,
     },
     textSelect : {
+        display: 'inline-block',
         flexGrow: 1,
         margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
         '&:hover': {
@@ -157,7 +159,9 @@ class Search extends Component {
         const {classes} = this.props;
         const {value} = this.state;
 
-        const cities = ['All', 'Beijing', 'Shanghai', 'Ningbo', 'Shengzheng', 'New York', 'Manhattan', 'California'];
+        const cities = ['All', 'Beijing', 'Shanghai', 'Ningbo', 'Shengzheng', 'New York', 'Manhattan', 'California',
+            'Munich', 'Berlin', 'London', 'Hongkong', 'Sydney'
+        ];
 
 
         return(

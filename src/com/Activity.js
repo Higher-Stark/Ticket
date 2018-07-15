@@ -40,14 +40,20 @@ const styles = theme => ({
         height: '100%',
     },
     imageSec: {
+        display: 'block',
         height: 189,
+        width: 'inherit',
+        justifyContent: 'center',
     },
     image: {
-        width: '100%',
+        maxWidth: '100%',
         maxHeight: '100%',
-        margin: 'auto 0',
+        width: 'auto',
+        height: 'auto',
+        padding: 'auto auto',
     },
     intro: {
+        height: 100,
         overflow: 'hidden',
         textOverflow: 'fade(10px)',
     },
@@ -121,13 +127,10 @@ class Activity extends Component {
                                title='Card Image'
                     />
                     <CardContent className={classes.intro}>
-                        <Typography gutterBottom variant='headline' component='h2'>
-                            {card.title}
-                        </Typography>
                         <Typography variant='subheading' component='h3' gutterBottom>
                             <PlaceIcon/>{card.venue}{' '}
                         </Typography>
-                        <Typography component='p' className={classes.brief}>
+                        <Typography component='p' variant='body1' className={classes.brief}>
                             {card.intro}
                         </Typography>
                     </CardContent>

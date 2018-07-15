@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import Typograph from '@material-ui/core/Typography';
+import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
@@ -13,9 +13,8 @@ const styles = theme => ({
         flexGrow: 1,
     },
     post: {
-        //maxHeight: 300,
-        maxWidth : '80%',
-        //width: '100%',
+        // maxWidth : '100%',
+        maxHeight: '100%',
         overflow: 'hidden',
     },
     date: {
@@ -84,16 +83,22 @@ class Specify extends Component{
             <div className={classes.root}>
                 <Grid container spacing={8} className={classes.grid}>
                     <Grid item xs={12} className={classes.grid}>
-                        <Grid item xs={4} className={classes.imgGrid}>
+                        <Grid item xs={3} className={classes.imgGrid}>
                             <Grid container className={classes.container}>
                             <img src={detail.image} alt={detail.title} className={classes.post}/>
                             </Grid>
                         </Grid>
-                        <Grid item xs={8} className={classes.content}>
+                        <Grid item xs={9} className={classes.content}>
                             <div>
-                                <Typograph variant='title' component='h2' gutterBottom>{detail.title}</Typograph>
-                                <Typograph variant='subheading' component='h3' gutterBottom>{detail.city}{' - '}{detail.venue}</Typograph>
-                                <Typograph variant='body1' component='p' gutterBottom>{'Date'}</Typograph>
+                                <Typography variant='title' component='h2' gutterBottom color='primary'>
+                                    {detail.title}
+                                </Typography>
+                                <Typography variant='subheading' component='h3' gutterBottom color='secondary'>
+                                    {detail.city}{' | '}{detail.venue}
+                                </Typography>
+                                <Typography variant='body1' component='p' gutterBottom color='secondary'>
+                                    {'Date'}
+                                </Typography>
                                 <div>
                                     {detail.dates.split(',').map((s, i) =>{
                                         const {dates} = this.state;
@@ -115,14 +120,14 @@ class Specify extends Component{
                                     })}
                                 </div>
                                 <div>
-                                    <Typograph variant='body1' component='p'>{"票价： "}{detail.lowprice}{' - '}{detail.highprice}</Typograph>
+                                    <Typography variant='body1' component='p'>{"票价： "}{detail.lowprice}{' - '}{detail.highprice}</Typography>
                                 </div>
                             </div>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>
                         <Grid item xs={8} className={classes.content}>
-                            <Typograph variant='title' component='h2' color='primary'>{'注意事项'}</Typograph>
+                            <Typography variant='title' component='h2' color='primary'>{'注意事项'}</Typography>
                         </Grid>
                     </Grid>
                 </Grid>

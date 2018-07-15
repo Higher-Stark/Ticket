@@ -145,7 +145,7 @@ class ResponsiveDrawer extends React.Component {
                         </Hidden>
                         <TextField className={classes.search} id='search_input'
                                    label="Search"
-                                   InputProps={{startAdornment: (
+                                   InputProps={{endAdornment: (
                                        <InputAdornment position="end">
                                            <SearchIcon onClick={this.toggleSearch}/>
                                        </InputAdornment>

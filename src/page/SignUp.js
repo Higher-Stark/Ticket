@@ -51,7 +51,6 @@ const styles = theme => ({
 
 class SignUp extends Component{
     verification = {
-        prepareVerify: 'http://120.79.58.85:30001/Code/Prepare/',
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
         uuid: ''
     };
@@ -63,6 +62,7 @@ class SignUp extends Component{
             password: '',
             email: '',
             authCode: '',
+            verifyUrl: '',
             formError: false,
         }
     }
@@ -78,21 +78,10 @@ class SignUp extends Component{
     };
 
     changeVerifyImg = () => {
-        fetch (this.verification.prepareVerify, {
-            method: 'GET',
-            credentials: "include",
-        })
-            .then(response => {
-                if (response.status === 200) return response.text();
-                else throw  Error("Prepare verification code failed");
-            }).then(data => {
-                this.verification.uuid = data;
-                document.cookie = `CodeUUID=${data}`;
-                this.setState({
-                    verifyUrl: this.verification.verifyUrl + `?token=${data}`,
-                });
-            })
-            .catch(e => console.log(e));
+        let date = new Date();
+        this.setState({
+            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
+        });
     };
 
     /*
@@ -122,17 +111,6 @@ class SignUp extends Component{
         return pattern.test(this.state.email);
     };
 
-    /*
-     * Check if the username is already registered
-    check_replicate = () => {
-        const {name} = this.state;
-        for (let i = 0; i !== User.length; i++) {
-            if (name === User[i].name) return false;
-        }
-        return true;
-    }
-     */
-
     getCookie(key) {
         const cookies = document.cookie;
         let idx = cookies.indexOf(key);
@@ -148,20 +126,16 @@ class SignUp extends Component{
                 }
          */
         console.log(document.cookie);
-        console.log(this.getCookie("CodeUUID"));
+        // console.log(this.getCookie("CodeUUID"));
         if (this.check_name() && this.check_pwd() && this.check_email()) {
             const {name, password, email, authCode} = this.state;
+            console.log(this.state);
             fetch ('http://120.79.58.85:30004/Sign/Up', {
                 method: 'POST',
                 headers: new Headers({
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 }),
-                body: {
-                    username: name,
-                    password: password,
-                    email: email,
-                    answer: authCode,
-                },
+                body: `username=${name}&password=${password}&email=${email}&answer=${authCode}`,
                 credentials: "include",
             })
                 .then(response => response.text())
@@ -222,7 +196,7 @@ class SignUp extends Component{
                                margin='normal'
                                onChange={this.handleChange('authCode')}/>
                     <img src={this.state.verifyUrl} alt="img"
-                         onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
+                         onClick={this.changeVerifyImg}
                          className={classes.verifyImg}/>
                     <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
                         Sign Up

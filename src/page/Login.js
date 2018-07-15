@@ -78,20 +78,10 @@ class Login extends Component{
     };
 
     changeVerifyImg = () => {
-        fetch (this.verification.prepareVerify, {
-            method: 'GET',
-            credentials: "include",
-        })
-            .then(response => {
-                if (response.status === 200) return response.text();
-                else throw  Error("Prepare verification code failed");
-            }).then(data => {
-            this.verification.uuid = data;
-            this.setState({
-                verifyUrl: this.verification.verifyUrl + `?token=${data}`,
-            });
-        })
-            .catch(e => console.log(e));
+        let date = new Date();
+        this.setState({
+            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
+        });
     };
 
     login = () => {
@@ -108,15 +98,12 @@ class Login extends Component{
             alert("验证码不能为空");
             return;
         }
-        fetch('/Sign/In', {
+        let s = `username=${name}&password=${password}&answer=${authCode}`;
+        fetch('http://120.79.58.85:30004/Sign/In', {
             method: 'POST',
-            body: {
-                username: name,
-                password: password,
-                answer: authCode,
-            },
+            body: s,
             headers: new Headers({
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             }),
             credentials: "include",
         })
@@ -125,6 +112,7 @@ class Login extends Component{
                 return response.text();
             })
             .then(text => {
+                /*
                 if (text === "success") {
                     let date = new Date();
                     let utcTime = date.toUTCString();
@@ -136,13 +124,23 @@ class Login extends Component{
                     this.props.history.push('/');
                     return;
                 }
-                else if (text === "code"){
+                */
+                if (text === "code"){
                     alert("验证码错误");
+                    return;
                 }
-                else if (text === "password") {
+                else if (text === "fail") {
                     alert("密码错误");
+                    return;
                 }
-                this.changeVerifyImg();
+                let date = new Date();
+                let utcTime = date.toUTCString();
+                let currentUser = {
+                    name: name,
+                    time: utcTime,
+                };
+                this.props.toggleLogin(currentUser);
+                this.props.history.push('/');
                 return;
             })
     };

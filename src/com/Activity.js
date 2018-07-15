@@ -40,12 +40,17 @@ const styles = theme => ({
         height: '100%',
     },
     imageSec: {
+        display: 'block',
         height: 189,
+        width: 'inherit',
+        justifyContent: 'center',
     },
     image: {
-        width: '100%',
+        maxWidth: '100%',
         maxHeight: '100%',
-        margin: 'auto 0',
+        width: 'auto',
+        height: 'auto',
+        padding: 'auto auto',
     },
     intro: {
         height: 100,

@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Activity from '../com/Activity';
-import {Cards} from '../test-data/Cards';
 
 const styles = theme => ({
     root: {
@@ -44,7 +43,8 @@ class Home extends Component {
 
     componentDidMount() {
         console.log(this.props.width);
-        const url = 'http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=1';
+        const {page} = this.state;
+        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch (url, {
             method: 'GET',
             credentials: "include",

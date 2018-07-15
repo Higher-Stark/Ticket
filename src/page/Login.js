@@ -52,8 +52,8 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
+        prepareVerify: 'http://120.79.58.85:30001/Code/Prepare/',
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
-        code: '',
         uuid: ''
     };
 
@@ -78,11 +78,20 @@ class Login extends Component{
     };
 
     changeVerifyImg = () => {
-        let now = new Date();
-        let timestamp = now.toUTCString();
-        this.setState({
-            verifyUrl: this.verification.verifyUrl + `?timestamp=${timestamp}`,
+        fetch (this.verification.prepareVerify, {
+            method: 'GET',
+            credentials: "include",
         })
+            .then(response => {
+                if (response.status === 200) return response.text();
+                else throw  Error("Prepare verification code failed");
+            }).then(data => {
+            this.verification.uuid = data;
+            this.setState({
+                verifyUrl: this.verification.verifyUrl + `?token=${data}`,
+            });
+        })
+            .catch(e => console.log(e));
     };
 
     login = () => {
@@ -136,23 +145,6 @@ class Login extends Component{
                 this.changeVerifyImg();
                 return;
             })
-        /*
-        for (let user of User) {
-            if (user.name === username && user.password === password) {
-                alert("Log in successfully");
-                let date = new Date();
-                let utcDate = date.toUTCString();
-                let currentUser = {
-                    name: user.name,
-                    time: utcDate,
-                };
-                this.props.toggleLogin(currentUser);
-                this.props.history.push('/');
-                return;
-            }
-        }
-        alert("Wrong username or password");
-        */
     };
 
     render() {
@@ -184,7 +176,6 @@ class Login extends Component{
                          alt=""
                          onClick={this.changeVerifyImg}
                          className={classes.verifyImg}/>
-                    <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
                     <Button color='primary' onClick={this.login} className={classes.button} variant='contained'>Log in</Button>
                 </form>
                 <div>

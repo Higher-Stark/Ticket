@@ -50,12 +50,13 @@ class Home extends Component {
             credentials: "include",
         })
             .then(response => response.json())
-            .then(data => this.setState({data: data}))
+            .then(data => this.setState({data: data.content}))
             .catch(e => console.log(e));
     }
 
     render() {
-        const {classes, data} = this.props;
+        const {classes} = this.props;
+        const {data} = this.state;
 
         return (
             <div className={classes.root}>

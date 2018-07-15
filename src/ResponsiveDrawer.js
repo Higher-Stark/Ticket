@@ -21,6 +21,7 @@ import Account from './Account';
 import Home from './page/Home';
 import Category from './page/Category';
 import Search from './page/Search';
+import Specify from './com/Specify';
 
 const drawerWidth = 240;
 
@@ -191,6 +192,7 @@ class ResponsiveDrawer extends React.Component {
                         )}/>
                     <Route path='/category/:sort' component={Category}/>
                     <Route path='/search' component={Search}/>
+                    <Route path='/detail/:id' component={Specify}/>
                 </main>
             </div>
         );

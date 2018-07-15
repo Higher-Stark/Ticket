@@ -87,6 +87,7 @@ class SignUp extends Component{
                 else throw  Error("Prepare verification code failed");
             }).then(data => {
                 this.verification.uuid = data;
+                document.cookie = `CodeUUID=${data}`;
                 this.setState({
                     verifyUrl: this.verification.verifyUrl + `?token=${data}`,
                 });

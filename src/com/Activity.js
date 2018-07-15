@@ -48,6 +48,7 @@ const styles = theme => ({
         margin: 'auto 0',
     },
     intro: {
+        height: 100,
         overflow: 'hidden',
         textOverflow: 'fade(10px)',
     },
@@ -121,13 +122,10 @@ class Activity extends Component {
                                title='Card Image'
                     />
                     <CardContent className={classes.intro}>
-                        <Typography gutterBottom variant='headline' component='h2'>
-                            {card.title}
-                        </Typography>
                         <Typography variant='subheading' component='h3' gutterBottom>
                             <PlaceIcon/>{card.venue}{' '}
                         </Typography>
-                        <Typography component='p' className={classes.brief}>
+                        <Typography component='p' variant='body1' className={classes.brief}>
                             {card.intro}
                         </Typography>
                     </CardContent>

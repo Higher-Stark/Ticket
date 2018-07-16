@@ -112,25 +112,14 @@ class Login extends Component{
                 return response.text();
             })
             .then(text => {
-                /*
-                if (text === "success") {
-                    let date = new Date();
-                    let utcTime = date.toUTCString();
-                    let currentUser = {
-                        name: name,
-                        time: utcTime,
-                    };
-                    this.props.toggleLogin(currentUser);
-                    this.props.history.push('/');
-                    return;
-                }
-                */
                 if (text === "code"){
                     alert("验证码错误");
+                    this.changeVerifyImg();
                     return;
                 }
                 else if (text === "fail") {
                     alert("密码错误");
+                    this.changeVerifyImg();
                     return;
                 }
                 let date = new Date();
@@ -138,6 +127,7 @@ class Login extends Component{
                 let currentUser = {
                     name: name,
                     time: utcTime,
+                    token: text,
                 };
                 this.props.toggleLogin(currentUser);
                 this.props.history.push('/homepage');

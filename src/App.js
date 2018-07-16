@@ -61,25 +61,52 @@ const theme = createMuiTheme({
     ],
 });
 
+
+function getCookie(cname)
+{
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for(let i=0; i<ca.length; i++)
+    {
+        let c = ca[i].trim();
+        if (c.indexOf(name)===0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+function setCookie(cname,cvalue)
+{
+    let expires = "expires=null; path=/";
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+
+
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            com: false,
+            flash: parseInt(getCookie("flash"),0),
+            user:null,
         };
     }
 
     componentDidMount() {
-        setTimeout(() => this.setState({com: true}), 5000);
+        setTimeout(() => {setCookie("flash","1");this.setState({flash: true});}, 5000);
     }
+
+    componentWillUnmount(){
+        setCookie("flash","0");
+    }
+
     render() {
         const Welcome = (
-            <div onClick={() => this.setState({com: true})} id='background'>
+            <div onClick={() => {setCookie("flash","1");this.setState({flash: true})}} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>
                 <div className="content">
-                    <h1 className="animated rotateIn">Ticket Website</h1>
+                    <h1 className="animated bounce">Ticket Website</h1>
                 </div>
             </div>
         );
@@ -87,7 +114,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.com ? <ResponsiveDrawer/> : Welcome}
+                    {this.state.flash ? <ResponsiveDrawer/>: Welcome}
                 </Router>
             </MuiThemeProvider>
         );

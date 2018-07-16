@@ -7,27 +7,61 @@ ul,li{
     list-style: none;
 }
 
-.wrapper{
+.huge{
+    overflow: hidden;
+    position:relative;
+}
+
+.small{
+    width:200%;
+    transform: translate(-25%, 0);
+
+}
+
+.wrapper-left{
+    float:left;
     position: relative;
     margin: 0 auto;
     overflow: hidden;
-    width: 100%;
-    height: 600px;
+    width: 33%;
+    padding-bottom: 20%;
     white-space:nowrap;
+    background-image: linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,1),rgba(255,255,255,0));
+}
+
+.wrapper-middle{
+    float:left;
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 34%;
+    padding-bottom: 20%;
+    white-space:nowrap;
+}
+
+.wrapper-right{
+    position: relative;
+    overflow: hidden;
+    width: 33%;
+    padding-bottom: 20%;
+    white-space:nowrap;
+    background-image: linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,1),rgba(255,255,255,0));
 }
 .sliders{
     position: absolute;
-    height: 600px;
+    height: 100%;
 }
 .slider{
     display:inline-block;
     width: 100%;
-    height: 600px;
+    height: 100%;
 }
 .slider img{
     width: 100%;
     height: 100%;
+    mix-blend-mode: overlay;
 }
+
 
 .arrows{
     position: absolute;
@@ -64,6 +98,7 @@ ul,li{
     height: 45px;
     line-height: 20px;
     text-align: center;
+    opacity: 0.5;
 }
 
 .dot{

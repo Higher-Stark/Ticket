@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Activity from './Activity';
-import {Cards} from './test-data/Cards';
 import Typography from '@material-ui/core/Typography';
 import Sliders from './Sliders/components/Sliders';
 
@@ -29,14 +28,30 @@ const Img = [
 ];
 
 class Homepage extends Component {
-    /*
     constructor(props) {
         super(props);
+        this.state = {
+            data: [],
+            page: 1,
+        }
     }
-    */
+
+    componentDidMount() {
+        console.log(this.props.width);
+        const {page} = this.state;
+        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        fetch (url, {
+            method: 'GET',
+            credentials: "include",
+        })
+            .then(response => response.json())
+            .then(data => this.setState({data: data.content}))
+            .catch(e => console.log(e));
+    }
 
     render() {
         const {classes} = this.props;
+        const {data} = this.state;
 
         return (
             <div >
@@ -56,7 +71,7 @@ class Homepage extends Component {
                 <br/>
                 <div className={classes.root}>
                     {
-                        Cards.map((s, i) => {
+                        data.map((s, i) => {
                             return (
                                 <Activity card={s} key={i}/>
                             );

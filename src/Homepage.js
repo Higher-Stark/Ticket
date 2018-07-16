@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Activity from './Activity';
+import Activity from './com/Activity';
 import Typography from '@material-ui/core/Typography';
 import Sliders from './Sliders/components/Sliders';
 

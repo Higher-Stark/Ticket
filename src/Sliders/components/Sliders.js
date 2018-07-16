@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import '../css/Sliders.css';
 import SlidersItem from './SlidersItem';
-import SlidersArrows from './SlidersArrows';
 import SlidersDots from './SlidersDots';
 
 
 export default class Sliders extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {index: 0};
     }
 

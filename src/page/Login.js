@@ -52,7 +52,6 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
-        prepareVerify: 'http://120.79.58.85:30001/Code/Prepare/',
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
         uuid: ''
     };

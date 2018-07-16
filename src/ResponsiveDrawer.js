@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Drawer from '@material-ui/core/Drawer';
+import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -13,8 +17,16 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import ReceiptIcon from '@material-ui/icons/Receipt';
-import {Route, Redirect, withRouter} from 'react-router-dom';
-import {NavMenuList1, NavMenuList2} from "./com/NavMenu";
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import HomeIcon from '@material-ui/icons/Home';
+import ShoppingCart from '@material-ui/icons/ShoppingCart';
+import Person from '@material-ui/icons/Person';
+import Collections from '@material-ui/icons/Collections';
+import Bookmark from '@material-ui/icons/Bookmark';
+import LogoutVariant from 'mdi-material-ui/LogoutVariant';
+import MusicCircle from 'mdi-material-ui/MusicCircle';
+import Theater from 'mdi-material-ui/Theater';
+import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
 import Account from './Account';
@@ -22,6 +34,27 @@ import Home from './page/Home';
 import Category from './page/Category';
 import Search from './page/Search';
 import Specify from './com/Specify';
+
+const listStyles = {
+    home: {
+        color: '#2196f3',
+    },
+    music: {
+        color: '#ff5722',
+    },
+    show: {
+        color: '#00e676',
+    },
+    opera: {
+        color: '#8bc34a',
+    },
+    sports: {
+        color: '#f44336',
+    },
+    dance: {
+        color: '#e040fb'
+    },
+};
 
 const drawerWidth = 240;
 
@@ -97,6 +130,20 @@ class ResponsiveDrawer extends React.Component {
         });
     };
 
+    toggleLogout = () => {
+        let {token} = this.state.user;
+        fetch (`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+            method: 'POST',
+            credentials: "include",
+        })
+            .then(response => response.status)
+            .then(status => {
+                if (status === 200) this.setState({user: null});
+                else throw Error("Connection failed");
+            })
+            .catch(e => console.log(e));
+    };
+
     handleChange = (e) => {
         this.setState({search: e.target.value});
     };
@@ -110,6 +157,89 @@ class ResponsiveDrawer extends React.Component {
 
     render() {
         const {classes, theme} = this.props;
+
+// not login
+        const NavMenuList1 = (
+            <div>
+                <ListItem button component={NavLink} to='/signin'>
+                    <ListItemIcon><AccountCircle/></ListItemIcon>
+                    <ListItemText inset primary='Sign in/up'/>
+                </ListItem>
+                <Divider/>
+                <ListItem button component={NavLink} to='/'>
+                    <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
+                    <ListItemText inset primary='Home'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/music'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/show'>
+                    <ListItemIcon><Bookmark style={listStyles.show}/></ListItemIcon>
+                    <ListItemText inset primary='Show'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/opera'>
+                    <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
+                    <ListItemText inset primary='Opera'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/sports'>
+                    <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
+                    <ListItemText inset primary='Sports'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/dance'>
+                    <ListItemIcon><Bookmark style={listStyles.dance}/></ListItemIcon>
+                    <ListItemText inset primary='Dance'/>
+                </ListItem>
+            </div>
+        );
+
+// login
+        const NavMenuList2 = (
+            <div>
+                <ListItem button component={NavLink} to='/account'>
+                    <ListItemIcon><Person/></ListItemIcon>
+                    <ListItemText inset primary='Account'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/cart'>
+                    <ListItemIcon><ShoppingCart/></ListItemIcon>
+                    <ListItemText inset primary='Cart'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/collection'>
+                    <ListItemIcon><Collections/></ListItemIcon>
+                    <ListItemText inset primary='Collection'/>
+                </ListItem>
+                <Divider/>
+                <ListItem button component={NavLink} to='/'>
+                    <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
+                    <ListItemText inset primary='Home'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/music'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/show'>
+                    <ListItemIcon><Bookmark style={listStyles.show}/></ListItemIcon>
+                    <ListItemText inset primary='Show'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/opera'>
+                    <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
+                    <ListItemText inset primary='Opera'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/sports'>
+                    <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
+                    <ListItemText inset primary='Sports'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/dance'>
+                    <ListItemIcon><Bookmark style={listStyles.dance}/></ListItemIcon>
+                    <ListItemText inset primary='Dance'/>
+                </ListItem>
+                <Divider/>
+                <ListItem button onClick={this.toggleLogout}>
+                    <ListItemIcon><LogoutVariant/></ListItemIcon>
+                    <ListItemText inset primary='Logout'/>
+                </ListItem>
+            </div>
+        );
 
         const drawer = (
             <div>

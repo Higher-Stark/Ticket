@@ -30,7 +30,7 @@ import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
 import Account from './Account';
-import Home from './page/Home';
+import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
 import Specify from './com/Specify';
@@ -314,7 +314,7 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <Route path='/' exact component={Home}/>
+                    <Route path='/' exact component={Homepage}/>
                     <Route path='/signup' component={SignUp}/>
                     <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
                     <Route path='/account' render={props => (this.state.user === null ? (

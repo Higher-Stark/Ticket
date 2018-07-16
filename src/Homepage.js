@@ -16,13 +16,19 @@ const styles = theme => ({
     },
 });
 
-const Img=[
-    require('./Sliders/img/AAE8E3AD657B93F4597B9136A535A5EFD7276A59_size27_w757_h391.jpeg'),
-    require('./Sliders/img/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg'),
-    require('./Sliders/img/steamuserimages-a.akamaihd.net.jpeg'),
+const Img = [
+    {
+        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
+    },
+    {
+        src:'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
+    },
+    {
+        src:'http://tu.qiumibao.com/v/img/180518/206969_01133852974.jpg'
+    }
 ];
 
-class Home extends Component {
+class Homepage extends Component {
     /*
     constructor(props) {
         super(props);
@@ -34,15 +40,17 @@ class Home extends Component {
 
         return (
             <div >
+
                 <Sliders
                     images={Img}
-                    speed={1}
-                    delay={2}
+                    speed={2}
+                    delay={3}
                     autoPlay={true}
                     autoParse={true}
                 />
+
                 <br/>
-                <Typography variant="title" color="inherit"  style={{textAlign:'center'}} noWrap>
+                <Typography variant="title" color="inherit" style={{textAlign: 'center'}} noWrap>
                     热门票品
                 </Typography>
                 <br/>
@@ -60,8 +68,8 @@ class Home extends Component {
     }
 }
 
-Home.propTypes = {
+Homepage.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Home);
+export default withStyles(styles)(Homepage);

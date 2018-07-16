@@ -2,23 +2,37 @@ import React,{Component} from 'react';
 
 export default class SlidersItem extends Component{
     render(){
-        let style={
-            width:100+'%',
-            left:this.props.index*-100+'%',
-            transitionDuration:this.props.speed+'s'
-        };
+
         return (
-            <ul className="sliders" style={style}>
+            <ul className="sliders" style={this.props.style}>
+                <li
+                    className="slider"
+                    key={-1}
+                >
+                    <img src={this.props.images[this.props.images.length-1].src} alt=""/>
+                </li>
                 {
                     this.props.images.map((item,index)=>(
                         <li
                             className="slider"
                             key={index}
                         >
-                            <img src={item} alt=""/>
+                            <img src={item.src} alt=""/>
                         </li>
                     ))
                 }
+                <li
+                    className="slider"
+                    key={this.props.images.length}
+                >
+                    <img src={this.props.images[0].src} alt=""/>
+                </li>
+                <li
+                    className="slider"
+                    key={this.props.images.length+1}
+                >
+                    <img src={this.props.images[1].src} alt=""/>
+                </li>
             </ul>
         )
     }

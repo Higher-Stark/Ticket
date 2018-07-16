@@ -15,7 +15,7 @@ import {NavMenuList1, NavMenuList2} from "./NavMenu";
 import SignUp from './SignUp';
 import Login from './Login';
 import Account from './Account';
-import Home from './Home';
+import Homepage from './Homepage';
 
 const drawerWidth = 240;
 
@@ -146,7 +146,7 @@ class ResponsiveDrawer extends React.Component {
                 </Hidden>
                 <main className={classes.content}>
                     <div className={classes.toolbar} />
-                    <Route path='/' exact component={Home}/>
+                    <Route path='/' exact component={Homepage}/>
                     <Route path='/signup' component={SignUp}/>
                     <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
                     <Route path='/account' render={props => (this.state.user === null ? (

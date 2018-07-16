@@ -9,6 +9,7 @@ import Collapse from '@material-ui/core/Collapse';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
+import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -57,6 +58,12 @@ const styles = theme => ({
         margin: theme.spacing.unit,
         padding: theme.spacing.unit,
     },
+    grid: {
+        display: 'flex',
+    },
+    subgrid: {
+        flexGrow: 1,
+    },
 });
 
 class DetailModal extends Component {
@@ -99,16 +106,16 @@ class DetailModal extends Component {
         return (
             <div style={{top: '50%', left: '50%', transform: `translate(-50%, -50%)`}} className={classes.paper}>
                 <div className={classes.modal}>
-                    <img src={card.src} alt={card.title} className={classes.image}/>
+                    <img src={card.image} alt={card.title} className={classes.image}/>
                 </div>
                 <div className={classes.paper2}>
                     <Typography variant='title' component='h2' color='primary' gutterBottom>
                         {card.title}
                     </Typography>
                     <Typography variant='subheading' component='h3' color='secondary'>
-                        {card.subtitle}
+                        {card.city}
                     </Typography>
-                    <Typography variant='subheading' component='h3' color='secondary'>
+                    <Typography variant='title' component='h2' color='secondary'>
                         <PlaceIcon/>
                         {card.location}
                     </Typography>
@@ -120,12 +127,17 @@ class DetailModal extends Component {
                     </Typography>
                     <Collapse in={this.state.open} timeout='auto' unmountOnExit>
                         <Typography variant='body1' component='p'>
-                            {card.brief}
+                            {card.intro}
                         </Typography>
                     </Collapse>
                     <div>
+                        <Grid container>
+                            <Grid item xs={12} className={classes.grid}>
+                                <Grid item className={classes.subgrid}>
                         <CalendarToday/>{'Date: '}
-                            {card.dates.map((s, i) => {
+                                </Grid>
+                                <Grid item className={classes.subgrid}>
+                            {card.dates.split(",").map((s, i) => {
                                 const {dates} = this.state;
                                 dates.push(false);
                                 return (
@@ -139,11 +151,16 @@ class DetailModal extends Component {
                                             key={i}
                                             disableRipple
                                     >
-                                        {s}
+                                        {s.replace(/\s/, '')}
                                     </Button>
                                 )
                             })}
+                                </Grid>
+                            </Grid>
+                        </Grid>
                     </div>
+                    {
+                        /*
                     <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
@@ -220,6 +237,9 @@ class DetailModal extends Component {
                             Pay
                         </Button>
                     </div>
+
+                         */
+                    }
                 </div>
             </div>
         )

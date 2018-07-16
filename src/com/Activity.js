@@ -27,7 +27,7 @@ const styles = theme => ({
         padding: theme.spacing.unit,
     },
     card: {
-        maxWidth: 345,
+        maxWidth: 336,
     },
     icon: {
         color: '#eeeeee',
@@ -40,21 +40,38 @@ const styles = theme => ({
         height: '100%',
     },
     imageSec: {
-        height: 195,
+        display: 'block',
+        height: 189,
+        width: 'inherit',
+        justifyContent: 'center',
     },
     image: {
-        width: '100%',
-        maxHeight: 200,
-        margin: 'auto 0',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        width: 'auto',
+        height: 'auto',
+        padding: 'auto auto',
+    },
+    intro: {
+        height: 100,
+        overflow: 'hidden',
+        textOverflow: 'fade(10px)',
     },
     brief: {
-        height: 100,
+        width: 'inherit',
+        height: 60,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
     },
     buttonIcon: {
+        flexGrow: 1,
         marginRight: theme.spacing.unit,
-        color: '#ffebee',
+        color: '#FFF9C4',
+        maxWidth: '25%',
+    },
+    cardAction: {
+        display: 'flex',
+        justifyContent: 'space-between',
     },
 });
 
@@ -92,10 +109,10 @@ class Activity extends Component {
             <div>
                 <GridListTile component='div' className={classes.imageSec}>
                     <img className={classes.image}
-                         src={card.src}
+                         src={card.image}
                          alt={card.title}/>
                     <GridListTileBar title={card.title}
-                                     subtitle={<span>{card.subtitle}</span>}
+                                     subtitle={<span>{card.city}</span>}
                                      actionIcon={<IconButton className={classes.icon}>{actIcon()}</IconButton>}
                     />
                 </GridListTile>
@@ -109,19 +126,16 @@ class Activity extends Component {
                                image='file-image.svg'
                                title='Card Image'
                     />
-                    <CardContent className={classes.brief} onClick={this.handleOpen}>
-                        <Typography gutterBottom variant='headline' component='h2'>
-                            {card.title}
-                        </Typography>
+                    <CardContent className={classes.intro}>
                         <Typography variant='subheading' component='h3' gutterBottom>
-                            <PlaceIcon/>{card.location}{' '}
+                            <PlaceIcon/>{card.venue}{' '}
                         </Typography>
-                        <Typography component='p'>
-                            {card.brief}
+                        <Typography component='p' variant='body1' className={classes.brief}>
+                            {card.intro}
                         </Typography>
                     </CardContent>
                     <Divider/>
-                    <CardActions>
+                    <CardActions className={classes.cardAction}>
                         <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.toggleLike}>
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like

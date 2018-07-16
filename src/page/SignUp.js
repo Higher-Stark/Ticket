@@ -120,13 +120,6 @@ class SignUp extends Component{
     }
 
     signup = () => {
-        /*
-            fetch ('login', method: {
-                method: 'POST'
-                }
-         */
-        console.log(document.cookie);
-        // console.log(this.getCookie("CodeUUID"));
         if (this.check_name() && this.check_pwd() && this.check_email()) {
             const {name, password, email, authCode} = this.state;
             console.log(this.state);

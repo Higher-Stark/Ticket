@@ -14,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import MovieIcon from 'mdi-material-ui/Movie';
+import Basketball from 'mdi-material-ui/Basketball';
 import TheaterIcon from 'mdi-material-ui/Theater';
 import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';
 import StarIcon from 'mdi-material-ui/Star';
@@ -27,7 +28,7 @@ const styles = theme => ({
         padding: theme.spacing.unit,
     },
     card: {
-        maxWidth: 336,
+        width: 336,
     },
     icon: {
         color: '#eeeeee',
@@ -44,6 +45,12 @@ const styles = theme => ({
         height: 189,
         width: 'inherit',
         justifyContent: 'center',
+    },
+    imageWrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: 'inherit',
+        height: 'inherit',
     },
     image: {
         maxWidth: '100%',
@@ -98,19 +105,21 @@ class Activity extends Component {
         const {classes, card} = this.props;
 
         const actIcon = () => {
-            const icon = card.icon;
-            if (icon === 'music') return <MusicCircle/>;
-            else if (icon === 'movie') return <MovieIcon/>;
-            else if (icon === 'show') return <TheaterIcon/>;
-            else return <DotsHorizontal/>
+            const type = card.type;
+            if (type.indexOf('sports') !== -1) return <Basketball/>;
+            else if (type.indexOf("concert") !== -1) return <MusicCircle/>;
+            else if (type.indexOf("show") !== -1) return <TheaterIcon/>;
+            else return (<MoreHoriz/>);
         };
 
         const titledImage = (
             <div>
                 <GridListTile component='div' className={classes.imageSec}>
+                    <div className={classes.imageWrapper}>
                     <img className={classes.image}
                          src={card.image}
                          alt={card.title}/>
+                    </div>
                     <GridListTileBar title={card.title}
                                      subtitle={<span>{card.city}</span>}
                                      actionIcon={<IconButton className={classes.icon}>{actIcon()}</IconButton>}

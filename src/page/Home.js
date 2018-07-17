@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import ChevronDown from 'mdi-material-ui/ChevronDown';
+import Button from '@material-ui/core/Button';
+import pink from '@material-ui/core/colors/pink';
 import Activity from '../com/Activity';
 
 const styles = theme => ({
@@ -13,6 +17,7 @@ const styles = theme => ({
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'start',
+        /*
         [theme.breakpoints.up('xl')]: {
             width: 1760,
         },
@@ -25,49 +30,174 @@ const styles = theme => ({
         [theme.breakpoints.down('sm')]: {
             width: '100%',
         },
-        margin: '0 auto',
+        */
+        // margin: '0 auto',
+    },
+    activity: {
+        display: 'inline-block',
     },
     card: {
         flexGrow: 1,
-    }
+    },
+    pageBar: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: 'inherit',
+    },
+    wrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        margin: theme.spacing.unit,
+        position: 'relative',
+    },
+    block: {
+        display: 'block',
+        position: 'relative',
+    },
+    buttonMore: {
+        backgroundColor : pink[400],
+        '&:hover': {
+            backgroundColor: pink[200],
+        },
+    },
+    fabProgress: {
+        color: pink[400],
+        position: 'absolute',
+        top: -6,
+        left: -6,
+        zIndex: 1,
+    },
+    rightWrapper: {
+        border: '9px solid transparent',
+        borderBottomColor: '#3DA0DB',
+        width: '0px',
+        height: '0px',
+        top: '0px',
+    },
 });
 
 class Home extends Component {
+    content=[];
+
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
+            items: 0,
             page: 1,
-        }
+            loading: false,
+        };
+        this.fetchPage = this.fetchPage.bind(this);
+        this.viewPage = this.viewPage.bind(this);
     }
 
     componentDidMount() {
-        console.log(this.props.width);
+        this.setState({loading: true})
         const {page} = this.state;
         const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch (url, {
             method: 'GET',
-            credentials: "include",
         })
             .then(response => response.json())
-            .then(data => this.setState({data: data.content}))
-            .catch(e => console.log(e));
+            .then(data => {
+                this.content = this.content.concat(data.content);
+                const quantity = data.numberOfElements;
+                const {items} = this.state;
+                this.setState({
+                    items: items + quantity,
+                    page: page + 1,
+                    loading: false,
+                })
+            })
+            .catch(e => console.log(e))
     }
+
+    async fetchPage (page)  {
+        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        try {
+            let res = await fetch(url, {
+                method: 'GET',
+                credentials: "include",
+            });
+            let data = await res.json();
+            this.setState({
+                data: data.content,
+                totalPages: data.totalPages,
+                maxPage : Math.ceil(data.totalElements / 6),
+                number: data.number + 1,
+            });
+            return new Promise(() => 1);
+        }catch (e) {
+            console.log(e);
+        }
+
+    };
+
+    async viewPage(idx) {
+        console.log("View page[" + idx + "]");
+        const {number, data} = this.state;
+        if (Math.ceil(idx / 3) !== number) {
+            let response = await this.fetchPage(Math.ceil(idx / 3));
+            console.log(response);
+        }
+        let idx1 = (idx - 1) % 3;
+        idx1 = idx1 * 6;
+        let view = data.splice(idx1, idx1 + 6);
+        console.log(view);
+        this.setState({
+            view: view,
+            page: idx,
+        });
+    };
+
+    load = () => {
+        this.setState({loading: true})
+        const {page} = this.state;
+        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        fetch (url, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.content = this.content.concat(data.content);
+                const quantity = data.numberOfElements;
+                const {items} = this.state;
+                this.setState({
+                    items: items + quantity,
+                    page: page + 1,
+                    loading: false,
+                })
+            })
+            .catch(e => console.log(e))
+    };
 
     render() {
         const {classes} = this.props;
-        const {data} = this.state;
+        const {items, loading} = this.state;
 
         return (
             <div className={classes.root}>
+                <div className={classes.wrapper}>
                 <div id='content' className={classes.content}>
                 {
-                    data.map((s, i) => {
+                    this.content.slice(0, items).map((s, i) => {
                         return (
                             <Activity card={s} key={i}/>
                         );
                     })
                 }
+                </div>
+                </div>
+                <div className={classes.wrapper}>
+                    <div className={classes.block}>
+                    <Button variant='fab' color='primary'
+                            className={classes.buttonMore}
+                            onClick={this.load}
+                    >
+                        <ChevronDown/>
+                    </Button>
+                    {loading && <CircularProgress size={68} className={classes.fabProgress}/> }
+                    </div>
+                    <div className={classes.rightWrapper}></div>
                 </div>
             </div>
         )

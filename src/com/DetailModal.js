@@ -8,15 +8,7 @@ import CalendarToday from 'mdi-material-ui/CalendarToday';
 import Collapse from '@material-ui/core/Collapse';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
 import Grid from '@material-ui/core/Grid';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import TableHead from '@material-ui/core/TableHead';
-import CartPlusIcon from 'mdi-material-ui/CartPlus';
-import ShoppingIcon from 'mdi-material-ui/Shopping';
 
 const styles = theme => ({
     paper: {

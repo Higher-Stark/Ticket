@@ -34,6 +34,8 @@ import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
 import Specify from './com/Specify';
+import Activating from "./page/Activating";
+import Activated from "./page/Activated";
 
 const listStyles = {
     home: {
@@ -316,6 +318,8 @@ class ResponsiveDrawer extends React.Component {
                     <div className={classes.toolbar} />
                     <Route path='/' exact component={Homepage}/>
                     <Route path='/signup' component={SignUp}/>
+                    <Route path='/activating' component={Activating}/>
+                    <Route path='/activated/:uuid' component={Activated}/>
                     <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)

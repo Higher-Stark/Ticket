@@ -98,13 +98,13 @@ class Home extends Component {
             items: 0,
             page: 1,
             loading: false,
+            firstLoad: false,
         };
         this.fetchPage = this.fetchPage.bind(this);
         this.viewPage = this.viewPage.bind(this);
     }
 
     componentDidMount() {
-        this.setState({loading: true})
         const {page} = this.state;
         const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch (url, {
@@ -119,6 +119,7 @@ class Home extends Component {
                     items: items + quantity,
                     page: page + 1,
                     loading: false,
+                    firstLoad: true,
                 })
             })
             .catch(e => console.log(e))
@@ -163,7 +164,7 @@ class Home extends Component {
     };
 
     load = () => {
-        this.setState({loading: true})
+        this.setState({loading: true});
         const {page} = this.state;
         const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch (url, {
@@ -185,7 +186,7 @@ class Home extends Component {
 
     render() {
         const {classes} = this.props;
-        const {items, loading} = this.state;
+        const {items, loading, firstLoad} = this.state;
 
         return (
             <div className={classes.root}>
@@ -203,7 +204,8 @@ class Home extends Component {
                         }
                     </div>
                 </div>
-                <div className={classes.wrapper}>
+                { firstLoad &&
+                (<div className={classes.wrapper}>
                     <div className={classes.block}>
                         <Button variant='fab' color='primary'
                                 className={classes.buttonMore}
@@ -216,7 +218,7 @@ class Home extends Component {
                     <a href="#topAnchor" className={classes.topIcon}>
                         <ArrowCollapseUp/>
                     </a>
-                </div>
+                </div>)}
             </div>
         )
     }

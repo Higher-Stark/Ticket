@@ -13,7 +13,6 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
-import MovieIcon from 'mdi-material-ui/Movie';
 import Basketball from 'mdi-material-ui/Basketball';
 import TheaterIcon from 'mdi-material-ui/Theater';
 import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';

@@ -3,20 +3,18 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
 import PlaceIcon from '@material-ui/icons/Place';
-import KeyBoardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import KeyBoardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import blue from '@material-ui/core/colors/blue';
 import indigo from '@material-ui/core/colors/indigo';
 import PageBar from '../com/PageBar';
-import {Cards} from '../test-data/Cards';
+import {data} from '../test-data/data';
 
 const itemStyles = theme => ({
     root: {
@@ -66,6 +64,13 @@ const itemStyles = theme => ({
 });
 
 class ActivityItem extends Component {
+
+    locale(date){
+        const pattern = /^(\d+)(-|\/)0?(\d+)(-|\/)0?(\d+)$/;
+        let res = date.replace(pattern, (match, year, sep1, month, spe2, day, offset, string) => `${year}年${month}月${day}日`)
+        return res;
+    }
+
     render() {
         const {classes, data} = this.props;
 
@@ -77,24 +82,24 @@ class ActivityItem extends Component {
                             return (
                                 <Grid container spacing={8} className={classes.root} key={s.id}>
                                     <Grid item xs={2} className={classes.pic}>
-                                        <img src={s.images.s3_4} className={classes.image} alt={s.title}/>
+                                        <img src={s.image} className={classes.image} alt={s.title}/>
                                     </Grid>
                                     <Grid item xs={10}>
                                         <div>
-                                            <Typography variant='title' component='h2' color='primary' className={classes.title}>
-                                                {`[${s.city}] ${s.title}`}
+                                            <Typography variant='title' component='h2' color='primary' className={classes.title} gutterBottom>
+                                                {`${s.city} | ${s.title}`}
                                             </Typography>
-                                            <Typography variant='subheading' color='secondary'>
-                                                {s.brief}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.dates.length === 1 ? s.dates[0] : `${s.dates[0]} - ${s.dates[s.dates.length - 1]}`}
+                                            <Typography variant='subheading' color='textSecondary' gutterBottom>
+                                                {s.intro}
                                             </Typography>
                                             <Typography variant='body1' component='p'>
-                                                <PlaceIcon/>{s.location}{' - '}{s.city}
+                                                <CalendarToday/>{s.startDate === s.endDate ? this.locale(s.startDate) : `${this.locale(s.startDate)} - ${this.locale(s.endDate)}`}{' | '}{s.time}
                                             </Typography>
-                                            <Typography variant='headline' color='primary'>
-                                                {s.price}{' '}{s.status}
+                                            <Typography variant='body1' component='p'>
+                                                <PlaceIcon/>{s.venue}{' - '}{s.city}
+                                            </Typography>
+                                            <Typography variant='subheading' color='primary'>
+                                                {s.lowprice === s.highprice ? `¥ ${s.lowprice}` : `¥ ${s.lowprice} - ${s.highprice}`}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -204,7 +209,7 @@ class Search extends Component {
                 <Grid container spacing={8} className={classes.root}>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3' color='secondary'>
+                            <Typography variant='headline' component='h3' color='error'>
                                 {'City'}
                             </Typography>
                         </Grid>
@@ -212,7 +217,7 @@ class Search extends Component {
                             {cities.map((s, i) => {
                                 return <Typography variant='button'
                                                    className={classNames(classes.textSelect, i === selected.city ? classes.selected : classes.nonselected)}
-                                                   key={i} component={Button}
+                                                   key={i} component={Button} size='small'
                                                     onClick={(e) => this.handleClick(e, 'city', i)}
                                 >
                                     {s}
@@ -220,16 +225,17 @@ class Search extends Component {
                             })}
                         </Grid>
                     </Grid>
+                    <Divider/>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3' color='secondary'>
+                            <Typography variant='headline' component='h3' color='error'>
                                 {'类别'}
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
                             {
                                 types.map((s, i) => {
-                                    return <Typography variant='button' key={i} component={Button}
+                                    return <Typography variant='button' key={i} component={Button} size='small'
                                                        onClick={e => this.handleClick(e, 'type', i)}
                                                        className={classNames(classes.textSelect, i === selected.type ? classes.selected : classes.nonselected)}
                                                        >
@@ -239,6 +245,7 @@ class Search extends Component {
                             }
                         </Grid>
                     </Grid>
+                    <Divider/>
                 </Grid>
                 <div>
                     <AppBar position='static' >
@@ -248,7 +255,7 @@ class Search extends Component {
                             <Tab label={'By Date'}/>
                         </Tabs>
                     </AppBar>
-                    <ActivityWithStyle data={Cards}/>
+                    <ActivityWithStyle data={data.content}/>
                 </div>
                 <div>
                     <PageBar current={3} max={7} goto={(i) => console.log(i)}/>

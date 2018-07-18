@@ -15,6 +15,7 @@ import blue from '@material-ui/core/colors/blue';
 import indigo from '@material-ui/core/colors/indigo';
 import PageBar from '../com/PageBar';
 import {data} from '../test-data/data';
+import locale from '../util/locale';
 
 const itemStyles = theme => ({
     root: {
@@ -65,12 +66,6 @@ const itemStyles = theme => ({
 
 class ActivityItem extends Component {
 
-    locale(date){
-        const pattern = /^(\d+)(-|\/)0?(\d+)(-|\/)0?(\d+)$/;
-        let res = date.replace(pattern, (match, year, sep1, month, spe2, day, offset, string) => `${year}年${month}月${day}日`)
-        return res;
-    }
-
     render() {
         const {classes, data} = this.props;
 
@@ -93,7 +88,7 @@ class ActivityItem extends Component {
                                                 {s.intro}
                                             </Typography>
                                             <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.startDate === s.endDate ? this.locale(s.startDate) : `${this.locale(s.startDate)} - ${this.locale(s.endDate)}`}{' | '}{s.time}
+                                                <CalendarToday/>{s.startDate === s.endDate ? locale(s.startDate) : `${locale(s.startDate)} - ${locale(s.endDate)}`}{' | '}{s.time}
                                             </Typography>
                                             <Typography variant='body1' component='p'>
                                                 <PlaceIcon/>{s.venue}{' - '}{s.city}

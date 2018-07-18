@@ -10,7 +10,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import SvgIcon from '@material-ui/core/SvgIcon';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -23,11 +22,9 @@ import HomeIcon from '@material-ui/icons/Home';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Person from '@material-ui/icons/Person';
 import Collections from '@material-ui/icons/Collections';
-import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import BasketballIcon from 'mdi-material-ui/Basketball';
-import Theater from 'mdi-material-ui/Theater';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
@@ -65,7 +62,6 @@ const listStyles = {
     svg: {
         width: 24,
         height : 24,
-        // color: '#e040fb'
     },
 };
 
@@ -188,19 +184,19 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/vocal'>
-                    <ListItemIcon><img src={Vocal} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Show'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Exhibition'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/opera'>
-                    <ListItemIcon><img src={Mask} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/sports'>
@@ -208,11 +204,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/dance'>
-                    <ListItemIcon><img src={Ballet} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/parent'>
-                    <ListItemIcon><img src={Parent} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
             </div>
@@ -243,19 +239,19 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/vocal'>
-                    <ListItemIcon><img src={Vocal} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Show'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Exhibition'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/opera'>
-                    <ListItemIcon><img src={Mask} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/sports'>
@@ -263,11 +259,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/dance'>
-                    <ListItemIcon><img src={Ballet} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/parent'>
-                    <ListItemIcon><img src={Parent} style={listStyles.svg}/></ListItemIcon>
+                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
                 <Divider/>

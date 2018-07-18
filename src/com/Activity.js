@@ -15,7 +15,6 @@ import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import Basketball from 'mdi-material-ui/Basketball';
 import TheaterIcon from 'mdi-material-ui/Theater';
-import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';
 import StarIcon from 'mdi-material-ui/Star';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import PlaceIcon from '@material-ui/icons/Place';

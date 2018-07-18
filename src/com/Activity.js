@@ -140,6 +140,9 @@ class Activity extends Component {
                             {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
                             Like
                         </Button>
+                        <Button variant='extendedFab' size='large' color='secondary' className={classes.buttonIcon} >
+                            ADD TO CART
+                        </Button>
                         <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.handleOpen}>
                             <MoreHoriz/>
                         </Button>

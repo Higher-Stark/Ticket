@@ -18,7 +18,7 @@ const styles = theme => ({
 class Activated extends Component {
 
     componentDidMount() {
-        let uuid= this.props.match.params.uuid;
+        const {uuid}= this.props.match.params;
         fetch(`http://120.79.58.85:30003/Email/Active?code=${uuid}`, {
             method: 'GET',
             credentials: "include",
@@ -29,7 +29,7 @@ class Activated extends Component {
                     alert("激活成功");
                 }
                  else if (text === "false") {
-                    alert("激活失败，未知错误");
+                    alert("激活失败，此用户不存在");
                 }
             });
     }

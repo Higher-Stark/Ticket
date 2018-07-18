@@ -8,6 +8,8 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
 
 const theme = createMuiTheme({
     typography: {
@@ -62,46 +64,30 @@ const theme = createMuiTheme({
 });
 
 
-function getCookie(cname)
-{
-    let name = cname + "=";
-    let ca = document.cookie.split(';');
-    for(let i=0; i<ca.length; i++)
-    {
-        let c = ca[i].trim();
-        if (c.indexOf(name)===0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
-function setCookie(cname,cvalue)
-{
-    let expires = "expires=null; path=/";
-    document.cookie = cname + "=" + cvalue + "; " + expires;
-}
-
-
 
 class App extends Component {
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
     constructor(props) {
         super(props);
+        const { cookies } = props;
         this.state = {
-            flash: parseInt(getCookie("flash"),0),
+            flash: cookies.get('flash')||false,
             user:null,
         };
     }
 
     componentDidMount() {
-        setTimeout(() => {setCookie("flash","1");this.setState({flash: true});}, 5000);
+        const { cookies } = this.props;
+        setTimeout(() => {cookies.set('flash', 1);this.setState({flash: true});}, 5000);
     }
 
-    componentWillUnmount(){
-        setCookie("flash","0");
-    }
 
     render() {
         const Welcome = (
-            <div onClick={() => {setCookie("flash","1");this.setState({flash: true})}} id='background'>
+            <div onClick={() => {const { cookies } = this.props;cookies.set('flash', 1);this.setState({flash: true})}} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>
@@ -121,4 +107,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default withCookies(App);

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, {instanceOf} from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -36,15 +36,17 @@ import Search from './page/Search';
 import Specify from './com/Specify';
 import Activating from "./page/Activating";
 import Activated from "./page/Activated";
+import {withCookies, Cookies} from 'react-cookie';
+import Cart from "./page/Cart";
 
 const listStyles = {
     home: {
         color: '#2196f3',
     },
-    music: {
+    concert: {
         color: '#ff5722',
     },
-    show: {
+    vocalConcert: {
         color: '#00e676',
     },
     opera: {
@@ -53,9 +55,16 @@ const listStyles = {
     sports: {
         color: '#f44336',
     },
-    dance: {
-        color: '#e040fb'
+    dancing: {
+        color: '#e040fb',
     },
+    parenting: {
+        color: '#547491',
+    },
+    acrobatics: {
+        color: '#474911',
+    },
+
 };
 
 const drawerWidth = 240;
@@ -113,11 +122,16 @@ const styles = theme => ({
 });
 
 class ResponsiveDrawer extends React.Component {
-    constructor(props){
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
+    constructor(props) {
         super(props);
+        const {cookies} = props;
         this.state = {
             mobileOpen: false,
-            user: null,
+            user: cookies.get('token') || null,
             search: null,
         };
     }
@@ -127,20 +141,27 @@ class ResponsiveDrawer extends React.Component {
     };
 
     toggleLogin = (user) => {
+        const {cookies} = this.props;
+        cookies.set('token', user);
         this.setState({
             user: user,
         });
+
     };
 
     toggleLogout = () => {
-        let {token} = this.state.user;
-        fetch (`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        const {cookies} = this.props;
+        let {token} = cookies.get('token');
+        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })
             .then(response => response.status)
             .then(status => {
-                if (status === 200) this.setState({user: null});
+                if (status === 200) {
+                    cookies.remove('token');
+                    this.setState({user: null});
+                }
                 else throw Error("Connection failed");
             })
             .catch(e => console.log(e));
@@ -172,25 +193,61 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/music'>
-                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/parenting'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.parenting}/></ListItemIcon>
+                    <ListItemText inset primary='Parenting'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/acrobatics'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.acrobatics}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/concert'});
+                    });
+                }}>
+                    <ListItemIcon><MusicCircle style={listStyles.concert}/></ListItemIcon>
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><Bookmark style={listStyles.show}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/vocal concert'});
+                    });
+                }}>
+                    <ListItemIcon><MusicCircle style={listStyles.vocalConcert}/></ListItemIcon>
+                    <ListItemText inset primary='Vocal concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/opera'>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/opera'});
+                    });
+                }}>
                     <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/sports'>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/sports'});
+                    });
+                }}>
                     <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
-                    <ListItemIcon><Bookmark style={listStyles.dance}/></ListItemIcon>
-                    <ListItemText inset primary='Dance'/>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/dancing'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.dancing}/></ListItemIcon>
+                    <ListItemText inset primary='Dancing'/>
                 </ListItem>
             </div>
         );
@@ -215,25 +272,61 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/music'>
-                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/parenting'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.parenting}/></ListItemIcon>
+                    <ListItemText inset primary='Parenting'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/acrobatics'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.acrobatics}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/concert'});
+                    });
+                }}>
+                    <ListItemIcon><MusicCircle style={listStyles.concert}/></ListItemIcon>
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><Bookmark style={listStyles.show}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/vocal concert'});
+                    });
+                }}>
+                    <ListItemIcon><MusicCircle style={listStyles.vocalConcert}/></ListItemIcon>
+                    <ListItemText inset primary='Vocal concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/opera'>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/opera'});
+                    });
+                }}>
                     <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/sports'>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/sports'});
+                    });
+                }}>
                     <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
-                    <ListItemIcon><Bookmark style={listStyles.dance}/></ListItemIcon>
-                    <ListItemText inset primary='Dance'/>
+                <ListItem button component={NavLink} to='/empty' onClick={() => {
+                    setTimeout(() => {
+                        this.props.history.replace({pathname: '/category/dancing'});
+                    });
+                }}>
+                    <ListItemIcon><Bookmark style={listStyles.dancing}/></ListItemIcon>
+                    <ListItemText inset primary='Dancing'/>
                 </ListItem>
                 <Divider/>
                 <ListItem button onClick={this.toggleLogout}>
@@ -252,7 +345,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : NavMenuList2 }
+                {this.state.user === null ? NavMenuList1 : NavMenuList2}
             </div>
         );
 
@@ -266,21 +359,22 @@ class ResponsiveDrawer extends React.Component {
                             onClick={this.handleDrawerToggle}
                             className={classes.navIconHide}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Hidden smDown implementation='css'>
-                        <Typography variant="title" color="inherit" noWrap>
-                            {
-                                '聚票网'
-                            }
-                        </Typography>
+                            <Typography variant="title" color="inherit" noWrap>
+                                {
+                                    '聚票网'
+                                }
+                            </Typography>
                         </Hidden>
                         <TextField className={classes.search} id='search_input'
                                    label="Search"
-                                   InputProps={{endAdornment: (
-                                       <InputAdornment position="end">
-                                           <SearchIcon onClick={this.toggleSearch}/>
-                                       </InputAdornment>
+                                   InputProps={{
+                                       endAdornment: (
+                                           <InputAdornment position="end">
+                                               <SearchIcon onClick={this.toggleSearch}/>
+                                           </InputAdornment>
                                        ),
                                    }}
                                    onChange={this.handleChange}
@@ -315,18 +409,21 @@ class ResponsiveDrawer extends React.Component {
                     </Drawer>
                 </Hidden>
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
+                    <div className={classes.toolbar}/>
                     <Route path='/' exact component={Homepage}/>
                     <Route path='/signup' component={SignUp}/>
                     <Route path='/activating' component={Activating}/>
                     <Route path='/activated/:uuid' component={Activated}/>
-                    <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
+                    <Route path='/signin'
+                           render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)}/>
                     <Route path='/account' render={props => (this.state.user === null ? (
-                        <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
-                        )}/>
+                            <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
+                    )}/>
+                    <Route path='/cart' component={Cart}/>
                     <Route path='/category/:sort' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
+                    <Route path="empty" component={null} key="empty"/>
                 </main>
             </div>
         );
@@ -338,4 +435,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(withRouter(ResponsiveDrawer));
+export default withStyles(styles, {withTheme: true})(withRouter(withCookies(ResponsiveDrawer)));

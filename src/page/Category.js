@@ -1,8 +1,19 @@
 import React, {Component} from 'react';
+import ReactLoading from "react-loading";
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles';
 import Activity from '../com/Activity';
-import {Cards} from '../test-data/Cards';
+import styled from "tachyons-components";
+
+
+const Section = styled('div')`
+flex flex-wrap content-center justify-center w-100 h-100`;
+
+export const Article = styled('div')`
+w-25 ma2 h4 items-center justify-center flex flex-column flex-wrap`;
+
+export const Prop = styled('h3')`
+f5 f4-ns mb0 white`;
 
 const styles = theme => ({
     root: {
@@ -45,25 +56,67 @@ const styles = theme => ({
 class Category extends Component {
     constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
             data: [],
+            page: 1,
         }
     }
 
-    render() {
-        const {classes, match} = this.props;
+    componentDidMount() {
+        const {page} = this.state;
+        const {sort} = this.props.match.params;
+        const url = `http://120.79.58.85:30005/Ticket/QueryByTypePage?pagenumber=${page}&type=${sort}`;
+        console.log(url);
+        fetch(url, {
+            method: 'GET',
+            credentials: "include",
+        })
+            .then(response => response.json())
+            .then(data => this.setState({data: data.content}))
+            .catch(e => console.log(e));
+    }
 
-        const data = Cards.filter(x => x.icon === match.params.sort);
+    render() {
+        const {classes} = this.props;
+
+        const data = this.state.data;
         console.log(data);
-        return (
+
+        const loading = (
+            <Section>
+                <Article>
+                    <ReactLoading type="bars" color="#fff"/>
+                    <Prop>Loading</Prop>
+                </Article>
+            </Section>
+        );
+
+        const activities = (
             <div className={classes.root}>
                 <div className={classes.content}>
                     <div className={classes.cards}>
                         {data.map(x => {
-                            return (<Activity card={x} key={x.id} className={classes.card}/>)
+                            return (
+                                <div className='animated fadeIn'>
+                                    <Activity card={x} key={x.id} className={classes.card}/>
+                                </div>
+                            )
                         })}
                     </div>
                 </div>
+            </div>
+        );
+
+        const toShow = (
+            <div>
+                {data.length === 0 ? loading : activities}
+            </div>
+        );
+
+
+        return (
+            <div>
+                {toShow}
             </div>
         );
     }

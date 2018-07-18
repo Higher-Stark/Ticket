@@ -23,7 +23,7 @@ const theme = createMuiTheme({
             fontWeight: 500,
         },
         subheading: {
-            fontSize: 12,
+            fontSize: 16,
         },
         button: {
             fontStyle: 'bold',

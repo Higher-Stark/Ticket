@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ChevronDown from 'mdi-material-ui/ChevronDown';
 import Button from '@material-ui/core/Button';
 import pink from '@material-ui/core/colors/pink';
+import ArrowCollapseUp from 'mdi-material-ui/ArrowCollapseUp';
 import Activity from '../com/Activity';
 
 const styles = theme => ({
@@ -12,11 +13,14 @@ const styles = theme => ({
         justifyContent: 'center',
         overflow: 'hidden',
         width: 'inherit',
+        padding: '0 auto',
     },
     content: {
-        display: 'flex',
+        display: 'inline-block',
+        flexGrow: 1,
         flexWrap: 'wrap',
         justifyContent: 'start',
+        width: 'auto',
         /*
         [theme.breakpoints.up('xl')]: {
             width: 1760,
@@ -33,10 +37,8 @@ const styles = theme => ({
         */
         // margin: '0 auto',
     },
-    activity: {
-        display: 'inline-block',
-    },
     card: {
+        display: 'inline-block',
         flexGrow: 1,
     },
     pageBar: {
@@ -73,6 +75,17 @@ const styles = theme => ({
         width: '0px',
         height: '0px',
         top: '0px',
+    },
+    topIcon: {
+        position: 'fixed',
+        right: theme.spacing.unit * 2,
+        bottom: theme.spacing.unit * 2,
+        color: '#f0f0f0',
+        padding: theme.spacing.unit,
+        backgroundColor: 'rgba(160, 160, 160, 0.3)',
+        borderRadius: '4px',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 
@@ -176,28 +189,33 @@ class Home extends Component {
 
         return (
             <div className={classes.root}>
+                <div id="topAnchor"></div>
                 <div className={classes.wrapper}>
-                <div id='content' className={classes.content}>
-                {
-                    this.content.slice(0, items).map((s, i) => {
-                        return (
-                            <Activity card={s} key={i}/>
-                        );
-                    })
-                }
-                </div>
+                    <div id='content' className={classes.content}>
+                        {
+                            this.content.slice(0, items).map((s, i) => {
+                                return (
+                                    <div className={classes.card} key={i}>
+                                    <Activity card={s}/>
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
                 </div>
                 <div className={classes.wrapper}>
                     <div className={classes.block}>
-                    <Button variant='fab' color='primary'
-                            className={classes.buttonMore}
-                            onClick={this.load}
-                    >
-                        <ChevronDown/>
-                    </Button>
-                    {loading && <CircularProgress size={68} className={classes.fabProgress}/> }
+                        <Button variant='fab' color='primary'
+                                className={classes.buttonMore}
+                                onClick={this.load}
+                        >
+                            <ChevronDown/>
+                        </Button>
+                        {loading && <CircularProgress size={68} className={classes.fabProgress}/> }
                     </div>
-                    <div className={classes.rightWrapper}></div>
+                    <a href="#topAnchor" className={classes.topIcon}>
+                        <ArrowCollapseUp/>
+                    </a>
                 </div>
             </div>
         )

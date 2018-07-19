@@ -6,26 +6,47 @@ import IconButton from '@material-ui/core/IconButton';
 import PlaceIcon from '@material-ui/icons/Place';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
 import Collapse from '@material-ui/core/Collapse';
+import Badge from '@material-ui/core/Badge';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import CartPlusIcon from 'mdi-material-ui/CartPlus';
+import ShoppingIcon from 'mdi-material-ui/Shopping';
+import locale from '../util/locale';
 
 const styles = theme => ({
     paper: {
         position: 'absolute',
-        minWidth: 360,
-        maxWidth: 720,
+        [theme.breakpoints.up('lg')]: {
+            width: 480,
+        },
+        [theme.breakpoints.down('lg')]: {
+            maxWidth: '60%',
+        },
+        maxHeight: '90%',
+        display: 'block',
+        overflow: 'scroll',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadow[5],
     },
     paper2: {
+        width: 'inherit',
         padding: theme.spacing.unit * 3,
     },
     modal: {
+        // height: 0,
+        // paddingTop: '56.25%',    // 16:9
+        display: 'flex',
         overflow: 'hidden',
+        justifyContent: 'center',
+        width: 'inherit',
     },
     image: {
-        width: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        width: 'auto',
+        height: 'auto',
+        margin: 'auto auto',
     },
     table: {
         width: '100%',
@@ -39,16 +60,12 @@ const styles = theme => ({
     },
     buttonIcon: {
         flexGrow: 1,
-        margin: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`,
+        margin: `${theme.spacing.unit}px ${theme.spacing.unit}px`,
     },
     action: {
         display: 'flex',
-        flexGrow: 'row wrap',
-        justifyContent: 'end',
-    },
-    section3: {
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit,
+        // flexGrow: 'row wrap',
+        // justifyContent: 'space-between',
     },
     grid: {
         display: 'flex',
@@ -107,11 +124,11 @@ class DetailModal extends Component {
                     <Typography variant='subheading' component='h3' color='secondary'>
                         {card.city}
                     </Typography>
-                    <Typography variant='title' component='h2' color='secondary'>
+                    <Typography variant='subheading' component='h3' color='secondary'>
                         <PlaceIcon/>
-                        {card.location}
+                        {card.venue}
                     </Typography>
-                    <Typography variant='title' component='h2'>
+                    <Typography variant='body1' component='p' color='textSecondary'>
                         Introduction
                         <IconButton onClick={this.toggleMore}>
                             <MoreVert/>
@@ -126,30 +143,48 @@ class DetailModal extends Component {
                         <Grid container>
                             <Grid item xs={12} className={classes.grid}>
                                 <Grid item className={classes.subgrid}>
-                        <CalendarToday/>{'Date: '}
+                                    <CalendarToday/>{'Date: '}
                                 </Grid>
                                 <Grid item className={classes.subgrid}>
-                            {card.dates.split(",").map((s, i) => {
-                                const {dates} = this.state;
-                                dates.push(false);
-                                return (
-                                    <Button variant={dates[i] ? "contained" : "outlined"}
-                                            onClick={() => {
-                                                dates[i] = !dates[i];
-                                                this.setState({dates: dates});
-                                            }}
-                                            color='primary'
-                                            className={classes.date}
-                                            key={i}
-                                            disableRipple
-                                    >
-                                        {s.replace(/\s/, '')}
-                                    </Button>
-                                )
-                            })}
+                                    {card.dates.split(" , ").map((s, i) => {
+                                        const {dates} = this.state;
+                                        dates.push(false);
+                                        return (
+                                            <Button variant={dates[i] ? "contained" : "outlined"}
+                                                    onClick={() => {
+                                                        dates[i] = !dates[i];
+                                                        this.setState({dates: dates});
+                                                    }}
+                                                    color='primary'
+                                                    className={classes.date}
+                                                    key={i}
+                                                    disableRipple
+                                            >
+                                                {locale(s) + ' | ' + card.time}
+                                            </Button>
+                                        )
+                                    })}
                                 </Grid>
                             </Grid>
                         </Grid>
+                    </div>
+                    <div>
+                        <Badge badgeContent={0} key={card.lowprice} className={classes.badge}>
+                            <Typography variant='body1'>{card.lowprice}</Typography>
+                        </Badge>
+                        <Badge badgeContent={0} key={card.highprice} className={classes.badge}>
+                            <Typography variant='body1'>{card.highprice}</Typography>
+                        </Badge>
+                    </div>
+                    <div className={classes.action}>
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={() => this.toggleCart(card.id)}>
+                            <CartPlusIcon/>
+                            Add
+                        </Button>
+                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
+                            <ShoppingIcon/>
+                            Pay
+                        </Button>
                     </div>
                     {
                         /*
@@ -232,9 +267,6 @@ class DetailModal extends Component {
 
                          */
                     }
-                    <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
-                        Pay
-                    </Button>
                 </div>
             </div>
         )

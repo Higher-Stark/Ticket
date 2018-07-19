@@ -1,51 +1,71 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
 import PlaceIcon from '@material-ui/icons/Place';
-import KeyBoardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import KeyBoardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-
-import {Cards} from '../test-data/Cards';
+import blue from '@material-ui/core/colors/blue';
+import indigo from '@material-ui/core/colors/indigo';
+import PageBar from '../com/PageBar';
+import {data} from '../test-data/data';
+import locale from '../util/locale';
 
 const itemStyles = theme => ({
     root: {
         [theme.breakpoints.down('sm')]: {
-            height: 120,
+            height: 80,
         },
         [theme.breakpoints.up('sm')]: {
-            minHeight: 320,
+            height: 200,
         },
         margin: theme.spacing.unit,
         padding: theme.spacing.unit,
         display: 'flex',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: '4px',
     },
     title: {
         margin: theme.spacing.unit,
     },
     image: {
+        /*
         [theme.breakpoints.down('sm')]:{
             maxWidth: 60,
         },
         [theme.breakpoints.up('sm')]: {
             maxWidth: 240,
         },
-        height: 'inherit',
+        [theme.breakpoints.down('sm')]: {
+            maxHeight: 120,
+        },
+        [theme.breakpoints.up('sm')]: {
+            maxHeight: 320,
+        },
+        */
+        maxHeight: '100%',
+        maxWidth: '100%',
+        padding: 'auto auto',
     },
     pic: {
-        width: '15%',
+        display: 'flex',
+        width: 'inherit',
+        height: 'inherit',
         padding: theme.spacing.unit,
         overflow: 'hidden',
+        justifyContent: 'right',
+        alignItems: 'center',
     }
 });
 
 class ActivityItem extends Component {
+
     render() {
         const {classes, data} = this.props;
 
@@ -57,24 +77,24 @@ class ActivityItem extends Component {
                             return (
                                 <Grid container spacing={8} className={classes.root} key={s.id}>
                                     <Grid item xs={2} className={classes.pic}>
-                                        <img src={s.images.s3_4} className={classes.image} alt={s.title}/>
+                                        <img src={s.image} className={classes.image} alt={s.title}/>
                                     </Grid>
                                     <Grid item xs={10}>
                                         <div>
-                                            <Typography variant='title' component='h2' color='primary' className={classes.title}>
-                                                {`[${s.city}] ${s.title}`}
+                                            <Typography variant='title' component='h2' color='primary' className={classes.title} gutterBottom>
+                                                {`${s.city} | ${s.title}`}
                                             </Typography>
-                                            <Typography variant='subheading' color='secondary'>
-                                                {s.brief}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.dates.length === 1 ? s.dates[0] : `${s.dates[0]} - ${s.dates[s.dates.length - 1]}`}
+                                            <Typography variant='subheading' color='textSecondary' gutterBottom>
+                                                {s.intro}
                                             </Typography>
                                             <Typography variant='body1' component='p'>
-                                                <PlaceIcon/>{s.location}{' - '}{s.city}
+                                                <CalendarToday/>{s.startDate === s.endDate ? locale(s.startDate) : `${locale(s.startDate)} - ${locale(s.endDate)}`}{' | '}{s.time}
                                             </Typography>
-                                            <Typography variant='headline' color='primary'>
-                                                {s.price}{' '}{s.status}
+                                            <Typography variant='body1' component='p'>
+                                                <PlaceIcon/>{s.venue}{' - '}{s.city}
+                                            </Typography>
+                                            <Typography variant='subheading' color='primary'>
+                                                {s.lowprice === s.highprice ? `¥ ${s.lowprice}` : `¥ ${s.lowprice} - ${s.highprice}`}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -108,11 +128,14 @@ const styles = theme => ({
         flexGrow: 1,
         margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
         '&:hover': {
-            background: '#3e072e',
+            background: indigo[400],
         },
-        '&:active': {
-            background: '#cccc44',
-        },
+    },
+    selected: {
+        background: blue[500],
+    },
+    nonselected: {
+        background: blue[100],
     },
     content: {
         display: 'flex',
@@ -129,7 +152,10 @@ class Search extends Component {
             pages: 0,
             value: 0,
             data: [],
-            filter: [],
+            selected: {
+                city: 0,
+                type: 0,
+            },
         };
     };
 
@@ -155,13 +181,22 @@ class Search extends Component {
         this.setState({value});
     };
 
+    handleClick = (e, name, value) => {
+        const {selected} = this.state;
+        selected[name] = value;
+        this.setState({
+            selected: selected,
+        });
+    };
+
     render() {
         const {classes} = this.props;
-        const {value} = this.state;
+        const {value, selected} = this.state;
 
         const cities = ['All', 'Beijing', 'Shanghai', 'Ningbo', 'Shengzheng', 'New York', 'Manhattan', 'California',
             'Munich', 'Berlin', 'London', 'Hongkong', 'Sydney'
         ];
+        const types = ['All', '演唱会', '体育赛事', '亲子', '展览', '动漫', '音乐会'];
 
 
         return(
@@ -169,16 +204,43 @@ class Search extends Component {
                 <Grid container spacing={8} className={classes.root}>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3'>
+                            <Typography variant='headline' component='h3' color='error'>
                                 {'City'}
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
                             {cities.map((s, i) => {
-                                return <Typography variant='button' className={classes.textSelect} key={i}>{s}</Typography>
+                                return <Typography variant='button'
+                                                   className={classNames(classes.textSelect, i === selected.city ? classes.selected : classes.nonselected)}
+                                                   key={i} component={Button} size='small'
+                                                    onClick={(e) => this.handleClick(e, 'city', i)}
+                                >
+                                    {s}
+                                </Typography>
                             })}
                         </Grid>
                     </Grid>
+                    <Divider/>
+                    <Grid item xs={12} className={classes.root}>
+                        <Grid item xs={1} className={classes.category}>
+                            <Typography variant='headline' component='h3' color='error'>
+                                {'类别'}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={11} className={classes.category}>
+                            {
+                                types.map((s, i) => {
+                                    return <Typography variant='button' key={i} component={Button} size='small'
+                                                       onClick={e => this.handleClick(e, 'type', i)}
+                                                       className={classNames(classes.textSelect, i === selected.type ? classes.selected : classes.nonselected)}
+                                                       >
+                                            {s}
+                                    </Typography>
+                                })
+                            }
+                        </Grid>
+                    </Grid>
+                    <Divider/>
                 </Grid>
                 <div>
                     <AppBar position='static' >
@@ -188,16 +250,10 @@ class Search extends Component {
                             <Tab label={'By Date'}/>
                         </Tabs>
                     </AppBar>
-                    <ActivityWithStyle data={Cards}/>
+                    <ActivityWithStyle data={data.content}/>
                 </div>
                 <div>
-                    <IconButton>
-                    <KeyBoardArrowLeft/>
-                    </IconButton>
-                    {'1 2 3 4'}
-                    <IconButton>
-                    <KeyBoardArrowRight/>
-                    </IconButton>
+                    <PageBar current={3} max={7} goto={(i) => console.log(i)}/>
                 </div>
             </div>
         )

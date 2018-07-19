@@ -5,6 +5,7 @@ import red from '@material-ui/core/colors/red';
 import lime from '@material-ui/core/colors/lime';
 import indigo from '@material-ui/core/colors/indigo';
 import deepOrange from '@material-ui/core/colors/deepOrange';
+import grey from '@material-ui/core/colors/grey';
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
@@ -27,7 +28,7 @@ const theme = createMuiTheme({
             fontWeight: 500,
         },
         subheading: {
-            fontSize: 12,
+            fontSize: 16,
         },
         button: {
             fontStyle: 'bold',
@@ -43,6 +44,11 @@ const theme = createMuiTheme({
             light: '#ff844c',
             main: deepOrange[600],
             dark: '#b91400',
+        },
+        textSecondary: {
+            light: '#484848',
+            main: grey[900],
+            dark: '#000000',
         },
         error: {
             light: red[200],

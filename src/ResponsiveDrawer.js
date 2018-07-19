@@ -13,6 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import red from '@material-ui/core/colors/red';
+import lightGreen from '@material-ui/core/colors/lightGreen';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
@@ -22,10 +24,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Person from '@material-ui/icons/Person';
 import Collections from '@material-ui/icons/Collections';
-import Bookmark from '@material-ui/icons/Bookmark';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
-import MusicCircle from 'mdi-material-ui/MusicCircle';
-import Theater from 'mdi-material-ui/Theater';
+import BasketballIcon from 'mdi-material-ui/Basketball';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
@@ -38,33 +38,31 @@ import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import {withCookies, Cookies} from 'react-cookie';
 import Cart from "./page/Cart";
+import Ballet from './svg/ballet3.svg';
+import Exhibition from './svg/exhibition.svg';
+import Vocal from './svg/ic-vocal.svg';
+import Curtain from './svg/curtain.svg';
+import Mask from './svg/mask.svg';
+import Parent from './svg/parenting.svg';
+import Acrobatics from './svg/acrobatics.svg';
 
 const listStyles = {
     home: {
         color: '#2196f3',
     },
-    concert: {
-        color: '#ff5722',
-    },
-    vocalConcert: {
-        color: '#00e676',
-    },
-    opera: {
-        color: '#8bc34a',
+    music: {
+        color: red['A400'],
     },
     sports: {
-        color: '#f44336',
+        color: lightGreen['A400'],
     },
-    dancing: {
-        color: '#e040fb',
+    svg: {
+        width: 24,
+        height : 24,
     },
     parenting: {
         color: '#547491',
     },
-    acrobatics: {
-        color: '#474911',
-    },
-
 };
 
 const drawerWidth = 240;
@@ -193,61 +191,37 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/parenting'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.parenting}/></ListItemIcon>
-                    <ListItemText inset primary='Parenting'/>
+                <ListItem button component={NavLink} to='/category/vocal'>
+                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/acrobatics'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.acrobatics}/></ListItemIcon>
-                    <ListItemText inset primary='Acrobatics'/>
+                <ListItem button component={NavLink} to='/category/show'>
+                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Show'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/concert'});
-                    });
-                }}>
-                    <ListItemIcon><MusicCircle style={listStyles.concert}/></ListItemIcon>
-                    <ListItemText inset primary='Concert'/>
+                <ListItem button component={NavLink} to='/category/exhibition'>
+                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Exhibition'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/vocal concert'});
-                    });
-                }}>
-                    <ListItemIcon><MusicCircle style={listStyles.vocalConcert}/></ListItemIcon>
-                    <ListItemText inset primary='Vocal concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/opera'});
-                    });
-                }}>
-                    <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/category/opera'>
+                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/sports'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/category/sports'>
+                    <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/dancing'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.dancing}/></ListItemIcon>
-                    <ListItemText inset primary='Dancing'/>
+                <ListItem button component={NavLink} to='/category/dance'>
+                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Dance'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/parent'>
+                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Parent-child'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/acrobatics'>
+                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
                 </ListItem>
             </div>
         );
@@ -272,61 +246,37 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/parenting'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.parenting}/></ListItemIcon>
-                    <ListItemText inset primary='Parenting'/>
+                <ListItem button component={NavLink} to='/category/vocal'>
+                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/acrobatics'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.acrobatics}/></ListItemIcon>
-                    <ListItemText inset primary='Acrobatics'/>
+                <ListItem button component={NavLink} to='/category/show'>
+                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Show'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/concert'});
-                    });
-                }}>
-                    <ListItemIcon><MusicCircle style={listStyles.concert}/></ListItemIcon>
-                    <ListItemText inset primary='Concert'/>
+                <ListItem button component={NavLink} to='/category/exhibition'>
+                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Exhibition'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/vocal concert'});
-                    });
-                }}>
-                    <ListItemIcon><MusicCircle style={listStyles.vocalConcert}/></ListItemIcon>
-                    <ListItemText inset primary='Vocal concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/opera'});
-                    });
-                }}>
-                    <ListItemIcon><Theater style={listStyles.opera}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/category/opera'>
+                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/sports'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.sports}/></ListItemIcon>
+                <ListItem button component={NavLink} to='/category/sports'>
+                    <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/empty' onClick={() => {
-                    setTimeout(() => {
-                        this.props.history.replace({pathname: '/category/dancing'});
-                    });
-                }}>
-                    <ListItemIcon><Bookmark style={listStyles.dancing}/></ListItemIcon>
-                    <ListItemText inset primary='Dancing'/>
+                <ListItem button component={NavLink} to='/category/dance'>
+                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Dance'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/parent'>
+                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Parent-child'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/acrobatics'>
+                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
                 </ListItem>
                 <Divider/>
                 <ListItem button onClick={this.toggleLogout}>

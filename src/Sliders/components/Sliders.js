@@ -25,7 +25,7 @@ export default class Sliders extends Component {
 
     turn = (step) => {
         let index = this.state.index;
-        console.log(index);
+        // console.log(index);
         if (index === this.props.images.length && step === 1) {
             index = 0;
             this.set(0, index, 0);

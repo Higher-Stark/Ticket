@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
+import {NavLink} from 'react-router-dom';
 
 const styles = theme => ({
     container: {
@@ -197,7 +198,7 @@ class SignUp extends Component{
                 </form>
                 <div>
                     <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Already have an account? <a href='signin'>Sign in</a>
+                        Already have an account? <NavLink to='/signin'>Sign in</NavLink>
                     </Typography>
                 </div>
             </div>

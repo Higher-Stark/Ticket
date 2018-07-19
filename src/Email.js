@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
+import {User} from './test-data/user';
 
 const styles = theme => ({
     container: {
@@ -36,9 +37,11 @@ const styles = theme => ({
         alignItems: 'center',
         margin: 'auto',
     },
-    root: {
+    content2: {
         margin: '0 auto',
-        maxWidth: 510,
+        width: 510,
+        background: 'rgba(255,255,255,0.8)',
+        borderRadius: theme.spacing.unit / 2,
         padding: `0 ${theme.spacing.unit}px`,
     },
     header : {
@@ -51,7 +54,8 @@ const styles = theme => ({
 
 class SignUp extends Component{
     verification = {
-        verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
+        verifyUrl: 'http://www.7xiwang.com/WebService/ImageValidateCode?code=',
+        code: '',
         uuid: ''
     };
 
@@ -62,25 +66,21 @@ class SignUp extends Component{
             password: '',
             email: '',
             authCode: '',
-            verifyUrl: '',
+            verifyCodes: '',
             formError: false,
         }
     }
 
     componentWillMount() {
-        this.changeVerifyImg();
+        this.setState({
+            verifyUrl : this.verification.verifyUrl + "find",
+            verifyCodes:'find'
+        });
     }
 
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
-        });
-    };
-
-    changeVerifyImg = () => {
-        let date = new Date();
-        this.setState({
-            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
         });
     };
 
@@ -111,56 +111,49 @@ class SignUp extends Component{
         return pattern.test(this.state.email);
     };
 
-    getCookie(key) {
-        const cookies = document.cookie;
-        let idx = cookies.indexOf(key);
-        let idxEqual = cookies.indexOf("=", idx);
-        let idxSemi = cookies.indexOf(";", idx);
-        return cookies.substring(idxEqual + 1, idxSemi);
+    /*
+     * Check if the username is already registered
+     */
+    check_replicate = () => {
+        const {name} = this.state;
+        for (let i = 0; i !== User.length; i++) {
+            if (name === User[i].name) return false;
+        }
+        return true;
     }
 
+    verify = () => {
+        return this.state.verifyCodes === this.state.authCode;
+    };
+
     signup = () => {
-        if (this.check_name() && this.check_pwd() && this.check_email()) {
-            const {name, password, email, authCode} = this.state;
-            console.log(this.state);
-            fetch ('http://120.79.58.85:30004/Sign/Up', {
-                method: 'POST',
-                headers: new Headers({
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }),
-                body: `username=${name}&password=${password}&email=${email}&answer=${authCode}`,
-                credentials: "include",
-            })
-                .then(response => response.text())
-                .then(text => {
-                    if (text === "success") {
-                        alert("注册成功");
-                        this.props.history.push('/');
-                        return;
-                    }
-                    else if (text === "code") {
-                        alert("验证码错误");
-                    } else if (text === "resend") {
-                        alert("尚未激活，已经重新发送邮件");
-                    } else if (text === 'exited') {
-                        alert("用户名已经存在");
-                    } else if (text === "fail") {
-                        alert("失败");
-                    }
-                    this.changeVerifyImg();
-                    return;
-                })
+        /*
+            fetch ('login', method: {
+                method: 'POST'
+                }
+         */
+        if (this.check_name() && this.check_pwd() && this.verify() && this.check_replicate() ) {
+            alert("Sign up succeed");
+            User.push({
+                name: this.state.name,
+                password: this.state.passive,
+                email: this.state.email,
+            });
+            this.props.history.push('/email');
         }
         else {
-            alert("信息不全");
-        }
+            console.log(this.check_name());
+            console.log(this.check_pwd());
+            console.log(this.verify());
+            alert("Sign up failed")
+        };
     };
 
     render() {
         const {classes} = this.props;
 
         return (
-            <div className={classes.root}>
+            <div className={classes.content2}>
                 <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
                 <form className={classes.container} autoComplete='off'>
                     <TextField placeholder='User Name' id='name' name='name'
@@ -189,8 +182,9 @@ class SignUp extends Component{
                                margin='normal'
                                onChange={this.handleChange('authCode')}/>
                     <img src={this.state.verifyUrl} alt="img"
-                         onClick={this.changeVerifyImg}
+                         onClick={() => this.setState({verifyUrl: this.state.verifyUrl + "3"})}
                          className={classes.verifyImg}/>
+                    <div className="g-recaptcha" data-sitekey="6LfLkmIUAAAAAO7cmo5x0KgCBtjobIK7M9RzA5Fl"></div>
                     <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
                         Sign Up
                     </Button>

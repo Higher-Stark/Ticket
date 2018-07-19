@@ -100,8 +100,6 @@ class Home extends Component {
             loading: false,
             firstLoad: false,
         };
-        this.fetchPage = this.fetchPage.bind(this);
-        this.viewPage = this.viewPage.bind(this);
     }
 
     componentDidMount() {

@@ -52,7 +52,6 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
-        prepareVerify: 'http://120.79.58.85:30001/Code/Prepare/',
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
         uuid: ''
     };
@@ -130,7 +129,7 @@ class Login extends Component{
                     token: text,
                 };
                 this.props.toggleLogin(currentUser);
-                this.props.history.push('/');
+                this.props.history.push('/homepage');
                 return;
             })
     };
@@ -168,7 +167,7 @@ class Login extends Component{
                 </form>
                 <div>
                     <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Don't have an account? <a href='/signup'>Sign up</a>
+                        Don't have an account? <a href='signup'>Sign up</a>
                     </Typography>
                 </div>
             </div>

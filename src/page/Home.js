@@ -125,44 +125,6 @@ class Home extends Component {
             .catch(e => console.log(e))
     }
 
-    async fetchPage (page)  {
-        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        try {
-            let res = await fetch(url, {
-                method: 'GET',
-                credentials: "include",
-            });
-            let data = await res.json();
-            this.setState({
-                data: data.content,
-                totalPages: data.totalPages,
-                maxPage : Math.ceil(data.totalElements / 6),
-                number: data.number + 1,
-            });
-            return new Promise(() => 1);
-        }catch (e) {
-            console.log(e);
-        }
-
-    };
-
-    async viewPage(idx) {
-        console.log("View page[" + idx + "]");
-        const {number, data} = this.state;
-        if (Math.ceil(idx / 3) !== number) {
-            let response = await this.fetchPage(Math.ceil(idx / 3));
-            console.log(response);
-        }
-        let idx1 = (idx - 1) % 3;
-        idx1 = idx1 * 6;
-        let view = data.splice(idx1, idx1 + 6);
-        console.log(view);
-        this.setState({
-            view: view,
-            page: idx,
-        });
-    };
-
     load = () => {
         this.setState({loading: true});
         const {page} = this.state;

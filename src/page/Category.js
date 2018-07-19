@@ -1,19 +1,9 @@
 import React, {Component} from 'react';
-import ReactLoading from "react-loading";
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles';
 import Activity from '../com/Activity';
-import styled from "tachyons-components";
-
-
-const Section = styled('div')`
-flex flex-wrap content-center justify-center w-100 h-100`;
-
-export const Article = styled('div')`
-w-25 ma2 h4 items-center justify-center flex flex-column flex-wrap`;
-
-export const Prop = styled('h3')`
-f5 f4-ns mb0 white`;
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     root: {
@@ -83,12 +73,13 @@ class Category extends Component {
         console.log(data);
 
         const loading = (
-            <Section>
-                <Article>
-                    <ReactLoading type="bars" color="#fff"/>
-                    <Prop>Loading</Prop>
-                </Article>
-            </Section>
+            <div>
+                <br/>
+                <Typography variant="title" color="white" align='center' noWrap>
+                    <CircularProgress className={classes.progress} size={50} />
+                    <br/>Loading
+                </Typography>
+            </div>
         );
 
         const activities = (

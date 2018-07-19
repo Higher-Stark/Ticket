@@ -232,6 +232,9 @@ class DetailModal extends Component {
 
                          */
                     }
+                    <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
+                        Pay
+                    </Button>
                 </div>
             </div>
         )

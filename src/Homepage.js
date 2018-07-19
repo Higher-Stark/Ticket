@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import ReactLoading from "react-loading";
 import {withStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Activity from './com/Activity';
 import Typography from '@material-ui/core/Typography';
 import Sliders from './Sliders/components/Sliders';
-import styled from "tachyons-components";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
     root: {
@@ -15,16 +14,11 @@ const styles = theme => ({
         overflow: 'hidden',
         // alignItems: 'start'
     },
+    progress: {
+        margin: theme.spacing.unit * 2,
+    },
 });
 
-const Section = styled('div')`
-flex flex-wrap content-center justify-center w-100 h-100`;
-
-export const Article = styled('div')`
-w-25 ma2 h4 items-center justify-center flex flex-column flex-wrap`;
-
-export const Prop = styled('h3')`
-f5 f4-ns mb0 white`;
 
 const Img = [
     {
@@ -66,12 +60,13 @@ class Homepage extends Component {
         console.log(data);
 
         const loading = (
-            <Section>
-                <Article>
-                    <ReactLoading type="bars" color="#fff"/>
-                    <Prop>Loading</Prop>
-                </Article>
-            </Section>
+            <div>
+                <br/>
+                <Typography variant="title" color="white" align='center' noWrap>
+                    <CircularProgress className={classes.progress} size={50} />
+                    <br/>Loading
+                </Typography>
+            </div>
         );
 
         const activities = (

@@ -19,7 +19,6 @@ import DotsHorizontal from 'mdi-material-ui/DotsHorizontal';
 import StarIcon from 'mdi-material-ui/Star';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import PlaceIcon from '@material-ui/icons/Place';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import DetailModal from './DetailModal';
 
 const styles = theme => ({
@@ -144,7 +143,7 @@ class Activity extends Component {
                             ADD TO CART
                         </Button>
                         <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.handleOpen}>
-                            <MoreHoriz/>
+                            Buy
                         </Button>
                     </CardActions>
                     <Modal arialabelledy="simple-model-title" ariadescribeby="simple-modal-description"

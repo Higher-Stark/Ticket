@@ -16,9 +16,9 @@ import MusicCircle from 'mdi-material-ui/MusicCircle';
 import Basketball from 'mdi-material-ui/Basketball';
 import TheaterIcon from 'mdi-material-ui/Theater';
 import StarIcon from 'mdi-material-ui/Star';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import PlaceIcon from '@material-ui/icons/Place';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import DetailModal from './DetailModal';
 
 const styles = theme => ({

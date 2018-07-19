@@ -7,7 +7,7 @@ import SlidersDots from './SlidersDots';
 export default class Sliders extends Component {
     constructor(props) {
         super(props);
-        this.state = {index: 0};
+        this.state = {index: 1};
     }
 
     componentDidMount() {

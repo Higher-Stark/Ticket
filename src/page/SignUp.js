@@ -112,18 +112,26 @@ class SignUp extends Component{
         return pattern.test(this.state.email);
     };
 
-    getCookie(key) {
-        const cookies = document.cookie;
-        let idx = cookies.indexOf(key);
-        let idxEqual = cookies.indexOf("=", idx);
-        let idxSemi = cookies.indexOf(";", idx);
-        return cookies.substring(idxEqual + 1, idxSemi);
-    }
 
     signup = () => {
+        const {name, password, email, authCode} = this.state;
+        if (name.length === 0) {
+            alert("用户名不能为空");
+            return;
+        }
+        if (password.length === 0) {
+            alert("密码不能为空");
+            return;
+        }
+        if (email.length === 0) {
+            alert("邮箱不能为空");
+            return;
+        }
+        if (authCode.length === 0) {
+            alert("验证码不能为空");
+            return;
+        }
         if (this.check_name() && this.check_pwd() && this.check_email()) {
-            const {name, password, email, authCode} = this.state;
-            console.log(this.state);
             fetch ('http://120.79.58.85:30004/Sign/Up', {
                 method: 'POST',
                 headers: new Headers({
@@ -135,25 +143,32 @@ class SignUp extends Component{
                 .then(response => response.text())
                 .then(text => {
                     if (text === "success") {
-                        alert("注册成功");
-                        this.props.history.push('/');
+                        alert("注册成功,我们已向您的邮箱发送了一封激活邮件,请查收");
+                        this.props.history.push('/activating');
                         return;
                     }
                     else if (text === "code") {
                         alert("验证码错误");
                     } else if (text === "resend") {
                         alert("尚未激活，已经重新发送邮件");
+                        this.props.history.push('/activating');
+                        return;
                     } else if (text === 'exited') {
                         alert("用户名已经存在");
                     } else if (text === "fail") {
-                        alert("失败");
+                        alert("注册失败，未知错误");
                     }
                     this.changeVerifyImg();
-                    return;
-                })
+                });
         }
-        else {
-            alert("信息不全");
+        else if(!this.check_name()){
+            alert("Wrong username format");
+        }
+        else if(!this.check_pwd()){
+            alert("Wrong password format");
+        }
+        else if(!this.check_email()){
+            alert("Wrong email format");
         }
     };
 

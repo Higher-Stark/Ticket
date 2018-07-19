@@ -13,6 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import red from '@material-ui/core/colors/red';
+import lightGreen from '@material-ui/core/colors/lightGreen';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
@@ -45,19 +47,10 @@ const listStyles = {
         color: '#2196f3',
     },
     music: {
-        color: '#ff5722',
-    },
-    show: {
-        color: '#00e676',
-    },
-    opera: {
-        color: '#8bc34a',
+        color: red['A400'],
     },
     sports: {
-        color: '#f44336',
-    },
-    dance: {
-        color: '#e040fb'
+        color: lightGreen['A400'],
     },
     svg: {
         width: 24,

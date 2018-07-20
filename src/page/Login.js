@@ -84,6 +84,7 @@ class Login extends Component{
         test = test && (this.state.password.match(/\w/) !== null);
         return test;
     };
+
     login = () => {
         const {name, password, authCode} = this.state;
         if (name.length === 0) {
@@ -147,7 +148,10 @@ class Login extends Component{
                     token: text,
                 };
                 this.props.toggleLogin(currentUser);
+                let storage = window.localStorage;
+                storage.setItem("user", JSON.stringify(currentUser));
                 this.props.history.push('/');
+                return;
             })
     };
 

@@ -19,7 +19,12 @@ const styles = theme => ({
     },
     carousel: {
         // display: 'flex',
-        width: '100%',
+        // width: '100%',
+        padding: `0 ${theme.spacing.unit * 2}px`,
+        maxHeight: '360px',
+        width: 'auto',
+        display: 'block',
+        overflow: 'hidden',
         justifyContent: 'center',
         marginBottom: theme.spacing.unit * 2,
     },
@@ -174,7 +179,7 @@ class Homepage extends Component {
 
         const loadingCircle = (
             <div>
-                <Typography variant="title" color="white" align='center' noWrap>
+                <Typography variant="title" color="primary" align='center' noWrap>
                     <CircularProgress className={classes.progress} size={50} />
                 </Typography>
             </div>

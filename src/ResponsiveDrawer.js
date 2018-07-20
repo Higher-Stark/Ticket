@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes, {instanceOf} from 'prop-types';
+import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -26,6 +26,7 @@ import Person from '@material-ui/icons/Person';
 import Collections from '@material-ui/icons/Collections';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import BasketballIcon from 'mdi-material-ui/Basketball';
+import MusicCircle from 'mdi-material-ui/MusicCircle';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
@@ -36,7 +37,6 @@ import Search from './page/Search';
 import Specify from './com/Specify';
 import Activating from "./page/Activating";
 import Activated from "./page/Activated";
-import {withCookies, Cookies} from 'react-cookie';
 import Cart from "./page/Cart";
 import Ballet from './svg/ballet3.svg';
 import Exhibition from './svg/exhibition.svg';
@@ -120,18 +120,20 @@ const styles = theme => ({
 });
 
 class ResponsiveDrawer extends React.Component {
-    static propTypes = {
-        cookies: instanceOf(Cookies).isRequired
-    };
-
     constructor(props) {
         super(props);
-        const {cookies} = props;
         this.state = {
             mobileOpen: false,
-            user: cookies.get('token') || null,
+            user: null,
             search: null,
         };
+    }
+
+    componentWillMount() {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        if (user !== null) this.setState({user});
     }
 
     handleDrawerToggle = () => {
@@ -139,8 +141,6 @@ class ResponsiveDrawer extends React.Component {
     };
 
     toggleLogin = (user) => {
-        const {cookies} = this.props;
-        cookies.set('token', user);
         this.setState({
             user: user,
         });
@@ -148,8 +148,10 @@ class ResponsiveDrawer extends React.Component {
     };
 
     toggleLogout = () => {
-        const {cookies} = this.props;
-        let {token} = cookies.get('token');
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user.token;
         fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
@@ -157,7 +159,7 @@ class ResponsiveDrawer extends React.Component {
             .then(response => response.status)
             .then(status => {
                 if (status === 200) {
-                    cookies.remove('token');
+                    storage.removeItem("user");
                     this.setState({user: null});
                 }
                 else throw Error("Connection failed");
@@ -191,7 +193,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/concert'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
@@ -211,11 +217,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
+                <ListItem button component={NavLink} to='/category/dancing'>
                     <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
+                <ListItem button component={NavLink} to='/category/parenting'>
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
@@ -299,6 +305,10 @@ class ResponsiveDrawer extends React.Component {
             </div>
         );
 
+        const LoginWrapper = (props) => (
+                <Login {...props} toggleLogin={user => this.toggleLogin(user)}/>
+        );
+
         return (
             <div className={classes.root}>
                 <AppBar className={classes.appBar}>
@@ -364,15 +374,17 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/signup' component={SignUp}/>
                     <Route path='/activating' component={Activating}/>
                     <Route path='/activated/:uuid' component={Activated}/>
-                    <Route path='/signin'
-                           render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)}/>
+                    <Route path='/signin' component={LoginWrapper}/>
+                           { 
+                               // render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)}/>
+                           }
                     <Route path='/account' render={props => (this.state.user === null ? (
-                            <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
-                    )}/>
-                    <Route path='/cart' component={Cart}/>
-                    <Route path='/category/:sort' component={Category}/>
+                        <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
+                        )}/>
+                    <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
+                    <Route path='/cart' component={Cart}/>
                     <Route path="empty" component={null} key="empty"/>
                 </main>
             </div>
@@ -385,4 +397,4 @@ ResponsiveDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(withRouter(withCookies(ResponsiveDrawer)));
+export default withStyles(styles, {withTheme: true})(withRouter(ResponsiveDrawer));

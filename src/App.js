@@ -9,8 +9,6 @@ import grey from '@material-ui/core/colors/grey';
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
-import { instanceOf } from 'prop-types';
-import { withCookies, Cookies } from 'react-cookie';
 
 const theme = createMuiTheme({
     typography: {
@@ -72,22 +70,23 @@ const theme = createMuiTheme({
 
 
 class App extends Component {
-    static propTypes = {
-        cookies: instanceOf(Cookies).isRequired
-    };
-
     constructor(props) {
         super(props);
-        const { cookies } = props;
+        let storage = window.sessionStorage;
+        let flash = storage.getItem('flash') || false;
         this.state = {
-            flash: cookies.get('flash')||false,
-            user:null,
+            flash: flash,
         };
     }
 
     componentDidMount() {
-        const { cookies } = this.props;
-        setTimeout(() => {cookies.set('flash', 1);this.setState({flash: true});}, 5000);
+        let storage = window.sessionStorage;
+        setTimeout(() => {
+            storage.setItem('flash', true);
+            this.setState({ flash: true });
+        },
+            5000
+        );
     }
 
 
@@ -113,4 +112,4 @@ class App extends Component {
     }
 }
 
-export default withCookies(App);
+export default App;

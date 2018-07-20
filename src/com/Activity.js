@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Divider from '@material-ui/core/Divider';
@@ -112,7 +113,7 @@ class Activity extends Component {
 
         const titledImage = (
             <div>
-                <GridListTile component='div' className={classes.imageSec}>
+                <GridListTile component={Link} className={classes.imageSec} to={`/detail/${card.id}`}>
                     <div className={classes.imageWrapper}>
                     <img className={classes.image}
                          src={card.image}

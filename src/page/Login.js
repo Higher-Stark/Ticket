@@ -4,6 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
+import {NavLink} from 'react-router-dom';
+import cookie from 'react-cookie';
 
 const styles = theme => ({
     container: {
@@ -128,8 +130,9 @@ class Login extends Component{
                     time: utcTime,
                     token: text,
                 };
+                cookie.save('token', text, { path: '/'});
                 this.props.toggleLogin(currentUser);
-                this.props.history.push('/homepage');
+                this.props.history.push('/');
                 return;
             })
     };
@@ -167,7 +170,7 @@ class Login extends Component{
                 </form>
                 <div>
                     <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Don't have an account? <a href='signup'>Sign up</a>
+                        Don't have an account? <NavLink to='/signup'>Sign up</NavLink>
                     </Typography>
                 </div>
             </div>

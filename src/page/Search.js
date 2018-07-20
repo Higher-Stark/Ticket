@@ -15,7 +15,7 @@ import blue from '@material-ui/core/colors/blue';
 import indigo from '@material-ui/core/colors/indigo';
 import PageBar from '../com/PageBar';
 import {data} from '../test-data/data';
-import locale from '../util/locale';
+import {locale} from '../util/utils';
 
 const itemStyles = theme => ({
     root: {

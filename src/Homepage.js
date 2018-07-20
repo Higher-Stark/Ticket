@@ -19,7 +19,12 @@ const styles = theme => ({
     },
     carousel: {
         // display: 'flex',
-        width: '100%',
+        // width: '100%',
+        padding: `0 ${theme.spacing.unit * 2}px`,
+        maxHeight: '360px',
+        width: 'auto',
+        display: 'block',
+        overflow: 'hidden',
         justifyContent: 'center',
         marginBottom: theme.spacing.unit * 2,
     },

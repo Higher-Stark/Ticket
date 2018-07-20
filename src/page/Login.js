@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
 import {NavLink} from 'react-router-dom';
-import cookie from 'react-cookie';
 
 const styles = theme => ({
     container: {
@@ -57,32 +56,33 @@ class Login extends Component{
         verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
         uuid: ''
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-            password: '',
-            email: '',
-            authCode: '',
-        }
-    }
-
-    componentWillMount() {
-        this.changeVerifyImg();
-    }
-
     handleChange = name => event => {
         this.setState({
             [name]: event.target.value,
         });
     };
-
     changeVerifyImg = () => {
         let date = new Date();
         this.setState({
             verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
         });
+    };
+    /*
+ * check username
+ */
+    check_name = () => {
+        let pattern = /^[\w-]{5,25}$/;
+        return pattern.test(this.state.name);
+    };
+    /*
+     * Password must contains digits and characters
+     */
+    check_pwd = () => {
+        let pattern = /^[\w-$%#]{6,25}$/;
+        let test = pattern.test(this.state.password);
+        test = test && (this.state.password.match(/\d/) !== null);
+        test = test && (this.state.password.match(/\w/) !== null);
+        return test;
     };
 
     login = () => {
@@ -97,6 +97,14 @@ class Login extends Component{
         }
         if (authCode.length === 0) {
             alert("验证码不能为空");
+            return;
+        }
+        if(!this.check_name()){
+            alert("Wrong username format");
+            return;
+        }
+       if(!this.check_pwd()){
+            alert("Wrong password format");
             return;
         }
         let s = `username=${name}&password=${password}&answer=${authCode}`;
@@ -119,9 +127,18 @@ class Login extends Component{
                     return;
                 }
                 else if (text === "fail") {
-                    alert("密码错误");
+                    alert("用户名或密码错误");
                     this.changeVerifyImg();
                     return;
+                }
+                else if (text === "UnActive") {
+                    alert("邮箱未激活");
+                    this.changeVerifyImg();
+                    return;
+                }
+                else
+                {
+                    alert("登录成功");
                 }
                 let date = new Date();
                 let utcTime = date.toUTCString();
@@ -130,12 +147,27 @@ class Login extends Component{
                     time: utcTime,
                     token: text,
                 };
-                cookie.save('token', text, { path: '/'});
                 this.props.toggleLogin(currentUser);
+                let storage = window.localStorage;
+                storage.setItem("user", JSON.stringify(currentUser));
                 this.props.history.push('/');
                 return;
             })
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: '',
+            password: '',
+            email: '',
+            authCode: '',
+        }
+    }
+
+    componentWillMount() {
+        this.changeVerifyImg();
+    }
 
     render() {
         const {classes} = this.props;

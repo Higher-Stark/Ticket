@@ -25,8 +25,8 @@ import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Person from '@material-ui/icons/Person';
 import Collections from '@material-ui/icons/Collections';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
-import MusicCircle from 'mdi-material-ui/MusicCircle';
 import BasketballIcon from 'mdi-material-ui/Basketball';
+import MusicCircle from 'mdi-material-ui/MusicCircle';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
@@ -35,12 +35,16 @@ import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
 import Specify from './com/Specify';
+import Activating from "./page/Activating";
+import Activated from "./page/Activated";
+import Cart from "./page/Cart";
 import Ballet from './svg/ballet3.svg';
 import Exhibition from './svg/exhibition.svg';
 import Vocal from './svg/ic-vocal.svg';
 import Curtain from './svg/curtain.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
+import Acrobatics from './svg/acrobatics.svg';
 
 const listStyles = {
     home: {
@@ -55,6 +59,9 @@ const listStyles = {
     svg: {
         width: 24,
         height : 24,
+    },
+    parenting: {
+        color: '#547491',
     },
 };
 
@@ -113,13 +120,20 @@ const styles = theme => ({
 });
 
 class ResponsiveDrawer extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             mobileOpen: false,
             user: null,
             search: null,
         };
+    }
+
+    componentWillMount() {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        if (user !== null) this.setState({user});
     }
 
     handleDrawerToggle = () => {
@@ -130,17 +144,24 @@ class ResponsiveDrawer extends React.Component {
         this.setState({
             user: user,
         });
+
     };
 
     toggleLogout = () => {
-        let {token} = this.state.user;
-        fetch (`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user.token;
+        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })
             .then(response => response.status)
             .then(status => {
-                if (status === 200) this.setState({user: null});
+                if (status === 200) {
+                    storage.removeItem("user");
+                    this.setState({user: null});
+                }
                 else throw Error("Connection failed");
             })
             .catch(e => console.log(e));
@@ -176,7 +197,7 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal%20concert'>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
@@ -204,6 +225,10 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
+                <ListItem button component={NavLink} to='/category/acrobatics'>
+                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
+                </ListItem>
             </div>
         );
 
@@ -226,10 +251,6 @@ class ResponsiveDrawer extends React.Component {
                 <ListItem button component={NavLink} to='/'>
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/music'>
-                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
-                    <ListItemText inset primary='Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/vocal'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
@@ -259,6 +280,10 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
+                <ListItem button component={NavLink} to='/category/acrobatics'>
+                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
+                </ListItem>
                 <Divider/>
                 <ListItem button onClick={this.toggleLogout}>
                     <ListItemIcon><LogoutVariant/></ListItemIcon>
@@ -276,8 +301,12 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : NavMenuList2 }
+                {this.state.user === null ? NavMenuList1 : NavMenuList2}
             </div>
+        );
+
+        const LoginWrapper = (props) => (
+                <Login {...props} toggleLogin={user => this.toggleLogin(user)}/>
         );
 
         return (
@@ -290,21 +319,22 @@ class ResponsiveDrawer extends React.Component {
                             onClick={this.handleDrawerToggle}
                             className={classes.navIconHide}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Hidden smDown implementation='css'>
-                        <Typography variant="title" color="inherit" noWrap>
-                            {
-                                '聚票网'
-                            }
-                        </Typography>
+                            <Typography variant="title" color="inherit" noWrap>
+                                {
+                                    '聚票网'
+                                }
+                            </Typography>
                         </Hidden>
                         <TextField className={classes.search} id='search_input'
                                    label="Search"
-                                   InputProps={{endAdornment: (
-                                       <InputAdornment position="end">
-                                           <SearchIcon onClick={this.toggleSearch}/>
-                                       </InputAdornment>
+                                   InputProps={{
+                                       endAdornment: (
+                                           <InputAdornment position="end">
+                                               <SearchIcon onClick={this.toggleSearch}/>
+                                           </InputAdornment>
                                        ),
                                    }}
                                    onChange={this.handleChange}
@@ -339,16 +369,23 @@ class ResponsiveDrawer extends React.Component {
                     </Drawer>
                 </Hidden>
                 <main className={classes.content}>
-                    <div className={classes.toolbar} />
+                    <div className={classes.toolbar}/>
                     <Route path='/' exact component={Homepage}/>
                     <Route path='/signup' component={SignUp}/>
-                    <Route path='/signin' render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)} />
+                    <Route path='/activating' component={Activating}/>
+                    <Route path='/activated/:uuid' component={Activated}/>
+                    <Route path='/signin' component={LoginWrapper}/>
+                           { 
+                               // render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)}/>
+                           }
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
                     <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
+                    <Route path='/cart' component={Cart}/>
+                    <Route path="empty" component={null} key="empty"/>
                 </main>
             </div>
         );

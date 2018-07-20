@@ -100,17 +100,21 @@ const styles = theme => ({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    progress: {
+        margin: theme.spacing.unit * 2,
+    },
 });
+
 
 const Img = [
     {
         src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
     },
     {
-        src:'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
+        src: 'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
     },
     {
-        src:'http://tu.qiumibao.com/v/img/180518/206969_01133852974.jpg'
+        src: 'http://tu.qiumibao.com/v/img/180518/206969_01133852974.jpg'
     }
 ];
 
@@ -129,8 +133,8 @@ class Homepage extends Component {
 
     componentDidMount() {
         const {page} = this.state;
-        const url = `http://120.79.58.85:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        fetch (url, {
+        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        fetch(url, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -173,6 +177,14 @@ class Homepage extends Component {
         const {classes} = this.props;
         const {items, loading, firstLoad} = this.state;
 
+        const loadingCircle = (
+            <div>
+                <Typography variant="title" color="primary" align='center' noWrap>
+                    <CircularProgress className={classes.progress} size={50} />
+                </Typography>
+            </div>
+        );
+
         return (
             <div className={classes.root}>
                 <div id="topAnchor"></div>
@@ -190,6 +202,7 @@ class Homepage extends Component {
                         热门票品
                     </Typography>
                 </div>
+                {items === 0 ? loadingCircle : null}
                 <div className={classes.wrapper}>
                     <div id='content' className={classes.content}>
                         {

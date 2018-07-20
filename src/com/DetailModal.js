@@ -7,9 +7,9 @@ import IconButton from '@material-ui/core/IconButton';
 import PlaceIcon from '@material-ui/icons/Place';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
 import Collapse from '@material-ui/core/Collapse';
+import Badge from '@material-ui/core/Badge';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
 import Grid from '@material-ui/core/Grid';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
@@ -237,87 +237,6 @@ class DetailModal extends Component {
                             Pay
                         </Button>
                     </div>
-                    {
-                        /*
-                    <Table className={classes.table}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Seat</TableCell>
-                                {card.seats.map(s => {
-                                    return (
-                                        <TableCell key={s.class} numeric>
-                                            {s.class}{' '}
-                                        </TableCell>
-                                    )
-                                })}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>Seat Remain</TableCell>
-                                {card.seats.map((s, i) => {
-                                    return (<TableCell key={i} numeric>{s.remain}</TableCell>);
-                                })}
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>Price</TableCell>
-                                {card.seats.map((s, i) => {
-                                    return (
-                                        <TableCell key={i} numeric>{s.price}</TableCell>
-                                    )
-                                })}
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                    <div className={classes.section3}>
-                        {'Selected Seats: '}
-                        {
-                            card.seats.map((s, i)=> {
-                                const {seats} = this.state;
-                                return (
-                                    <Badge key={i} badgeContent={seats.get(s.class) || 0 } className={classes.badge} color='secondary'>
-                                        <Button variant='contained' onClick={() => {
-                                            seats.set(s.class, seats.get(s.class) + 1 || 1);
-                                            this.setState({seats: seats});
-                                        }}>
-                                            {s.class}
-                                            </Button>
-                                    </Badge>
-                                );
-                            })
-                        }
-                    </div>
-                    <div>
-                        {
-                            this.state.seats.length > 0 ? (
-                                <div>
-                                    <Typography variant='body1' > Selected Seats: </Typography>
-                                    {
-                                        this.state.seats.forEach((value, key) => {
-                                            return (
-                                                <Badge badgeContent={value} key={key} className={classes.badge}>
-                                                    <Typography variant='body1'>{key}</Typography>
-                                                </Badge>
-                                            )
-                                        })
-                                    }
-                                </div>
-                            ) : null
-                        }
-                    </div>
-                    <div className={classes.action}>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={() => this.toggleCart(card.id)}>
-                            <CartPlusIcon/>
-                            Add
-                        </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
-                            <ShoppingIcon/>
-                            Pay
-                        </Button>
-                    </div>
-
-                         */
-                    }
                 </div>
             </div>
         )

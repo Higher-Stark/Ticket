@@ -44,12 +44,9 @@ const styles = theme => ({
     },
     loading: {
         display: 'block',
-        width: 'inherit',
-        position: 'relative'
-        // justifyContent: 'center',
+        position: 'relative',
     },
     fabProgress: {
-        // flexGrow: 1,
         color: pink[400],
         position: 'absolute',
         top: -6,
@@ -79,9 +76,11 @@ class Category extends Component {
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if (data === null) throw Error("Response error!");
+                /*
                 this.setState({
                     data: data.content,
                 });
+                */
                 this.totalPages = data.totalPages;
             })
             .catch(e => console.log(e));
@@ -144,27 +143,28 @@ class Category extends Component {
         return (
             data === null ? (
                 <div className={classes.loading}>
-                    <CircularProgress size={100} className={classes.fabProgress}/>
+                    <CircularProgress size={58} className={classes.fabProgress} />
                 </div>
-                ) :
-            <div className={classes.root}>
-                <div className={classes.content}>
-                    <div className={classes.cards}>
-                        {data.map((x, i) => {
-                            return (<Activity card={x} key={i} className={classes.card}/>)
-                        })}
+            ) :
+                <div className={classes.root}>
+                    <div className={classes.content}>
+                        <div className={classes.cards}>
+                            {data.map((x, i) => {
+                                return (<Activity card={x} key={i} className={classes.card} />)
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
                     </div>
                 </div>
-                <div>
-                    <PageBar current={page} max={this.totalPages} goto={this.viewPage}/>
-                </div>
-            </div>
         );
     }
 }
 
 Category.propTypes = {
     classes: PropTypes.object.isRequired,
+    match : PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Category);

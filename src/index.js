@@ -5,7 +5,7 @@ import App from './App';
 class Root extends Component {
     render() {
         return (
-            <App/>
+            <App />
         )
     }
 }

@@ -81,13 +81,13 @@ class PageBar extends Component {
                         array.map((s, i) => {
                             return (
                                 Number.isInteger(s) ?
-                                <Typography variant='button' component={IconButton}
-                                            className={s === current ? classes.active : classes.digit}
-                                            onClick={() => goto(s)}
-                                            key={i}
-                                >
-                                    {s}
-                                </Typography>
+                                    <Typography variant='button' component={IconButton}
+                                                className={s === current ? classes.active : classes.digit}
+                                                onClick={() => (s === current ? null : goto(s))}
+                                                key={i}
+                                    >
+                                        {s}
+                                    </Typography>
                                     :
                                     <Typography variant='body1' component='p' className={classes.icon} key={i}>
                                         {s}

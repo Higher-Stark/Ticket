@@ -172,11 +172,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/music'>
+                <ListItem button component={NavLink} to='/category/concert'>
                     <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
                     <ListItemText inset primary='Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/vocal%20concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
@@ -196,11 +196,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
+                <ListItem button component={NavLink} to='/category/dancing'>
                     <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
+                <ListItem button component={NavLink} to='/category/parenting'>
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
@@ -346,7 +346,7 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
-                    <Route path='/category/:sort' component={Category}/>
+                    <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                 </main>

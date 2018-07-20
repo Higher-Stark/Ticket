@@ -7,7 +7,7 @@ class Account extends Component {
         return (
             <div>
                 <Avatar alt='avatar' src='favicon.ico'/>
-                <Typography variant='body2'>{this.props.user.toString()}</Typography>
+                <Typography variant='body2'>{this.props.user.name.toString()}</Typography>
             </div>
         )
     }

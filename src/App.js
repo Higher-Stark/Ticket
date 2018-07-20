@@ -5,6 +5,7 @@ import red from '@material-ui/core/colors/red';
 import lime from '@material-ui/core/colors/lime';
 import indigo from '@material-ui/core/colors/indigo';
 import deepOrange from '@material-ui/core/colors/deepOrange';
+import grey from '@material-ui/core/colors/grey';
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
@@ -25,7 +26,7 @@ const theme = createMuiTheme({
             fontWeight: 500,
         },
         subheading: {
-            fontSize: 12,
+            fontSize: 16,
         },
         button: {
             fontStyle: 'bold',
@@ -41,6 +42,11 @@ const theme = createMuiTheme({
             light: '#ff844c',
             main: deepOrange[600],
             dark: '#b91400',
+        },
+        textSecondary: {
+            light: '#484848',
+            main: grey[900],
+            dark: '#000000',
         },
         error: {
             light: red[200],
@@ -62,46 +68,31 @@ const theme = createMuiTheme({
 });
 
 
-function getCookie(cname)
-{
-    let name = cname + "=";
-    let ca = document.cookie.split(';');
-    for(let i=0; i<ca.length; i++)
-    {
-        let c = ca[i].trim();
-        if (c.indexOf(name)===0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
-function setCookie(cname,cvalue)
-{
-    let expires = "expires=null; path=/";
-    document.cookie = cname + "=" + cvalue + "; " + expires;
-}
-
-
 
 class App extends Component {
     constructor(props) {
         super(props);
+        let storage = window.sessionStorage;
+        let flash = storage.getItem('flash') || false;
         this.state = {
-            flash: parseInt(getCookie("flash"),0),
-            user:null,
+            flash: flash,
         };
     }
 
     componentDidMount() {
-        setTimeout(() => {setCookie("flash","1");this.setState({flash: true});}, 5000);
+        let storage = window.sessionStorage;
+        setTimeout(() => {
+            storage.setItem('flash', true);
+            this.setState({ flash: true });
+        },
+            5000
+        );
     }
 
-    componentWillUnmount(){
-        setCookie("flash","0");
-    }
 
     render() {
         const Welcome = (
-            <div onClick={() => {setCookie("flash","1");this.setState({flash: true})}} id='background'>
+            <div onClick={() => {const { cookies } = this.props;cookies.set('flash', 1);this.setState({flash: true})}} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>

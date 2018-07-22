@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles';
-import Activity from '../com/Activity';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import pink from '@material-ui/core/colors/pink';
+import Activity from '../com/Activity';
 import PageBar from '../com/PageBar';
 
 const styles = theme => ({
@@ -40,7 +41,18 @@ const styles = theme => ({
     },
     card: {
         flexGrow: 1,
-    }
+    },
+    loading: {
+        display: 'block',
+        position: 'relative',
+    },
+    fabProgress: {
+        color: pink[400],
+        position: 'absolute',
+        top: -6,
+        left: -6,
+        zIndex: 1,
+    },
 });
 
 class Category extends Component {
@@ -51,7 +63,6 @@ class Category extends Component {
             page: 1,
         }
     }
-
 
     componentWillMount() {
         const {match} = this.props;
@@ -70,7 +81,6 @@ class Category extends Component {
             })
             .catch(e => console.log(e));
     }
-
 
     componentWillReceiveProps(nextProps, nextContext) {
         const {match} = nextProps;
@@ -107,15 +117,14 @@ class Category extends Component {
             .catch(e => console.log(e));
     }
 
-
     viewPage = (idx) => {
         const category = this.props.match.params.category;
         fetch(this.url + `?pagenumber=${idx}&type=${category}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
-                if( data === null ) throw Error("Response error");
+                if (data === null) throw Error("Response error");
                 this.setState({
-                    data : data.content,
+                    data: data.content,
                     page: idx,
                 });
                 this.totalPages = data.totalPages;
@@ -130,19 +139,19 @@ class Category extends Component {
         return (
             data === null ? (
                     <div className={classes.loading}>
-                        <CircularProgress size={58} className={classes.fabProgress} />
+                        <CircularProgress size={58} className={classes.fabProgress}/>
                     </div>
                 ) :
                 <div className={classes.root}>
                     <div className={classes.content}>
                         <div className={classes.cards}>
                             {data.map((x, i) => {
-                                return (<Activity card={x} key={i} className={classes.card} />)
+                                return (<Activity card={x} key={i} className={classes.card}/>)
                             })}
                         </div>
                     </div>
                     <div>
-                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
+                        <PageBar current={page} max={this.totalPages} goto={this.viewPage}/>
                     </div>
                 </div>
         );
@@ -151,7 +160,7 @@ class Category extends Component {
 
 Category.propTypes = {
     classes: PropTypes.object.isRequired,
-    match : PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Category);

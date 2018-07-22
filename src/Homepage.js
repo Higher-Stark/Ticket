@@ -174,11 +174,11 @@ class Homepage extends Component {
 
 
         const loadingCircle = (
-                <div>
-                    <Typography variant="title" align='center' noWrap>
-                        <CircularProgress className={classes.progress} size={50}/>
-                    </Typography>
-                </div>
+            <div>
+                <Typography variant="title" align='center' noWrap>
+                    <CircularProgress className={classes.progress} size={50}/>
+                </Typography>
+            </div>
         );
 
         return (
@@ -205,7 +205,7 @@ class Homepage extends Component {
                             this.content.map((s, i) => {
                                 return (
                                     <div className={classes.card} key={i}>
-                                            <Activity card={s}/>
+                                        <Activity card={s}/>
                                     </div>
                                 );
                             })

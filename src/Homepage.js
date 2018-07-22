@@ -175,8 +175,8 @@ class Homepage extends Component {
 
         const loadingCircle = (
             <div>
-                <Typography variant="title" align='center' noWrap>
-                    <CircularProgress className={classes.progress} size={50}/>
+                <Typography variant="title" color="primary" align='center' noWrap>
+                    <CircularProgress className={classes.progress} size={50} />
                 </Typography>
             </div>
         );

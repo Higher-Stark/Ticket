@@ -122,9 +122,9 @@ class Category extends Component {
         fetch(this.url + `?pagenumber=${idx}&type=${category}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
-                if (data === null) throw Error("Response error");
+                if( data === null ) throw Error("Response error");
                 this.setState({
-                    data: data.content,
+                    data : data.content,
                     page: idx,
                 });
                 this.totalPages = data.totalPages;
@@ -139,19 +139,19 @@ class Category extends Component {
         return (
             data === null ? (
                     <div className={classes.loading}>
-                        <CircularProgress size={58} className={classes.fabProgress}/>
+                        <CircularProgress size={58} className={classes.fabProgress} />
                     </div>
                 ) :
                 <div className={classes.root}>
                     <div className={classes.content}>
                         <div className={classes.cards}>
                             {data.map((x, i) => {
-                                return (<Activity card={x} key={i} className={classes.card}/>)
+                                return (<Activity card={x} key={i} className={classes.card} />)
                             })}
                         </div>
                     </div>
                     <div>
-                        <PageBar current={page} max={this.totalPages} goto={this.viewPage}/>
+                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
                     </div>
                 </div>
         );
@@ -160,7 +160,7 @@ class Category extends Component {
 
 Category.propTypes = {
     classes: PropTypes.object.isRequired,
-    match: PropTypes.object.isRequired,
+    match : PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Category);

@@ -9,7 +9,6 @@ import ArrowCollapseUp from 'mdi-material-ui/ArrowCollapseUp';
 import Activity from './com/Activity';
 import Typography from '@material-ui/core/Typography';
 import Sliders from './Sliders/components/Sliders';
-import Slide from '@material-ui/core/Slide';
 
 const styles = theme => ({
     root: {
@@ -175,13 +174,11 @@ class Homepage extends Component {
 
 
         const loadingCircle = (
-            <Slide direction="up" in={items === 0}>
                 <div>
                     <Typography variant="title" align='center' noWrap>
                         <CircularProgress className={classes.progress} size={50}/>
                     </Typography>
                 </div>
-            </Slide>
         );
 
         return (
@@ -208,9 +205,7 @@ class Homepage extends Component {
                             this.content.map((s, i) => {
                                 return (
                                     <div className={classes.card} key={i}>
-                                        <Slide direction="up" in={items > 0}>
                                             <Activity card={s}/>
-                                        </Slide>
                                     </div>
                                 );
                             })

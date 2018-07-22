@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles';
 import Activity from '../com/Activity';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
+import PageBar from '../com/PageBar';
 
 const styles = theme => ({
     root: {
@@ -53,67 +53,105 @@ class Category extends Component {
     }
 
 
-    componentDidMount() {
+    componentWillMount() {
+        const {match} = this.props;
+        const category = match.params.category;
         const {page} = this.state;
-        const {sort} = this.props.match.params;
-        const url = `http://120.79.58.85:30005/Ticket/QueryByTypePage?pagenumber=${page}&type=${sort}`;
-        console.log(url);
-        fetch(url, {
-            method: 'GET',
-            credentials: "include",
-        })
-            .then(response => response.json())
-            .then(data => this.setState({data: data.content}))
+        fetch(this.url + `?pagenumber=${page}&type=${category}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                /*
+                this.setState({
+                    data: data.content,
+                });
+                */
+                this.totalPages = data.totalPages;
+            })
             .catch(e => console.log(e));
-        console.log("componentDidMount");
     }
+
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        const {match} = nextProps;
+        this.setState({
+            category: match.params.category,
+            page: 1,
+        })
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        const {match} = this.props;
+        let preCategory = match.params.category;
+        let nextCategory = match.params.category;
+        if (nextCategory !== preCategory) return true;
+        preCategory = this.state.category;
+        nextCategory = nextState.category;
+        if (preCategory !== nextCategory) return true;
+        return false;
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {match} = this.props;
+        const category = match.params.category;
+        const {page} = this.state;
+        fetch(this.url + `?pagenumber=${page}&type=${category}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                });
+                this.totalPages = data.totalPages;
+            })
+            .catch(e => console.log(e));
+    }
+
+
+    viewPage = (idx) => {
+        const category = this.props.match.params.category;
+        fetch(this.url + `?pagenumber=${idx}&type=${category}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if( data === null ) throw Error("Response error");
+                this.setState({
+                    data : data.content,
+                    page: idx,
+                });
+                this.totalPages = data.totalPages;
+            })
+            .catch(e => console.log(e));
+    };
+
     render() {
         const {classes} = this.props;
-
-        const data = this.state.data;
-        console.log(data);
-
-        const loading = (
-            <div>
-                <br/>
-                <Typography variant="title"  align='center' noWrap>
-                    <CircularProgress className={classes.progress} size={50} />
-                    <br/>Loading
-                </Typography>
-            </div>
-        );
-
-        const activities = (
-            <div className={classes.root}>
-                <div className={classes.content}>
-                    <div className={classes.cards}>
-                        {data.map(x => {
-                            return (
-                                    <Activity card={x} key={x.id} className={classes.card}/>
-                            )
-                        })}
-                    </div>
-                </div>
-            </div>
-        );
-
-        const toShow = (
-            <div>
-                {data.length === 0 ? loading : activities}
-            </div>
-        );
-
+        const {data, page} = this.state;
 
         return (
-            <div>
-                {toShow}
-            </div>
+            data === null ? (
+                    <div className={classes.loading}>
+                        <CircularProgress size={58} className={classes.fabProgress} />
+                    </div>
+                ) :
+                <div className={classes.root}>
+                    <div className={classes.content}>
+                        <div className={classes.cards}>
+                            {data.map((x, i) => {
+                                return (<Activity card={x} key={i} className={classes.card} />)
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
+                    </div>
+                </div>
         );
     }
 }
 
 Category.propTypes = {
     classes: PropTypes.object.isRequired,
+    match : PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Category);

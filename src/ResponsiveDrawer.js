@@ -146,21 +146,23 @@ class ResponsiveDrawer extends React.Component {
     };
 
     toggleLogout = () => {
-        /*const {cookies} = this.props;
-        let token = cookies.get('token');
-        /*fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user.token;
+        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })
             .then(response => response.status)
             .then(status => {
                 if (status === 200) {
-                    cookies.remove('token');
+                    storage.removeItem("user");
                     this.setState({user: null});
                 }
                 else throw Error("Connection failed");
             })
-            .catch(e => console.log(e));*/
+            .catch(e => console.log(e));
     };
 
     handleChange = (e) => {

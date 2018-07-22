@@ -21,10 +21,6 @@ import Avatar from '@material-ui/core/Avatar';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import HomeIcon from '@material-ui/icons/Home';
-import ShoppingCart from '@material-ui/icons/ShoppingCart';
-import Person from '@material-ui/icons/Person';
-import Collections from '@material-ui/icons/Collections';
-import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import BasketballIcon from 'mdi-material-ui/Basketball';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
@@ -46,6 +42,8 @@ import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
 import Acrobatics from './svg/acrobatics.svg';
 
+import NestedList from './NestedList'
+
 const listStyles = {
     home: {
         color: '#2196f3',
@@ -58,7 +56,7 @@ const listStyles = {
     },
     svg: {
         width: 24,
-        height : 24,
+        height: 24,
     },
     parenting: {
         color: '#547491',
@@ -148,9 +146,9 @@ class ResponsiveDrawer extends React.Component {
     };
 
     toggleLogout = () => {
-        const {cookies} = this.props;
-        let {token} = cookies.get('token');
-        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        /*const {cookies} = this.props;
+        let token = cookies.get('token');
+        /*fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })
@@ -162,7 +160,7 @@ class ResponsiveDrawer extends React.Component {
                 }
                 else throw Error("Connection failed");
             })
-            .catch(e => console.log(e));
+            .catch(e => console.log(e));*/
     };
 
     handleChange = (e) => {
@@ -226,65 +224,7 @@ class ResponsiveDrawer extends React.Component {
             </div>
         );
 
-// login
-        const NavMenuList2 = (
-            <div>
-                <ListItem button component={NavLink} to='/account'>
-                    <ListItemIcon><Person/></ListItemIcon>
-                    <ListItemText inset primary='Account'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/cart'>
-                    <ListItemIcon><ShoppingCart/></ListItemIcon>
-                    <ListItemText inset primary='Cart'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/collection'>
-                    <ListItemIcon><Collections/></ListItemIcon>
-                    <ListItemText inset primary='Collection'/>
-                </ListItem>
-                <Divider/>
-                <ListItem button component={NavLink} to='/'>
-                    <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
-                    <ListItemText inset primary='Home'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
-                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Vocal Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Exhibition'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/opera'>
-                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Opera'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/sports'>
-                    <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
-                    <ListItemText inset primary='Sports'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
-                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Dance'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
-                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Parent-child'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/acrobatics'>
-                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Acrobatics'/>
-                </ListItem>
-                <Divider/>
-                <ListItem button onClick={this.toggleLogout}>
-                    <ListItemIcon><LogoutVariant/></ListItemIcon>
-                    <ListItemText inset primary='Logout'/>
-                </ListItem>
-            </div>
-        );
+
 
         const drawer = (
             <div>
@@ -295,7 +235,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : NavMenuList2}
+                {this.state.user === null ? NavMenuList1 : <NestedList toggleLogout={this.toggleLogout()}/>}
             </div>
         );
 

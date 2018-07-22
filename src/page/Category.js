@@ -52,6 +52,7 @@ class Category extends Component {
         }
     }
 
+
     componentDidMount() {
         const {page} = this.state;
         const {sort} = this.props.match.params;
@@ -64,8 +65,8 @@ class Category extends Component {
             .then(response => response.json())
             .then(data => this.setState({data: data.content}))
             .catch(e => console.log(e));
+        console.log("componentDidMount");
     }
-
     render() {
         const {classes} = this.props;
 
@@ -75,7 +76,7 @@ class Category extends Component {
         const loading = (
             <div>
                 <br/>
-                <Typography variant="title" color="white" align='center' noWrap>
+                <Typography variant="title"  align='center' noWrap>
                     <CircularProgress className={classes.progress} size={50} />
                     <br/>Loading
                 </Typography>
@@ -88,9 +89,7 @@ class Category extends Component {
                     <div className={classes.cards}>
                         {data.map(x => {
                             return (
-                                <div className='animated fadeIn'>
                                     <Activity card={x} key={x.id} className={classes.card}/>
-                                </div>
                             )
                         })}
                     </div>

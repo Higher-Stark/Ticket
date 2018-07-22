@@ -1,255 +1,371 @@
-import React, {Component} from 'react';
+import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import CalendarToday from 'mdi-material-ui/CalendarToday';
-import PlaceIcon from '@material-ui/icons/Place';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import {lighten} from '@material-ui/core/styles/colorManipulator';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+
+import {Cards} from "../test-data/Cards";
+
+const columnData = [
+    {id: 'name', numeric: false, disablePadding: true, label: '商品信息'},
+    {id: 'calories', numeric: true, disablePadding: false, label: '单价'},
+    {id: 'fat', numeric: true, disablePadding: false, label: '数量'},
+    {id: 'carbs', numeric: true, disablePadding: false, label: '金额'},
+    {id: 'protein', numeric: true, disablePadding: false, label: '操作'},
+];
 
 
-import {Cards} from '../test-data/Cards';
+class EnhancedTableHead extends React.Component {
+    createSortHandler = property => event => {
+        this.props.onRequestSort(event, property);
+    };
 
-const itemStyles = theme => ({
-    root: {
-        [theme.breakpoints.down('sm')]: {
-            height: 120,
-        },
-        [theme.breakpoints.up('sm')]: {
-            minHeight: 320,
-        },
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit,
-        display: 'flex',
-    },
-    title: {
-        margin: theme.spacing.unit,
-    },
-    image: {
-        [theme.breakpoints.down('sm')]: {
-            maxWidth: 60,
-        },
-        [theme.breakpoints.up('sm')]: {
-            maxWidth: 240,
-        },
-        height: 'inherit',
-    },
-    pic: {
-        width: '15%',
-        padding: theme.spacing.unit,
-        overflow: 'hidden',
-    },
-});
-
-class ActivityItem extends Component {
     render() {
-        const {classes, data} = this.props;
+        const {onSelectAllClick, numSelected, rowCount} = this.props;
 
         return (
-            <div>
-                <Grid spacing={8} container>
-                    {
-                        data.map(s => {
-                            return (
-                                <Grid container spacing={8} className={classes.root} key={s.id}>
-                                    <Grid item xs={2} className={classes.pic}>
-                                        <img src={s.images.s3_4} className={classes.image} alt={s.title}/>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='title' component='h2' color='primary'
-                                                        className={classes.title}>
-                                                {`[${s.city}] ${s.title}`}
-                                            </Typography>
-                                            <Typography variant='subheading' color='secondary'>
-                                                {s.brief}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.dates.length === 1 ? s.dates[0] : `${s.dates[0]} - ${s.dates[s.dates.length - 1]}`}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <PlaceIcon/>{s.location}{' - '}{s.city}
-                                            </Typography>
-                                            <Typography variant='headline' color='primary'>
-                                                {s.price}{' '}{s.status}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                ￥{s.price}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                <Button color="inherit" size='large'>-</Button>{s.quantity}<Button
-                                                color="inherit" size='large'>+</Button>
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                ￥{s.price * s.quantity}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                <Button color="inherit" size='large'>删除</Button>
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                </Grid>
-                            )
-                        })
-                    }
-                </Grid>
-            </div>
-        )
+            <TableHead>
+                <TableRow>
+                    <TableCell padding="checkbox">
+                        <Checkbox
+                            indeterminate={numSelected > 0 && numSelected < rowCount}
+                            checked={numSelected > 0 && numSelected === rowCount}
+                            onChange={onSelectAllClick}
+                        />
+                    </TableCell>
+                    {columnData.map(column => {
+                        return (
+                            <TableCell
+                                numeric={column.numeric}
+                                padding={column.disablePadding ? 'none' : 'default'}
+                            >
+                                {column.label}
+                            </TableCell>
+                        );
+                    }, this)}
+
+                </TableRow>
+            </TableHead>
+        );
     }
 }
 
-ActivityItem.propTypes = {
-    classes: PropTypes.object.isRequired,
-    data: PropTypes.array.isRequired,
+
+EnhancedTableHead.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.string.isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
 };
 
-const ActivityWithStyle = withStyles(itemStyles)(ActivityItem);
+const toolbarStyles = theme => ({
+    root: {
+        paddingRight: theme.spacing.unit,
+    },
+    highlight:
+        theme.palette.type === 'light'
+            ? {
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
+            : {
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
+    spacer: {
+        flex: '1 1 100%',
+    },
+    actions: {
+        color: theme.palette.text.secondary,
+    },
+    title: {
+        flex: '0 0 auto',
+    },
+});
+
+let EnhancedTableToolbar = props => {
+    const {numSelected, classes} = props;
+
+    return (
+        <Toolbar
+            className={classNames(classes.root, {
+                [classes.highlight]: numSelected > 0,
+            })}
+        >
+            <div className={classes.title}>
+                {numSelected > 0 ? (
+                    <Typography color="inherit" variant="subheading">
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography variant="title" id="tableTitle">
+                        购物车
+                    </Typography>
+                )}
+            </div>
+            <div className={classes.spacer}/>
+        </Toolbar>
+    );
+};
+
+EnhancedTableToolbar.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+};
+
+EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
     root: {
-        display: 'flex',
+        width: '100%',
+        marginTop: theme.spacing.unit * 3,
     },
-    category: {
-        display: 'inline-block',
-        flexGrow: 1,
+    table: {
+        minWidth: 1020,
     },
-    textSelect: {
-        display: 'inline-block',
-        flexGrow: 1,
-        margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        '&:hover': {
-            background: '#3e072e',
-        },
-        '&:active': {
-            background: '#cccc44',
-        },
+    tableWrapper: {
+        overflowX: 'auto',
     },
-    content: {
-        display: 'flex',
+    image: {
+        width: '100%',
+        align: 'center',
     },
-    appBar: {
-        marginBottom: theme.spacing.unit,
-    },
-    flex: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
+    info: {
+        width: '20%',
     }
+
 });
 
-class Cart extends Component {
+class Cart extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            pages: 0,
-            value: 0,
-            data: [],
-            filter: [],
-        };
-    };
 
-    componentDidMount() {
-        const {search} = this.props.location;
-        console.log(search);
-        /*
-        fetch (`/search?q=${search}`, {
-            method: 'GET',
-        })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error encountered");
-                return response.json();
-            })
-            .then(data => {
-                this.setState({data: data});
-            })
-            .catch(e => alert(e.message));
-        */
+        this.state = {
+            order: 'asc',
+            orderBy: 'calories',
+            selected: [],
+            data: Cards,
+            page: 0,
+            rowsPerPage: 5,
+        };
     }
 
-    handleChange = (event, value) => {
-        this.setState({value});
+    handleRequestSort = (event, property) => {
+        const orderBy = property;
+        let order = 'desc';
+
+        if (this.state.orderBy === property && this.state.order === 'desc') {
+            order = 'asc';
+        }
+
+        this.setState({order, orderBy});
     };
+
+    handleSelectAllClick = (event, checked) => {
+        if (checked) {
+            this.setState(state => ({selected: state.data.map(n => n.id)}));
+            return;
+        }
+        this.setState({selected: []});
+    };
+
+    handleClick = (event, id) => {
+        const {selected} = this.state;
+        const selectedIndex = selected.indexOf(id);
+        let newSelected = [];
+
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+        }
+
+        this.setState({selected: newSelected});
+    };
+
+    handleDelete = (event, id) => {
+        let newData = this.state.data.slice();
+        let i = 0;
+        for (; i < newData.length; i++) {
+            if (newData[i].id === id)
+                break;
+        }
+        newData.splice(i, 1);
+        this.setState({data: newData});
+    };
+
+    handleSub = (event, id) => {
+        let newData = this.state.data.slice();
+        let i = 0;
+        for (; i < newData.length; i++) {
+            if (newData[i].id === id) {
+                newData[i].quantity--;
+                break;
+            }
+        }
+        this.setState({data: newData});
+    };
+
+    handleAdd = (event, id) => {
+        let newData = this.state.data.slice();
+        let i = 0;
+        for (; i < newData.length; i++) {
+            if (newData[i].id === id) {
+                newData[i].quantity++;
+                break;
+            }
+        }
+        this.setState({data: newData});
+    };
+
+
+    handleDeleteSelected = (event) => {
+        let newData = this.state.data.slice();
+        let newSelected = this.state.selected.slice();
+        let i = 0;
+        let id = 0;
+        console.log(this.state.selected);
+        let length = newData.length;
+        for (; id < newSelected.length; id++) {
+            console.log(id);
+            for (; i < length; i++) {
+                if (newData[i].id === newSelected[id])
+                    break;
+            }
+            newData.splice(i, 1);
+        }
+        this.setState({data: newData});
+        this.setState({selected: []});
+    };
+
+
+    handleChangePage = (event, page) => {
+        this.setState({page});
+    };
+
+    detail = (id) => {
+        this.props.history.push("/detail/"+id)
+    };
+
+
+    isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
         const {classes} = this.props;
-
-        let total=0;
-
-        Cards.map(s => {total+=s.price*s.quantity;return null});
-
+        const {data, order, orderBy, selected, rowsPerPage, page} = this.state;
+        console.log(selected);
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+        let totalPrice = 0;
         return (
-            <div>
-                <div>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Grid item xs={4}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    商品信息
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    单价
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    数量
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    金额
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center'
-                                            className={classes.menuButton}>
-                                    操作
-                                </Typography>
-                            </Grid>
-                        </Toolbar>
-                    </AppBar>
-                    <ActivityWithStyle data={Cards}/>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Grid item xs={8}>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" className={classes.flex} align='center'>
-                                    合计：￥{total}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" className={classes.flex} align='center'>
-                                    <Button color="inherit" size='large'>结算</Button>
-                                </Typography>
-                            </Grid>
-                        </Toolbar>
-                    </AppBar>
+            <Paper className={classes.root}>
+                <EnhancedTableToolbar numSelected={selected.length}/>
+                <div className={classes.tableWrapper}>
+                    <Table className={classes.table} aria-labelledby="tableTitle">
+                        <EnhancedTableHead
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={this.handleSelectAllClick}
+                            onRequestSort={this.handleRequestSort}
+                            rowCount={data.length}
+                        />
+                        <TableBody>
+                            {data
+                                .map(n => {
+                                    const isSelected = this.isSelected(n.id);
+                                    totalPrice += isSelected * n.price * n.quantity;
+                                    return (
+                                        <TableRow
+                                            hover
+                                            role="checkbox"
+                                            aria-checked={isSelected}
+                                            tabIndex={-1}
+                                            key={n.id}
+                                            selected={isSelected}
+                                        >
+                                            <TableCell padding="checkbox"
+                                                       onClick={event => this.handleClick(event, n.id)}>
+                                                <Checkbox checked={isSelected}/>
+                                            </TableCell>
+                                            <TableCell className={classes.info} component="th" scope="row"
+                                                       padding="none" onClick={() => this.detail(n.id)}>
+                                                <Grid container spacing={8} className={classes.root} key={n.id}>
+                                                    <Grid item xs={6}>
+                                                        <img src={n.images.s3_4} className={classes.image}
+                                                             alt={n.title}/>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography variant='title' component='h2' color='primary'
+                                                                    className={classes.title}>
+                                                            {`[${n.title}]`}
+                                                        </Typography>
+                                                        <Typography variant='subheading' color='secondary'>
+                                                            {n.city}{' '}{n.venue}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </TableCell>
+                                            <TableCell numeric>￥{n.price}</TableCell>
+                                            <TableCell
+                                                numeric><Button disabled={n.quantity === 1}
+                                                                onClick={event => this.handleSub(event, n.id)}>-</Button>{n.quantity}<Button
+                                                onClick={event => this.handleAdd(event, n.id)}>+</Button></TableCell>
+                                            <TableCell numeric>￥{n.price * n.quantity}</TableCell>
+                                            <TableCell numeric
+                                                       onClick={event => this.handleDelete(event, n.id)}>删除</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow style={{height: 49 * emptyRows}}>
+                                    <TableCell colSpan={6}/>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Button disabled={selected.length === 0}
+                                            onClick={event => this.handleDeleteSelected(event)}>
+                                        批量删除
+                                    </Button>
+                                </TableCell>
+                                <TableCell/>
+                                <TableCell/>
+                                <TableCell/>
+                                <TableCell
+                                > 合计：￥{totalPrice}
+                                </TableCell>
+                                <TableCell>
+                                    <Button disabled={totalPrice === 0}>结算</Button>
+                                </TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                    </Table>
                 </div>
-            </div>
-        )
+            </Paper>
+        );
     }
 }
 

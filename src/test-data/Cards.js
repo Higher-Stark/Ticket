@@ -29,6 +29,7 @@ export const Cards = [
         ],
         price: 2000,
         quantity:1,
+        venue:'yjj',
     },
     {
         id: 1001,
@@ -70,6 +71,7 @@ export const Cards = [
         ],
         price: 3600,
         quantity:2,
+        venue:'jyy',
     },
     {
         id: 1002,
@@ -101,5 +103,6 @@ export const Cards = [
         ],
         price: 1200,
         quantity:3,
+        venue:'yjk',
     },
 ];

@@ -53,7 +53,7 @@ const styles = theme => ({
 
 class Login extends Component{
     verification = {
-        verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
+        verifyUrl: 'http://pipipan.cn:30001/Code/Generate',
         uuid: ''
     };
     handleChange = name => event => {
@@ -107,7 +107,7 @@ class Login extends Component{
             return;
         }
         let s = `username=${name}&password=${password}&answer=${authCode}`;
-        fetch('http://120.79.58.85:30004/Sign/In', {
+        fetch('http://pipipan.cn:30004/Sign/In', {
             method: 'POST',
             body: s,
             headers: new Headers({

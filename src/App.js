@@ -78,22 +78,31 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        const { cookies } = props;
+        let storage = window.sessionStorage;
+        let flash = storage.getItem('flash') || false;
         this.state = {
-            flash: cookies.get('flash')||false,
-            user:null,
+            flash: flash,
         };
     }
 
     componentDidMount() {
-        const { cookies } = this.props;
-        setTimeout(() => {cookies.set('flash', 1);this.setState({flash: true});}, 5000);
+        let storage = window.sessionStorage;
+        setTimeout(() => {
+                storage.setItem('flash', true);
+                this.setState({flash: true});
+            },
+            5000
+        );
     }
 
 
     render() {
         const Welcome = (
-            <div onClick={() => {const { cookies } = this.props;cookies.set('flash', 1);this.setState({flash: true})}} id='background'>
+            <div onClick={() => {
+                let storage = window.sessionStorage;
+                storage.setItem('flash', true);
+                this.setState({flash: true})
+            }} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>

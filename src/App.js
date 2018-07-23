@@ -70,12 +70,6 @@ const theme = createMuiTheme({
     ],
 });
 
-const greetingPics = [
-    black,
-    coverBlack,
-    coverColor,
-] 
-
 class App extends Component {
 
     constructor(props) {
@@ -88,6 +82,7 @@ class App extends Component {
         this.slideshow = this.slideshow.bind(this)
         this.cancelFlash = this.cancelFlash.bind(this)
     }
+
     componentDidMount() {
         this.slideshow()
         setTimeout(this.cancelFlash,6000)
@@ -96,18 +91,21 @@ class App extends Component {
     cancelFlash(){
         console.log(this.state.flash)
         this.setState({
-            flash:false
+            flash:true
         })
         console.log(this.state.flash)
     }
 
     slideshow() {
+        console.log(document.getElementById("background"))
         var imgs=document.getElementById("background").getElementsByTagName("img"), //得到图片们
-      
+        
         current=0; //current为当前活跃的图片编号
       
         function slideOff() {
-          imgs[current].className=""; //图片淡出
+            console.log(current)
+            imgs[current].className=""; //图片淡出
+            console.log(imgs[current])
       
         }
         function slideOn() {
@@ -125,7 +123,7 @@ class App extends Component {
     }
     render() {
         const Welcome = (
-            <div id='background' className='background' onClick = {this.cancelFlash} >
+            <div id="background" className='background' onClick = {this.cancelFlash} >
                 <img className = "active" src = {black}/>
                 <img src = {coverBlack}/>
                 <img src = {coverColor}/>
@@ -139,7 +137,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ?  Welcome:<ResponsiveDrawer/>}
+                    {this.state.flash ?  <ResponsiveDrawer/>:Welcome}
                 </Router>
             </MuiThemeProvider>
         );

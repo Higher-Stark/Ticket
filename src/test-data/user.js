@@ -3,6 +3,7 @@ export const User = [
         name: 'Judy',
         password: '123456abc',
         email: 'judy1964@hotmail.com',
+        image: "https://image.flaticon.com/icons/svg/25/25231.svg",
     },
     {
         name: 'Michale',

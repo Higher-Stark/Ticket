@@ -31,6 +31,7 @@ import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
 import Account from './Account';
+import User from './page/User';
 import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
@@ -229,6 +230,10 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Acrobatics'/>
                 </ListItem>
+                <ListItem button component={NavLink} to='/user'>
+                    <ListItemIcon><Person/></ListItemIcon>
+                    <ListItemText inset primary='User'/>
+                </ListItem>
             </div>
         );
 
@@ -381,6 +386,7 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/account' render={props => (this.state.user === null ? (
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
+                    <Route path='/user' component={User}/>
                     <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>

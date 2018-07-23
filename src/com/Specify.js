@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import cookie from 'react-cookie';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -132,14 +131,16 @@ class Specify extends Component{
 
     toggleCart = () => {
         const {detail, price, date, quantity} = this.state;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
         let body = {
-            token: cookie.load('token'),
+            token: user.token,
             ticketid: detail.id,
             price: price,
             date: date,
             number: quantity,
         };
-        const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage"
+        const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage";
         fetch (url, {
             method: 'POST',
             body: urlEncode(body),

@@ -70,6 +70,7 @@ const theme = createMuiTheme({
     ],
 });
 
+
 class App extends Component {
 
     constructor(props) {
@@ -84,8 +85,10 @@ class App extends Component {
     }
 
     componentDidMount() {
+
         this.slideshow()
         setTimeout(this.cancelFlash,6000)
+
     }
 
     cancelFlash(){
@@ -127,10 +130,12 @@ class App extends Component {
     }
     render() {
         const Welcome = (
+
             <div id="background" className='background' onClick = {this.cancelFlash} >
                 <img className = "active" src = {black}/>
                 <img src = {coverBlack}/>
                 <img src = {coverColor}/>
+
                 <div className="content">
                     <h2 className = "greeting-word">Fashion passes,</h2>
                     <h2 className = "greeting-word">style remains.</h2>

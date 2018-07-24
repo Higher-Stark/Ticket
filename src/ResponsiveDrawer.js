@@ -39,9 +39,7 @@ import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import Cart from "./page/Cart";
 import Ballet from './svg/ballet3.svg';
-import Exhibition from './svg/exhibition.svg';
 import Vocal from './svg/ic-vocal.svg';
-import Curtain from './svg/curtain.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
 import Acrobatics from './svg/acrobatics.svg';
@@ -291,8 +289,7 @@ class ResponsiveDrawer extends React.Component {
 
     toggleSearch = () => {
         this.props.history.push({
-            pathname: '/search',
-            search: `s=${this.state.search}`,
+            pathname: '/search/'+this.state.search,
         });
     };
 
@@ -318,14 +315,6 @@ class ResponsiveDrawer extends React.Component {
                 <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Exhibition'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/opera'>
                     <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
@@ -442,7 +431,7 @@ class ResponsiveDrawer extends React.Component {
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
                     <Route path='/category/:category' component={Category}/>
-                    <Route path='/search' component={Search}/>
+                    <Route path='/search/:search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
                     <Route path="empty" component={null} key="empty"/>

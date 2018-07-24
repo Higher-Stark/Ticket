@@ -91,7 +91,7 @@ class App extends Component {
     cancelFlash(){
         console.log(this.state.flash)
         this.setState({
-            flash:true
+            flash:false
         })
         console.log(this.state.flash)
     }
@@ -137,7 +137,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ?  <ResponsiveDrawer/>:Welcome}
+                    {this.state.flash ?  Welcome:<ResponsiveDrawer/>}
                 </Router>
             </MuiThemeProvider>
         );

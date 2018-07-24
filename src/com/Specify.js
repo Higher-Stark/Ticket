@@ -134,20 +134,15 @@ class Specify extends Component {
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
-        let token = user.token;
         let body = {
-            token: token,
+            token: user===null?'':user.token,
             ticketid: detail.id,
             price: price,
             date: date,
             number: quantity,
-            /*token: '85ce6c3c-a6d1-4fc1-a584-d690a41952ab',
-            ticketid: '2',
-            price: 100,
-            date: '2018-05-25',
-            number: 2,*/
         };
         const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage";
+
         fetch(url, {
             method: 'POST',
             mode: "cors",
@@ -157,24 +152,28 @@ class Specify extends Component {
             body: urlEncode(body),
             credentials: "include",
         })
-        /*.then(response => response.text())
-        .then(text => {
-            alert("添加成功！");”
-        })*/
-            .then(function (response) {
-                console.log(response);
-                console.log(response.headers.get('access-control-allow-credentials'));
-                console.log(response.headers.get('access-control-allow-origin'));
-                console.log(response.headers.get('content-length'));
-                console.log(response.headers.get('date'));
-                console.log(response.headers.get('errornum'));
-                console.log(response.headers.get('keep-alive'));
-                console.log(response.headers.get('vary'));
-                console.log(response.headers.get('Content-Type'));
-                console.log(response.headers.get('Captcha'));
-                console.log(response.headers.get('errornum'));
-            });
-
+        .then(response => response.headers)
+        .then(headers => {
+            let errornum=headers.get('errornum');
+            if(errornum==='0')
+            {
+                alert("成功！");
+                return ;
+            }
+            else if(errornum==='1')
+            {
+                alert("尚未登录！");
+            }
+            else if(errornum==='2')
+            {
+                alert("身份不对应！");
+            }
+            else if(errornum==='3')
+            {
+                alert("账户被冻结！");
+            }
+            this.props.history.push('/signin');
+        })
     };
 
     handleChange = (e) => {

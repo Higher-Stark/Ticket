@@ -15,6 +15,8 @@ export default class Sliders extends Component {
         if (this.props.autoPlay) {
             this.go();
         }
+        let wid = document.getElementById("mydiv").offsetWidth;
+        console.log(wid);
     }
 
     go = () => {
@@ -83,7 +85,7 @@ export default class Sliders extends Component {
         };
         return (
             <div className="huge">
-                <div className="small">
+                <div className="small"  id='mydiv'>
                     <div
                         className="wrapper-left"
                         onMouseOver={() => clearInterval(this.timer)}

@@ -18,8 +18,6 @@ const styles = theme => ({
         padding: '0 auto',
     },
     carousel: {
-        // display: 'flex',
-        // width: '100%',
         padding: `0 ${theme.spacing.unit * 2}px`,
         maxHeight: '360px',
         width: 'auto',
@@ -34,21 +32,6 @@ const styles = theme => ({
         flexWrap: 'wrap',
         justifyContent: 'start',
         width: 'auto',
-        /*
-        [theme.breakpoints.up('xl')]: {
-            width: 1760,
-        },
-        [theme.breakpoints.up('lg')]: {
-            width: 1056,
-        },
-        [theme.breakpoints.up('md')]: {
-            width: 704,
-        },
-        [theme.breakpoints.down('sm')]: {
-            width: '100%',
-        },
-        */
-        // margin: '0 auto',
     },
     card: {
         display: 'inline-block',
@@ -187,7 +170,7 @@ class Homepage extends Component {
 
         return (
             <div className={classes.root}>
-                <div id="topAnchor"></div>
+                <div id="topAnchor"/>
                 <div className={classes.carousel}>
                     <Sliders
                         images={Img}

@@ -76,65 +76,63 @@ class App extends Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
-        let flash = storage.getItem('flash') || false;
+        let flash = storage.getItem('flash');
         this.state = {
             flash: flash,
         };
-        this.slideshow = this.slideshow.bind(this)
+        this.slideshow = this.slideshow.bind(this);
         this.cancelFlash = this.cancelFlash.bind(this)
     }
 
     componentDidMount() {
-
-        this.slideshow()
-        setTimeout(this.cancelFlash,6000)
+        this.slideshow();
+        setTimeout(this.cancelFlash, 6000)
 
     }
 
-    cancelFlash(){
-        console.log(this.state.flash)
+    cancelFlash() {
+        let storage = window.sessionStorage;
+        storage.setItem('flash', true);
         this.setState({
-            flash:false
-        })
-        console.log(this.state.flash)
+            flash: true
+        });
     }
 
     slideshow() {
-        console.log(document.getElementById("background"))
-        var imgs=document.getElementById("background").getElementsByTagName("img"), //得到图片们
-        
-        current=0; //current为当前活跃的图片编号
-      
+        let background = document.getElementById("background");
+        if (background === null)
+            return;
+        let imgs = background.getElementsByTagName("img"), //得到图片们
+            current = 0; //current为当前活跃的图片编号
         function slideOff() {
-            console.log(current)
-            imgs[current].className=""; //图片淡出
-            console.log(imgs[current])
-      
+            imgs[current].className = ""; //图片淡出
         }
+
         function slideOn() {
-          imgs[current].className="active"; //图片淡入
+            imgs[current].className = "active"; //图片淡入
         }
-      
+
         function changeSlide() { //切换图片的函数
-          slideOff();
-          current++; //自增1
-          slideOn();
+            slideOff();
+            current++; //自增1
+            slideOn();
         }
+
         //每2s调用changeSlide函数进行图片轮播
-        setTimeout(changeSlide,2000); 
-        setTimeout(changeSlide,4000);
+        setTimeout(changeSlide, 2000);
+        setTimeout(changeSlide, 4000);
     }
+
     render() {
         const Welcome = (
-
-            <div id="background" className='background' onClick = {this.cancelFlash} >
-                <img className = "active" src = {black}/>
-                <img src = {coverBlack}/>
-                <img src = {coverColor}/>
+            <div id="background" className='background' onClick={this.cancelFlash}>
+                <img className="active" src={black} alt={''}/>
+                <img src={coverBlack}  alt={''}/>
+                <img src={coverColor}  alt={''}/>
 
                 <div className="content">
-                    <h2 className = "greeting-word">Fashion passes,</h2>
-                    <h2 className = "greeting-word">style remains.</h2>
+                    <h2 className="greeting-word">Fashion passes,</h2>
+                    <h2 className="greeting-word">style remains.</h2>
                 </div>
             </div>
         );
@@ -142,9 +140,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-
-                    {this.state.flash ?  Welcome:<ResponsiveDrawer/>}
-
+                    {this.state.flash ? <ResponsiveDrawer/> : Welcome}
                 </Router>
             </MuiThemeProvider>
         );

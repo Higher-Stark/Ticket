@@ -76,7 +76,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
-        let flash = storage.getItem('flash');
+        let flash = storage.getItem('flash') || false;
         this.state = {
             flash: flash,
         };
@@ -140,7 +140,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ? <ResponsiveDrawer/> : Welcome}
+                    {this.state.flash ? <ResponsiveDrawer/>: Welcome}
                 </Router>
             </MuiThemeProvider>
         );

@@ -89,10 +89,15 @@ class App extends Component {
         );
     }
 
+    handleClick = () => {
+        let storage = window.sessionStorage;
+        storage.setItem('flash', true);
+        this.setState({flash : true})
+    };
 
     render() {
         const Welcome = (
-            <div onClick={() => {const { cookies } = this.props;cookies.set('flash', 1);this.setState({flash: true})}} id='background'>
+            <div onClick={this.handleClick} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>

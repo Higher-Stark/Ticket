@@ -19,8 +19,7 @@ export const urlEncode = function(obj) {
 
 export const locale = function (date){
     const pattern = /^(\d+)(-|\/)0?(\d+)(-|\/)0?(\d+)$/;
-    let res = date.replace(pattern, (match, year, sep1, month, spe2, day, offset, string) => `${year}年${month}月${day}日`)
-    return res;
+    return date.replace(pattern, (match, year, sep1, month, spe2, day, offset, string) => `${year}年${month}月${day}日`);
 };
 
 const extractProvince = function (addr) {
@@ -38,6 +37,7 @@ const extractCity = function (addr, prov) {
     if (cities.length === 1) return cities[0];
     let city = null;
     cities.forEach(c => {
+        // Probably bugy
         if (addr.indexOf(c) !== -1) city = c;
     });
     return city;
@@ -48,6 +48,7 @@ const extractDistrict = function (addr, prov, city) {
     let districts = Pca[prov][city];
     let district = null;
     districts.forEach(d => {
+        // Probably bugy
         if (addr.indexOf(d) !== -1) district = d;
     });
     return district;
@@ -56,14 +57,10 @@ const extractDistrict = function (addr, prov, city) {
 export const decomposeAddr = function (addr) {
     if (!addr) return null;
     let prov = extractProvince(addr) || "";
-    // console.log(prov);
     let city = extractCity(addr, prov) || "";
-    // console.log(city);
     let district = extractDistrict(addr, prov, city) || "";
-    // console.log(district);
     let idx = prov.length + city.length + district.length;
     let detail = addr.substring(idx);
-    // console.log(detail);
     return {
         province: prov,
         city: city,
@@ -89,13 +86,19 @@ export const getCities = function (prov) {
     if (!prov) return [];
     let cities = Pca[prov];
     cities = Object.keys(cities);
-    // console.log(cities);
     return cities;
 };
 
 export const getDistricts = function (prov, city) {
     if (! (prov && city)) return [];
-    let districts = Pca[prov][city];
-    // console.log(districts);
-    return districts;
+    return Pca[prov][city];
+};
+
+let engChi = new Map([]);
+engChi.set("nickName", "昵称");
+engChi.set("nickname", "昵称");
+engChi.set("phone", "手机");
+
+export const chinese = function (key) {
+    return engChi.get(key) || key;
 };

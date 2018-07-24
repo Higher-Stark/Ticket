@@ -16,8 +16,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
+import Cancel from '@material-ui/icons/Cancel';
 import Provinces from '../data/provinces';
-import {decomposeAddr, UserError, composeAddr, getDistricts, getCities} from "../util/utils";
+import {decomposeAddr, UserError, composeAddr, getDistricts, getCities, chinese} from "../util/utils";
 
 const styles = theme => ({
     root: {
@@ -108,6 +109,7 @@ const styles = theme => ({
 
 class User extends Component {
     serviceUrl = 'http://pipipan.cn:30009';
+    oldInfo = null;
 
     constructor(props) {
         super(props);
@@ -132,7 +134,6 @@ class User extends Component {
         // user = user === null ? Users[0] : user;
         user = {
             username: 'Invinsible',
-            password: 'incredible',
             avatar: 'https://image.flaticon.com/icons/svg/25/25231.svg',
             intro: 'For Asgard!',
             nickname: 'menhera',
@@ -158,8 +159,16 @@ class User extends Component {
     };
 
     toggleEdit = () => {
+        this.oldInfo = Object.assign({}, this.state.user);
+        const detailAddr = decomposeAddr(this.state.user.address);
+        let cities = null;
+        let districts = null;
+        if (detailAddr.province) cities = getCities(detailAddr.province);
+        if (detailAddr.city) districts = getDistricts(detailAddr.province, detailAddr.city);
         this.setState({
             edit: true,
+            cities: cities,
+            districts: districts,
         });
     };
 
@@ -178,6 +187,13 @@ class User extends Component {
                 else alert("Update profile failed");
             })
         */
+    };
+
+    toggleCancel = () => {
+        this.setState({
+            user: this.oldInfo,
+            edit: false,
+        });
     };
 
     toggleTab = (event, value) => {
@@ -270,7 +286,7 @@ class User extends Component {
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username", "account"];
+        let filter = ["avatar", "id", "username", "account", "email"];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);
@@ -280,8 +296,6 @@ class User extends Component {
 
     changeAddress = name => event => {
         let value = event.target.value;
-        // console.log(name);
-        // console.log(value);
         if (name === 'province') {
             const cities = getCities(value);
             const detailAddr = {
@@ -342,14 +356,14 @@ class User extends Component {
 
         const infoItem = (key, value) => edit ? (
             <div className={classes.block} key={key}>
-                <Typography variant='title' className={classes.label}>{key}{': '}</Typography>
+                <Typography variant='title' className={classes.label}>{chinese(key)}{': '}</Typography>
                 <TextField key={key} value={value} onChange={this.updateUserInfo(key)} className={classes.textField}
                            id={key} name={key} margin="normal" type="text" required
                 />
             </div>
         ) : (
             <div className={classes.block} key={key}>
-                <Typography variant='title' className={classes.label} color='primary'>{key}{': '}</Typography>
+                <Typography variant='title' className={classes.label} color='primary'>{chinese(key)}{': '}</Typography>
                 <Typography className={classes.inline} variant="subheading" component="h3" color="default">{value}</Typography>
             </div>
         );
@@ -360,7 +374,7 @@ class User extends Component {
         districts = districts || [];
         const address = ! edit ? (
             <div className={classes.block}>
-                <Typography variant="title" className={classes.label} color="primary">{"Address: "}</Typography>
+                <Typography variant="title" className={classes.label} color="primary">{"地址: "}</Typography>
                 <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.address}</Typography>
             </div>
             )
@@ -450,9 +464,14 @@ class User extends Component {
                         <div className={classes.actions}>
                             {
                                 edit ?
+                                    <div>
                                     <Button variant='fab' color='secondary' onClick={this.toggleSave} className={classNames(classes.action, classes.button)}>
                                         <SaveIcon/>
-                                    </Button> :
+                                    </Button>
+                                        <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
+                                            <Cancel/>
+                                        </Button>
+                                    </div> :
                                     <Button variant='fab' color='primary' onClick={this.toggleEdit} className={classNames(classes.action, classes.button)}>
                                         <EditIcon/>
                                     </Button>
@@ -460,8 +479,12 @@ class User extends Component {
                         </div>
                         <div className={classes.padding}>
                             <div className={classes.block} key="username">
-                                <Typography variant='title' className={classes.label} color='primary'>{"Username: "}</Typography>
+                                <Typography variant='title' className={classes.label} color='primary'>{"用户名: "}</Typography>
                                 <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.username}</Typography>
+                            </div>
+                            <div className={classes.block} key="email">
+                                <Typography variant='title' className={classes.label} color='primary'>{"邮箱: "}</Typography>
+                                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.email}</Typography>
                             </div>
                             {
                                 keys.map(s => (

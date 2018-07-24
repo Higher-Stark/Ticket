@@ -30,7 +30,7 @@ import MusicCircle from 'mdi-material-ui/MusicCircle';
 import {Route, Redirect, withRouter, NavLink} from 'react-router-dom';
 import SignUp from './page/SignUp';
 import Login from './page/Login';
-import Account from './Account';
+import User from './page/User';
 import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
@@ -309,6 +309,10 @@ class ResponsiveDrawer extends React.Component {
                 <Login {...props} toggleLogin={user => this.toggleLogin(user)}/>
         );
 
+        const redirectTo = () => (
+            <Redirect to='/signin'/>
+        );
+
         return (
             <div className={classes.root}>
                 <AppBar className={classes.appBar}>
@@ -375,12 +379,7 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/activating' component={Activating}/>
                     <Route path='/activated/:uuid' component={Activated}/>
                     <Route path='/signin' component={LoginWrapper}/>
-                           { 
-                               // render={props => (<Login {...props} toggleLogin={user => this.toggleLogin(user)}/>)}/>
-                           }
-                    <Route path='/account' render={props => (this.state.user === null ? (
-                        <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
-                        )}/>
+                    <Route path='/account' component={this.state.user === null ? redirectTo : User }/>
                     <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>

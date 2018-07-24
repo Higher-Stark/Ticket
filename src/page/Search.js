@@ -196,39 +196,6 @@ class Search extends Component {
         })
     }
 
-    /* shouldComponentUpdate(nextProps, nextState, nextContext) {
-         const {match} = this.props;
-         let preSearch = match.params.search;
-         let nextSearch = match.params.search;
-         if (nextSearch !== preSearch) return true;
-         preSearch = this.state.search;
-         nextSearch = nextState.search;
-         let preValue=this.state.value;
-         let nextValue = nextState.value;
-         /*console.log(preValue);
-         console.log(nextValue);
-         let preCity= this.state.selected["city"];
-         let nextCity = nextState.selected["city"];
-         /*console.log(preCity);
-         console.log(nextCity);
-         return (preSearch !== nextSearch)||(preValue!==nextValue)||(preCity!==nextCity);
-     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {page, selected} = this.state;
-        let city = this.cities[selected['city']];
-        fetch(this.url + `?pagenumber=${page}&city=${city}`)
-            .then(response => response.status === 200 ? response.json() : null)
-            .then(data => {
-                if (data === null) throw Error("Response error!");
-                this.setState({
-                    data: data.content,
-                });
-                this.totalPages = data.totalPages;
-            })
-            .catch(e => console.log(e));
-    }*/
-
     viewPage = (idx) => {
         const {selected} = this.state;
         let city = this.cities[selected['city']];

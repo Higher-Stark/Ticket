@@ -9,6 +9,9 @@ import grey from '@material-ui/core/colors/grey';
 import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
+import black from './pic/black.jpeg'
+import coverColor from './pic/coverColor.png'
+import coverBlack from './pic/coverBlack.png'
 
 const theme = createMuiTheme({
     typography: {
@@ -68,8 +71,8 @@ const theme = createMuiTheme({
 });
 
 
-
 class App extends Component {
+
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
@@ -77,32 +80,59 @@ class App extends Component {
         this.state = {
             flash: flash,
         };
+        this.slideshow = this.slideshow.bind(this);
+        this.cancelFlash = this.cancelFlash.bind(this)
     }
 
     componentDidMount() {
-        let storage = window.sessionStorage;
-        setTimeout(() => {
-            storage.setItem('flash', true);
-            this.setState({ flash: true });
-        },
-            5000
-        );
+        this.slideshow();
+        setTimeout(this.cancelFlash, 6000)
+
     }
 
-    handleClick = () => {
+    cancelFlash() {
         let storage = window.sessionStorage;
         storage.setItem('flash', true);
-        this.setState({flash : true})
-    };
+        this.setState({
+            flash: true
+        });
+    }
+
+    slideshow() {
+        let background = document.getElementById("background");
+        if (background === null)
+            return;
+        let imgs = background.getElementsByTagName("img"), //得到图片们
+            current = 0; //current为当前活跃的图片编号
+        function slideOff() {
+            imgs[current].className = ""; //图片淡出
+        }
+
+        function slideOn() {
+            imgs[current].className = "active"; //图片淡入
+        }
+
+        function changeSlide() { //切换图片的函数
+            slideOff();
+            current++; //自增1
+            slideOn();
+        }
+
+        //每2s调用changeSlide函数进行图片轮播
+        setTimeout(changeSlide, 2000);
+        setTimeout(changeSlide, 4000);
+    }
 
     render() {
         const Welcome = (
-            <div onClick={this.handleClick} id='background'>
-                <div className="bg"/>
-                <div className="bg bg2"/>
-                <div className="bg bg3"/>
+            <div id="background" className='background' onClick={this.cancelFlash}>
+                <img className="active" src={black} alt={''}/>
+                <img src={coverBlack}  alt={''}/>
+                <img src={coverColor}  alt={''}/>
+
                 <div className="content">
-                    <h1 className="animated bounce">Ticket Website</h1>
+                    <h2 className="greeting-word">Fashion passes,</h2>
+                    <h2 className="greeting-word">style remains.</h2>
                 </div>
             </div>
         );

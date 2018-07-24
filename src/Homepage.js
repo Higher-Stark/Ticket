@@ -18,8 +18,6 @@ const styles = theme => ({
         padding: '0 auto',
     },
     carousel: {
-        // display: 'flex',
-        // width: '100%',
         padding: `0 ${theme.spacing.unit * 2}px`,
         maxHeight: '360px',
         width: 'auto',
@@ -34,21 +32,6 @@ const styles = theme => ({
         flexWrap: 'wrap',
         justifyContent: 'start',
         width: 'auto',
-        /*
-        [theme.breakpoints.up('xl')]: {
-            width: 1760,
-        },
-        [theme.breakpoints.up('lg')]: {
-            width: 1056,
-        },
-        [theme.breakpoints.up('md')]: {
-            width: 704,
-        },
-        [theme.breakpoints.down('sm')]: {
-            width: '100%',
-        },
-        */
-        // margin: '0 auto',
     },
     card: {
         display: 'inline-block',
@@ -108,13 +91,13 @@ const styles = theme => ({
 
 const Img = [
     {
-        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
-    },
-    {
         src: 'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
     },
     {
-        src: 'http://tu.qiumibao.com/v/img/180518/206969_01133852974.jpg'
+        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
+    },
+    {
+        src: 'http://pic1.win4000.com/wallpaper/7/590ae44ec3b26.jpg'
     }
 ];
 
@@ -134,7 +117,7 @@ class Homepage extends Component {
     componentDidMount() {
         const {page} = this.state;
         const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        fetch(url, {
+        fetch (url, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -156,7 +139,7 @@ class Homepage extends Component {
         this.setState({loading: true});
         const {page} = this.state;
         const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        fetch (url, {
+        fetch(url, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -187,7 +170,7 @@ class Homepage extends Component {
 
         return (
             <div className={classes.root}>
-                <div id="topAnchor"></div>
+                <div id="topAnchor"/>
                 <div className={classes.carousel}>
                     <Sliders
                         images={Img}

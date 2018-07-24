@@ -57,11 +57,11 @@ const styles = theme => ({
 
 class Category extends Component {
     url = "http://pipipan.cn:30005/Ticket/QueryByTypePage";
-    totalPages = 0;
 
     constructor(props) {
         super(props);
         this.state ={
+            totalPages : 0,
             data: null,
             category: null,
             page: 1,
@@ -76,37 +76,17 @@ class Category extends Component {
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if (data === null) throw Error("Response error!");
-                /*
                 this.setState({
                     data: data.content,
+                    totalPages:data.totalPages
                 });
-                */
-                this.totalPages = data.totalPages;
+
             })
             .catch(e => console.log(e));
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
         const {match} = nextProps;
-        this.setState({
-            category: match.params.category,
-            page: 1,
-        })
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        const {match} = this.props;
-        let preCategory = match.params.category;
-        let nextCategory = match.params.category;
-        if (nextCategory !== preCategory) return true;
-        preCategory = this.state.category;
-        nextCategory = nextState.category;
-        if (preCategory !== nextCategory) return true;
-        return false;
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {match} = this.props;
         const category = match.params.category;
         const {page} = this.state;
         fetch(this.url + `?pagenumber=${page}&type=${category}`)
@@ -115,10 +95,14 @@ class Category extends Component {
                 if (data === null) throw Error("Response error!");
                 this.setState({
                     data: data.content,
+                    totalPages:data.totalPages
                 });
-                this.totalPages = data.totalPages;
             })
             .catch(e => console.log(e));
+        this.setState({
+            category: match.params.category,
+            page: 1,
+        });
     }
 
     viewPage = (idx) => {
@@ -130,10 +114,14 @@ class Category extends Component {
                 this.setState({
                     data : data.content,
                     page: idx,
+                    totalPages:data.totalPages
                 });
-                this.totalPages = data.totalPages;
             })
             .catch(e => console.log(e));
+    };
+
+    detail = (id) => {
+        this.props.history.push("/detail/"+id)
     };
 
     render() {
@@ -150,12 +138,12 @@ class Category extends Component {
                     <div className={classes.content}>
                         <div className={classes.cards}>
                             {data.map((x, i) => {
-                                return (<Activity card={x} key={i} className={classes.card} />)
+                                return (<Activity card={x} key={i} className={classes.card} onClick={() => this.detail(i)}/>)
                             })}
                         </div>
                     </div>
                     <div>
-                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
+                        <PageBar current={page} max={this.state.totalPages} goto={this.viewPage} />
                     </div>
                 </div>
         );

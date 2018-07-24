@@ -1,255 +1,653 @@
-import React, {Component} from 'react';
+import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import CalendarToday from 'mdi-material-ui/CalendarToday';
-import PlaceIcon from '@material-ui/icons/Place';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import {lighten} from '@material-ui/core/styles/colorManipulator';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import TableFooter from '@material-ui/core/TableFooter';
+import TextField from '@material-ui/core/TextField';
 
-
-import {Cards} from '../test-data/Cards';
-
-const itemStyles = theme => ({
+const actionsStyles = theme => ({
     root: {
-        [theme.breakpoints.down('sm')]: {
-            height: 120,
-        },
-        [theme.breakpoints.up('sm')]: {
-            minHeight: 320,
-        },
-        margin: theme.spacing.unit,
-        padding: theme.spacing.unit,
-        display: 'flex',
-    },
-    title: {
-        margin: theme.spacing.unit,
-    },
-    image: {
-        [theme.breakpoints.down('sm')]: {
-            maxWidth: 60,
-        },
-        [theme.breakpoints.up('sm')]: {
-            maxWidth: 240,
-        },
-        height: 'inherit',
-    },
-    pic: {
-        width: '15%',
-        padding: theme.spacing.unit,
-        overflow: 'hidden',
+        flexShrink: 0,
+        color: theme.palette.text.secondary,
+        marginLeft: theme.spacing.unit * 2.5,
     },
 });
 
-class ActivityItem extends Component {
+class TablePaginationActions extends React.Component {
+    handleFirstPageButtonClick = event => {
+        this.props.onChangePage(event, 0);
+    };
+
+    handleBackButtonClick = event => {
+        this.props.onChangePage(event, this.props.page - 1);
+    };
+
+    handleNextButtonClick = event => {
+        this.props.onChangePage(event, this.props.page + 1);
+    };
+
+    handleLastPageButtonClick = event => {
+        this.props.onChangePage(
+            event,
+            Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
+        );
+    };
+
     render() {
-        const {classes, data} = this.props;
+        const {classes, count, page, rowsPerPage, theme} = this.props;
 
         return (
-            <div>
-                <Grid spacing={8} container>
-                    {
-                        data.map(s => {
-                            return (
-                                <Grid container spacing={8} className={classes.root} key={s.id}>
-                                    <Grid item xs={2} className={classes.pic}>
-                                        <img src={s.images.s3_4} className={classes.image} alt={s.title}/>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='title' component='h2' color='primary'
-                                                        className={classes.title}>
-                                                {`[${s.city}] ${s.title}`}
-                                            </Typography>
-                                            <Typography variant='subheading' color='secondary'>
-                                                {s.brief}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.dates.length === 1 ? s.dates[0] : `${s.dates[0]} - ${s.dates[s.dates.length - 1]}`}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <PlaceIcon/>{s.location}{' - '}{s.city}
-                                            </Typography>
-                                            <Typography variant='headline' color='primary'>
-                                                {s.price}{' '}{s.status}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                ￥{s.price}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                <Button color="inherit" size='large'>-</Button>{s.quantity}<Button
-                                                color="inherit" size='large'>+</Button>
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                ￥{s.price * s.quantity}
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <div>
-                                            <Typography variant='headline' align='center' style={{paddingTop: '50%'}}>
-                                                <Button color="inherit" size='large'>删除</Button>
-                                            </Typography>
-                                        </div>
-                                    </Grid>
-                                </Grid>
-                            )
-                        })
-                    }
-                </Grid>
+            <div className={classes.root}>
+                <IconButton
+                    onClick={this.handleFirstPageButtonClick}
+                    disabled={page === 0}
+                    aria-label="First Page"
+                >
+                    {theme.direction === 'rtl' ? <LastPageIcon/> : <FirstPageIcon/>}
+                </IconButton>
+                <IconButton
+                    onClick={this.handleBackButtonClick}
+                    disabled={page === 0}
+                    aria-label="Previous Page"
+                >
+                    {theme.direction === 'rtl' ? <KeyboardArrowRight/> : <KeyboardArrowLeft/>}
+                </IconButton>
+                <IconButton
+                    onClick={this.handleNextButtonClick}
+                    disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                    aria-label="Next Page"
+                >
+                    {theme.direction === 'rtl' ? <KeyboardArrowLeft/> : <KeyboardArrowRight/>}
+                </IconButton>
+                <IconButton
+                    onClick={this.handleLastPageButtonClick}
+                    disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                    aria-label="Last Page"
+                >
+                    {theme.direction === 'rtl' ? <FirstPageIcon/> : <LastPageIcon/>}
+                </IconButton>
             </div>
-        )
+        );
     }
 }
 
-ActivityItem.propTypes = {
+TablePaginationActions.propTypes = {
     classes: PropTypes.object.isRequired,
-    data: PropTypes.array.isRequired,
+    count: PropTypes.number.isRequired,
+    onChangePage: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+    theme: PropTypes.object.isRequired,
 };
 
-const ActivityWithStyle = withStyles(itemStyles)(ActivityItem);
+const TablePaginationActionsWrapped = withStyles(actionsStyles, {withTheme: true})(
+    TablePaginationActions,
+);
+
+
+const columnData = [
+    {numeric: false, disablePadding: true, label: '商品信息'},
+    {numeric: true, disablePadding: false, label: '单价'},
+    {numeric: true, disablePadding: false, label: '数量'},
+    {numeric: true, disablePadding: false, label: '金额'},
+    {numeric: true, disablePadding: false, label: '操作'},
+];
+
+
+class EnhancedTableHead extends React.Component {
+    render() {
+        const {onSelectAllClick, numSelected, rowCount} = this.props;
+
+        return (
+            <TableHead>
+                <TableRow>
+                    <TableCell padding="checkbox">
+                        <Checkbox
+                            indeterminate={numSelected > 0 && numSelected < rowCount}
+                            checked={numSelected > 0 && numSelected === rowCount}
+                            onChange={onSelectAllClick}
+                        />
+                    </TableCell>
+                    {columnData.map((column, i) => {
+                        return (
+                            <TableCell
+                                key={i}
+                                numeric={column.numeric}
+                                padding={column.disablePadding ? 'none' : 'default'}
+                            >
+                                {column.label}
+                            </TableCell>
+                        );
+                    }, this)}
+
+                </TableRow>
+            </TableHead>
+        );
+    }
+}
+
+
+EnhancedTableHead.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    rowCount: PropTypes.number.isRequired,
+};
+
+const toolbarStyles = theme => ({
+    root: {
+        paddingRight: theme.spacing.unit,
+    },
+    highlight:
+        theme.palette.type === 'light'
+            ? {
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
+            : {
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
+    spacer: {
+        flex: '1 1 100%',
+    },
+    actions: {
+        color: theme.palette.text.secondary,
+    },
+    title: {
+        flex: '0 0 auto',
+    },
+});
+
+let EnhancedTableToolbar = props => {
+    const {numSelected, classes} = props;
+
+    return (
+        <Toolbar
+            className={classNames(classes.root, {
+                [classes.highlight]: numSelected > 0,
+            })}
+        >
+            <div className={classes.title}>
+                {numSelected > 0 ? (
+                    <Typography color="inherit" variant="subheading">
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography variant="title" id="tableTitle">
+                        购物车
+                    </Typography>
+                )}
+            </div>
+            <div className={classes.spacer}/>
+        </Toolbar>
+    );
+};
+
+EnhancedTableToolbar.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+};
+
+EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
     root: {
-        display: 'flex',
+        width: '100%',
+        marginTop: theme.spacing.unit * 3,
     },
-    category: {
-        display: 'inline-block',
-        flexGrow: 1,
+    table: {
+        minWidth: 1020,
     },
-    textSelect: {
-        display: 'inline-block',
-        flexGrow: 1,
-        margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        '&:hover': {
-            background: '#3e072e',
-        },
-        '&:active': {
-            background: '#cccc44',
-        },
+    tableWrapper: {
+        overflowX: 'auto',
     },
-    content: {
-        display: 'flex',
+    image: {
+        width: '100%',
+        align: 'center',
     },
-    appBar: {
-        marginBottom: theme.spacing.unit,
-    },
-    flex: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
+    info: {
+        width: '20%',
     }
+
 });
 
-class Cart extends Component {
+/*class CartRow extends React.Component {
+    render() {
+        const {isSelected,n,classes} = this.props;
+
+        return(
+            <TableRow
+                hover
+                role="checkbox"
+                aria-checked={isSelected}
+                tabIndex={-1}
+                key={n.id}
+                selected={isSelected}
+            >
+                <TableCell padding="checkbox"
+                           onClick={event => this.handleClick(event, n.id)}>
+                    <Checkbox checked={isSelected}/>
+                </TableCell>
+                <TableCell className={classes.info} component="th" scope="row"
+                           padding="none" onClick={() => this.detail(n.id)}>
+                    <Grid container spacing={8} className={classes.root} key={n.id}>
+                        <Grid item xs={6}>
+                            <img src={n.image} className={classes.image}
+                                 alt={n.title}/>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography variant='title' component='h2' color='primary'
+                                        className={classes.title}>
+                                {`[${n.title}]`}
+                            </Typography>
+                            <Typography variant='subheading' color='secondary'>
+                                {n.city}{' '}{n.venue}
+                            </Typography>
+                            <Typography variant='subheading' color='inherit'>
+                                {n.date}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </TableCell>
+                <TableCell numeric>￥{n.price}</TableCell>
+                <TableCell numeric>
+                    <Button disabled={n.number === 1} onClick={event => this.handleSub(event, n.id)}>-</Button>
+                    {n.number}
+                    <Button
+                        onClick={event => this.handleAdd(event, n.id)}>+</Button></TableCell>
+                <TableCell numeric>￥{n.price * n.number}</TableCell>
+                <TableCell numeric><Button
+                    onClick={event => this.handleDelete(event, n.id)}>删除</Button></TableCell>
+            </TableRow>
+        )
+    }
+}*/
+
+
+class Cart extends React.Component {
+    QueryByUserId = "http://pipipan.cn:30007/Cart/QueryByUserId";
+    NumberEditInCart = "http://pipipan.cn:30007/Cart/NumberEditInCart";
+    DeleteBatchInCart = "http://pipipan.cn:30007/Cart/DeleteBatchInCart";
+
     constructor(props) {
         super(props);
-        this.state = {
-            pages: 0,
-            value: 0,
-            data: [],
-            filter: [],
-        };
-    };
 
-    componentDidMount() {
-        const {search} = this.props.location;
-        console.log(search);
-        /*
-        fetch (`/search?q=${search}`, {
-            method: 'GET',
-        })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error encountered");
-                return response.json();
-            })
-            .then(data => {
-                this.setState({data: data});
-            })
-            .catch(e => alert(e.message));
-        */
+        this.state = {
+            selected: [],
+            data: [],
+            page: 0,
+            rowsPerPage: 16,
+            totalElements: 0,
+            dirties: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        };
     }
 
-    handleChange = (event, value) => {
-        this.setState({value});
+    handleSelectAllClick = (event, checked) => {
+        if (checked) {
+            this.setState(state => ({selected: state.data.map(n => n.id)}));
+            return;
+        }
+        this.setState({selected: []});
     };
+
+    handleClick = (event, id) => {
+        const {selected} = this.state;
+        const selectedIndex = selected.indexOf(id);
+        let newSelected = [];
+
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+        }
+
+        this.setState({selected: newSelected});
+    };
+
+    handleDelete = (event, id) => {
+        let newData = this.state.data.slice();
+        let newTotalElements = this.state.totalElements;
+        newTotalElements--;
+        let i = 0;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        let batchentryid = [id];
+        for (; i < newData.length; i++) {
+            if (newData[i].id === id) {
+                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchentryid}`)
+                    .then(response => response.headers)
+                    .then(headers => {
+                        let errornum = headers.get('errornum');
+                        if (errornum === '0') {
+                            return;
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    })
+                    .catch(e => console.log(e));
+                break;
+            }
+        }
+        newData.splice(i, 1);
+        this.setState({data: newData});
+        this.setState({totalElements: newTotalElements});
+    };
+
+
+    handleNumberEdit = (token, id,  i) => {
+        fetch(this.NumberEditInCart + `?token=${token}&entryid=${id}&number=${this.state.data[i].number}`)
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum = headers.get('errornum');
+                if (errornum === '0') {
+
+                    return;
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+            .catch(e => console.log(e));
+        let newDirty=this.state.dirties.slice();
+        newDirty[i]=0;
+        this.setState({dirties:newDirty});
+    };
+
+
+    handleChange = (event, id) => {
+        if (event.target.value < 1)
+            return;
+        let newData = this.state.data.slice();
+        let i = 0;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        for (; i < newData.length; i++) {
+            if (newData[i].id === id) {
+                newData[i].number = event.target.value;
+                if (this.state.dirties[i] === 1)
+                    break;
+                else
+                {
+                    let newDirty=this.state.dirties.slice();
+                    let newI=i;
+                    newDirty[i]=1;
+                    this.setState({dirties:newDirty});
+                    setTimeout(()=>{this.handleNumberEdit(token,id,newI)}, 5000);
+                }
+
+            }
+        }
+        this.setState({data: newData});
+    };
+
+
+    handleDeleteSelected = (event) => {
+        let newData = this.state.data.slice();
+        let newSelected = this.state.selected.slice();
+        let newTotalElements = this.state.totalElements;
+        newTotalElements -= newSelected.length;
+        let i = 0;
+        let j = 0;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        console.log(newData);
+        for (; i < newSelected.length; i++) {
+            for (; j < newData.length; j++) {
+                console.log(j);
+                if (newSelected[i] === newData[j].id) {
+                    fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
+                        .then(response => response.headers)
+                        .then(headers => {
+                            let errornum = headers.get('errornum');
+                            if (errornum === '0') {
+                                return;
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            this.props.history.push('/signin');
+                        })
+                        .catch(e => console.log(e));
+                    break;
+                }
+            }
+            newData.splice(j, 1);
+        }
+        this.setState({data: newData});
+        this.setState({totalElements: newTotalElements});
+        this.setState({selected: []});
+    };
+
+
+    handleChangeRowsPerPage = event => {
+        this.setState({rowsPerPage: event.target.value});
+    };
+
+    handleChangePage = (event, page) => {
+        this.setState({page});
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+            .then(response => {
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        return response.status === 200 ? response.json() : null;
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalElements: data.totalElements
+                });
+            })
+            .catch(e => console.log(e));
+    };
+
+    detail = (id) => {
+        this.props.history.push("/detail/" + id)
+    };
+
+
+    isSelected = id => this.state.selected.indexOf(id) !== -1;
+
+
+    componentWillMount() {
+        const {page} = this.state;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+            .then(response => {
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        return response.status === 200 ? response.json() : null;
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalElements: data.totalElements
+                });
+            })
+            .catch(e => console.log(e));
+    }
 
     render() {
         const {classes} = this.props;
-
-        let total=0;
-
-        Cards.map(s => {total+=s.price*s.quantity;return null});
-
+        const {data, selected, rowsPerPage, page, totalElements} = this.state;
+        let totalPrice = 0;
         return (
-            <div>
-                <div>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Grid item xs={4}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    商品信息
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    单价
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    数量
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center' className={classes.flex}>
-                                    金额
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" align='center'
-                                            className={classes.menuButton}>
-                                    操作
-                                </Typography>
-                            </Grid>
-                        </Toolbar>
-                    </AppBar>
-                    <ActivityWithStyle data={Cards}/>
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Grid item xs={8}>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" className={classes.flex} align='center'>
-                                    合计：￥{total}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2}>
-                                <Typography variant="title" color="inherit" className={classes.flex} align='center'>
-                                    <Button color="inherit" size='large'>结算</Button>
-                                </Typography>
-                            </Grid>
-                        </Toolbar>
-                    </AppBar>
+            <Paper className={classes.root}>
+                <EnhancedTableToolbar numSelected={selected.length}/>
+                <div className={classes.tableWrapper}>
+                    <Table className={classes.table} aria-labelledby="tableTitle">
+                        <EnhancedTableHead
+                            numSelected={selected.length}
+                            onSelectAllClick={this.handleSelectAllClick}
+                            onRequestSort={this.handleRequestSort}
+                            rowCount={data.length}
+                        />
+                        <TableBody>
+                            {data
+                                .map(n => {
+                                    const isSelected = this.isSelected(n.id);
+                                    totalPrice += isSelected * n.price * n.number;
+                                    return (
+                                        <TableRow
+                                            hover
+                                            role="checkbox"
+                                            aria-checked={isSelected}
+                                            tabIndex={-1}
+                                            key={n.id}
+                                            selected={isSelected}
+                                        >
+                                            <TableCell padding="checkbox"
+                                                       onClick={event => this.handleClick(event, n.id)}>
+                                                <Checkbox checked={isSelected}/>
+                                            </TableCell>
+                                            <TableCell className={classes.info} component="th" scope="row"
+                                                       padding="none" onClick={() => this.detail(n.id)}>
+                                                <Grid container spacing={8} className={classes.root} key={n.id}>
+                                                    <Grid item xs={6}>
+                                                        <img src={n.image} className={classes.image}
+                                                             alt={n.title}/>
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography variant='title' component='h2' color='primary'
+                                                                    className={classes.title}>
+                                                            {`[${n.title}]`}
+                                                        </Typography>
+                                                        <Typography variant='subheading' color='secondary'>
+                                                            {n.city}{' '}{n.venue}
+                                                        </Typography>
+                                                        <Typography variant='subheading' color='inherit'>
+                                                            {n.date}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </TableCell>
+                                            <TableCell numeric>￥{n.price}</TableCell>
+                                            <TableCell numeric>
+                                                <TextField id='quantity' type='number' margin='normal'
+                                                           value={n.number}
+                                                           onChange={event => this.handleChange(event, n.id)}/>
+                                            </TableCell>
+                                            <TableCell numeric>￥{n.price * n.number}</TableCell>
+                                            <TableCell numeric><Button
+                                                onClick={event => this.handleDelete(event, n.id)}>删除</Button></TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell>
+                                    <Button disabled={selected.length === 0}
+                                            onClick={event => this.handleDeleteSelected(event)}>
+                                        批量删除
+                                    </Button>
+                                </TableCell>
+                                <TableCell
+                                > 合计：￥{totalPrice}
+                                </TableCell>
+                                <TableCell>
+                                    <Button disabled={selected.length === 0}>结算</Button>
+                                </TableCell>
+                                <TablePagination
+                                    count={totalElements}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onChangePage={this.handleChangePage}
+                                    labelRowsPerPage={''}
+                                    rowsPerPageOptions={[]}
+                                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActionsWrapped}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
                 </div>
-            </div>
-        )
+            </Paper>
+        );
     }
 }
 

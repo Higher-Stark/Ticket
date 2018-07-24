@@ -90,14 +90,18 @@ class App extends Component {
 
     cancelFlash(){
         console.log(this.state.flash)
+        let storage = window.sessionStorage;
+        storage.setItem("flash",true);
         this.setState({
-            flash:false
+            flash:true
         })
         console.log(this.state.flash)
     }
 
     slideshow() {
         console.log(document.getElementById("background"))
+        if(document.getElementById("background")==null)
+            return;
         var imgs=document.getElementById("background").getElementsByTagName("img"), //得到图片们
         
         current=0; //current为当前活跃的图片编号
@@ -137,7 +141,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ?  Welcome:<ResponsiveDrawer/>}
+                    {this.state.flash ?  <ResponsiveDrawer/>:Welcome}
                 </Router>
             </MuiThemeProvider>
         );

@@ -22,6 +22,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PaymentIcon from '@material-ui/icons/Payment'
+import $ from 'jquery';
 
 const styles = ()=>({
     headline:{
@@ -46,6 +47,7 @@ class PayConfirm extends Component{
     constructor(props){
         super(props)
         this.calcuTotal = this.calcuTotal.bind()
+        this.getHeader = this.getHeader.bind()
     }
 
     calcuTotal(){
@@ -57,6 +59,9 @@ class PayConfirm extends Component{
         return totalPrice
     }
 
+    getHeader(){
+        console.log("in ger header")
+    }
     render(){
         const { classes } = this.props;
 
@@ -154,7 +159,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{marginTop:"1.5%"}}/>
                             <Grid item xs={3} style={{marginTop:"1.5%"}}>
-                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}}>
+                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}} onClick={this.getHeader}>
                                     支付
                                 </Button>
                             </Grid>

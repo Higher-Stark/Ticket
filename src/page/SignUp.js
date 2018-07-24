@@ -5,6 +5,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
 import {NavLink} from 'react-router-dom';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const styles = theme => ({
     container: {
@@ -16,10 +18,10 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
-        width: '100%',
+        width: '90%',
     },
     verifyImg: {
-        width: '30%',
+        width: '27%',
         height: '85%',
         marginTop: theme.spacing.unit,
         marginBottom: theme.spacing.unit,
@@ -177,45 +179,49 @@ class SignUp extends Component{
 
         return (
             <div className={classes.root}>
-                <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
-                <form className={classes.container} autoComplete='off'>
-                    <TextField placeholder='User Name' id='name' name='name'
-                               value={this.state.name} label='User name'
-                               className={classes.textField}
-                               margin='normal'
-                               required
-                               onChange={this.handleChange('name')}/>
-                    <TextField placeholder='Password' id='password' name='password'
-                               value={this.state.password} label='Password'
-                               className={classes.textField}
-                               margin='normal'
-                               type='password'
-                               required
-                               onChange={this.handleChange('password')}/>
-                    <TextField placeholder='Email Address' id='email' name='email'
-                               value={this.state.email} label='Email'
-                               className={classes.textField}
-                               margin='normal'
-                               type='email'
-                               required
-                               onChange={this.handleChange('email')}/>
-                    <TextField id='authCode' name='authCode'
-                               value={this.state.authCode} label='Verification Code'
-                               className={classes.authInput}
-                               margin='normal'
-                               onChange={this.handleChange('authCode')}/>
-                    <img src={this.state.verifyUrl} alt="img"
-                         onClick={this.changeVerifyImg}
-                         className={classes.verifyImg}/>
-                    <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
-                        Sign Up
-                    </Button>
-                </form>
-                <div>
-                    <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Already have an account? <NavLink to='/signin'>Sign in</NavLink>
-                    </Typography>
-                </div>
+                <Card>
+                    <CardContent>
+                        <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
+                        <form className={classes.container} autoComplete='off'>
+                            <TextField placeholder='User Name' id='name' name='name'
+                                value={this.state.name} label='User name'
+                                className={classes.textField}
+                                margin='normal'
+                                required
+                                onChange={this.handleChange('name')} />
+                            <TextField placeholder='Password' id='password' name='password'
+                                value={this.state.password} label='Password'
+                                className={classes.textField}
+                                margin='normal'
+                                type='password'
+                                required
+                                onChange={this.handleChange('password')} />
+                            <TextField placeholder='Email Address' id='email' name='email'
+                                value={this.state.email} label='Email'
+                                className={classes.textField}
+                                margin='normal'
+                                type='email'
+                                required
+                                onChange={this.handleChange('email')} />
+                            <TextField id='authCode' name='authCode'
+                                value={this.state.authCode} label='Verification Code'
+                                className={classes.authInput}
+                                margin='normal'
+                                onChange={this.handleChange('authCode')} />
+                            <img src={this.state.verifyUrl} alt="img"
+                                onClick={this.changeVerifyImg}
+                                className={classes.verifyImg} />
+                            <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
+                                Sign Up
+                            </Button>
+                        </form>
+                        <div>
+                            <Typography variant='body1' align='center' noWrap style={{color: "#FF6699"}} className={classes.reminder}>
+                                Already have an account? <NavLink to='/signin'>Sign in</NavLink>
+                            </Typography>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         )
     }

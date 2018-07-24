@@ -30,9 +30,9 @@ const styles = ()=>({
 })
 
 let id = 0;
-function createData(name, number, eachPrice) {
+function createData(title, number, eachPrice) {
   id += 1;
-  return { id, name, number, eachPrice};
+  return { id, title, number, eachPrice};
 }
 
 const data = [
@@ -128,7 +128,7 @@ class PayConfirm extends Component{
                                         return (
                                             <TableRow key={n.id}>
                                                 <TableCell component="th" scope="row" style ={{textAlign:'center'}}>
-                                                    {n.name}
+                                                    {n.title}
                                                 </TableCell>
                                                 <TableCell style ={{textAlign:'center'}} numeric>{n.number}</TableCell>
                                                 <TableCell style ={{textAlign:'center'}} numeric>{'¥'+n.eachPrice}</TableCell>

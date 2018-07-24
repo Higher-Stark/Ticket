@@ -30,9 +30,9 @@ function createData(title, number, price) {
 }
   
 const data = [
-    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,"¥500"),
-    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, "¥1000"),
-    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,"¥880")
+    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,500),
+    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
+    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,880)
 ];
 
 const theme = createMuiTheme({

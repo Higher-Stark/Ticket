@@ -28,15 +28,15 @@ import TableRow from '@material-ui/core/TableRow';
 import PaymentIcon from '@material-ui/icons/Payment'
 
 let id = 0
-function createData(title, number, price) {
+function createData(title, number, eachPrice) {
     id += 1;
-    return { title,number,price };
+    return { id, title, number, eachPrice};
 }
   
 const data = [
-    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,"¥500"),
-    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, "¥1000"),
-    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,"¥880")
+    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,500),
+    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
+    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,880)
 ];
 
 const styles = ()=>({
@@ -48,6 +48,16 @@ const styles = ()=>({
 class Order extends Component{
     constructor(props){
         super(props)
+        this.calcuTotal = this.calcuTotal.bind()
+    }
+
+    calcuTotal(){
+        console.log(data)
+        let totalPrice = 0;
+        data.forEach(element => {
+            totalPrice += element.number * element.eachPrice;
+        });
+        return totalPrice
     }
 
     render(){
@@ -55,7 +65,7 @@ class Order extends Component{
 
         const Order = (
             <div>
-                <Card className={classes.card}>
+                <Card >
                     <CardContent>
                         <Grid container spacing={24}>
                             <Grid item xs={12} style={{ textAlign: 'center',marginTop:'2%'}}>
@@ -87,109 +97,111 @@ class Order extends Component{
                                 </Grid>
                             </ExpansionPanelSummary>
                             <ExpansionPanelDetails>
+                                
                             <Card>
-                                <CardContent>
-                                <Typography variant="headline" color="textSecondary" >
-                                    取货信息
-                                </Typography>
-                                <Divider style={{ marginTop: "1%" }} />
-                                <Grid container spacing={24}>
-                                    <Grid item xs={2} style={{ textAlign: 'right', marginTop: "2%" }}>
-                                        <Typography style={{ fontSize: "125%", fontWeight: "normal" }}>
-                                            收货地址
-                                    </Typography>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "1.8%" }}>
-                                        <Input
-                                            placeholder="打爆潘子奕狗头 打爆潘子奕狗头 打爆潘子奕狗头"
-                                            fullWidth
-                                            className={classes.input}
-                                            inputProps={{
-                                                'aria-label': 'Description',
-                                            }}>
-                                        </Input>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "2%" }}>
-                                    </Grid>
-                                    <Grid item xs={2} style={{ textAlign: 'right', marginTop: "-1%" }}>
-                                        <Typography style={{ fontSize: "125%", fontWeight: "normal" }}>
-                                            用户姓名
-                                    </Typography>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "-1%" }}>
-                                        <Input
-                                            placeholder="打爆潘子奕狗头"
-
-                                            inputProps={{
-                                                'aria-label': 'Description',
-                                            }}>
-                                        </Input>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "-1%" }}>
-                                    </Grid>
-                                    <Grid item xs={2} style={{ textAlign: 'right', marginTop: "-1%" }}>
-                                        <Typography style={{ fontSize: "125%", fontWeight: "normal" }}>
-                                            手机号码
-                                    </Typography>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "-1%" }}>
-                                        <Input
-                                            placeholder="打爆潘子奕狗头"
-                                            className={classes.input}
-                                            inputProps={{
-                                                'aria-label': 'Description',
-                                            }}>
-                                        </Input>
-                                    </Grid>
-                                    <Grid item xs={5} style={{ marginTop: "-1%" }}>
-                                    </Grid>
-                                </Grid>
-                                <Divider style={{ marginTop: "2%" }} />
-                                <Typography variant="headline" style={{ marginTop: "1.5%" }} className={classes.headline}>
-                                    票品清单
+                    <CardContent>
+                        <Typography variant="headline" color="textSecondary" >
+                            取货信息
                         </Typography>
-                                <Grid container spacing={24}>
-                                    <Grid item xs={12} style={{ textAlign: 'right', marginTop: "2%" }}>
-                                        <Paper className={classes.root} style={{ marginLeft: "10%" }} >
-                                            {/* 以下显示票品的信息:title number price */}
-                                            <Table className={classes.table} >
-                                                <TableHead>
-                                                    <TableRow >
-                                                        <TableCell style={{ textAlign: 'center' }}>Title</TableCell>
-                                                        <TableCell style={{ textAlign: 'center' }} numeric>Number</TableCell>
-                                                        <TableCell style={{ textAlign: 'center' }} numeric>Price</TableCell>
+                        <Divider style={{marginTop:"1%"}}/>
+                        <Grid container spacing={24}>
+                            <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
+                                    <Typography style={{ fontSize: "125%" , fontWeight:"normal"}}>
+                                        收货地址
+                                    </Typography>
+                            </Grid>
+                            <Grid item xs={5} style={{marginTop:"1.8%"}}>
+                                <Input 
+                                    placeholder="打爆潘子奕狗头 打爆潘子奕狗头 打爆潘子奕狗头"
+                                    fullWidth
+                                    className={classes.input}
+                                    inputProps={{
+                                        'aria-label': 'Description',
+                                    }}>
+                                </Input>
+                            </Grid>
+                            <Grid item xs={5} style={{marginTop:"2%"}}>
+                            </Grid>
+                            <Grid item xs={2} style={{textAlign:'right',marginTop:"-1%"}}>
+                                    <Typography style={{ fontSize: "125%",fontWeight:"normal"}}>
+                                        用户姓名
+                                    </Typography>
+                            </Grid>
+                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                                <Input 
+                                    placeholder="打爆潘子奕狗头"
+                                    
+                                    inputProps={{
+                                        'aria-label': 'Description',
+                                    }}>
+                                </Input>
+                            </Grid>
+                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            </Grid>
+                            <Grid item xs={2} style={{textAlign:'right',marginTop:"-1%"}}>
+                                    <Typography style={{ fontSize: "125%",fontWeight:"normal"}}>
+                                        手机号码
+                                    </Typography>
+                            </Grid>
+                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                                <Input 
+                                    placeholder="打爆潘子奕狗头"
+                                    className={classes.input}
+                                    inputProps={{
+                                        'aria-label': 'Description',
+                                    }}>
+                                </Input>
+                            </Grid>
+                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            </Grid>
+                        </Grid>
+                        <Divider style={{marginTop:"2%"}}/>
+                        <Typography variant="headline"  style={{marginTop:"1.5%"}} className={classes.headline}>
+                            票品清单
+                        </Typography>
+                        <Grid container spacing={24}>
+                            <Grid item xs={12} style={{textAlign:'right',marginTop:"2%"}}>
+                                <Paper className={classes.root} style={{marginLeft:"10%"}} >
+                                {/* 以下显示票品的信息:title number price */}
+                                    <Table className={classes.table} >
+                                        <TableHead>
+                                            <TableRow >
+                                                <TableCell style={{textAlign:'center'}}>Title</TableCell>
+                                                <TableCell style={{textAlign:'center'}} numeric>Number</TableCell>
+                                                <TableCell style={{textAlign:'center'}} numeric>Price</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {data.map(n => {
+                                                return (
+                                                    <TableRow key={n.id}>
+                                                        <TableCell component="th" scope="row" style={{textAlign:'center'}}>
+                                                            {n.title}
+                                                        </TableCell>
+                                                        <TableCell style={{textAlign:'center'}} numeric>{n.number}</TableCell>
+                                                        <TableCell style={{textAlign:'center'}} numeric>{n.eachPrice}</TableCell>
                                                     </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {data.map(n => {
-                                                        return (
-                                                            <TableRow key={n.id}>
-                                                                <TableCell component="th" scope="row" style={{ textAlign: 'center' }}>
-                                                                    {n.title}
-                                                                </TableCell>
-                                                                <TableCell style={{ textAlign: 'center' }} numeric>{n.number}</TableCell>
-                                                                <TableCell style={{ textAlign: 'center' }} numeric>{n.price}</TableCell>
-                                                            </TableRow>
-                                                        );
-                                                    })}
-                                                </TableBody>
-                                            </Table>
-                                        </Paper>
-                                    </Grid>
-                                </Grid>
-                                <Divider style={{ marginTop: "2%" }} />
-                                <Grid container spacing={24}>
-                                    <Grid item xs={12} style={{ textAlign: 'center', marginTop: "1%" }}>
-                                        <Button variant="extendedFab" style={{ marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC" }}>
-                                            <PaymentIcon />
-                                            <Typography variant='body1' style={{ paddingLeft: '10px', color: "#FF6699" }}>
-                                                {'支付'}
-                                            </Typography>
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                                </CardContent>
-                                </Card>
+                                                );
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                        <Divider style={{ marginTop: "2%" }} />
+                        <Grid container spacing={24}>
+                            <Grid item xs={12} style={{ textAlign: 'center', marginTop: "1%" }}>
+                                <Button variant="extendedFab" style={{ marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC" }}>
+                                    <PaymentIcon />
+                                    <Typography variant='body1' style={{ paddingLeft: '10px', color: "#FF6699" }}>
+                                        {'提交'}
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                                
                             </ExpansionPanelDetails>
                         </ExpansionPanel>
                     </CardContent>

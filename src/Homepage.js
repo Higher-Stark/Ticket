@@ -70,7 +70,7 @@ const styles = theme => ({
         position: 'relative',
     },
     buttonMore: {
-        backgroundColor : pink[400],
+        backgroundColor: pink[400],
         '&:hover': {
             backgroundColor: pink[200],
         },
@@ -108,18 +108,18 @@ const styles = theme => ({
 
 const Img = [
     {
-        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
-    },
-    {
         src: 'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
     },
     {
-        src: 'http://tu.qiumibao.com/v/img/180518/206969_01133852974.jpg'
+        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
+    },
+    {
+        src: 'http://pic1.win4000.com/wallpaper/7/590ae44ec3b26.jpg'
     }
 ];
 
 class Homepage extends Component {
-    content=[];
+    content = [];
 
     constructor(props) {
         super(props);
@@ -156,7 +156,7 @@ class Homepage extends Component {
         this.setState({loading: true});
         const {page} = this.state;
         const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        fetch (url, {
+        fetch(url, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -180,7 +180,7 @@ class Homepage extends Component {
         const loadingCircle = (
             <div>
                 <Typography variant="title" color="primary" align='center' noWrap>
-                    <CircularProgress className={classes.progress} size={50} />
+                    <CircularProgress className={classes.progress} size={50}/>
                 </Typography>
             </div>
         );
@@ -216,7 +216,7 @@ class Homepage extends Component {
                         }
                     </div>
                 </div>
-                { firstLoad &&
+                {firstLoad &&
                 (<div className={classes.wrapper}>
                     <div className={classes.block}>
                         <Button variant='fab' color='primary'
@@ -225,7 +225,7 @@ class Homepage extends Component {
                         >
                             <ChevronDown/>
                         </Button>
-                        {loading && <CircularProgress size={68} className={classes.fabProgress}/> }
+                        {loading && <CircularProgress size={68} className={classes.fabProgress}/>}
                     </div>
                     <a href="#topAnchor" className={classes.topIcon}>
                         <ArrowCollapseUp/>

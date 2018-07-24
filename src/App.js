@@ -68,7 +68,6 @@ const theme = createMuiTheme({
 });
 
 
-
 class App extends Component {
     constructor(props) {
         super(props);
@@ -82,9 +81,9 @@ class App extends Component {
     componentDidMount() {
         let storage = window.sessionStorage;
         setTimeout(() => {
-            storage.setItem('flash', true);
-            this.setState({ flash: true });
-        },
+                storage.setItem('flash', true);
+                this.setState({flash: true});
+            },
             5000
         );
     }
@@ -92,7 +91,11 @@ class App extends Component {
 
     render() {
         const Welcome = (
-            <div onClick={() => {const { cookies } = this.props;cookies.set('flash', 1);this.setState({flash: true})}} id='background'>
+            <div onClick={() => {
+                let storage = window.sessionStorage;
+                storage.setItem('flash', true);
+                this.setState({flash: true})
+            }} id='background'>
                 <div className="bg"/>
                 <div className="bg bg2"/>
                 <div className="bg bg3"/>
@@ -105,7 +108,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ? <ResponsiveDrawer/>: Welcome}
+                    {this.state.flash ? <ResponsiveDrawer/> : Welcome}
                 </Router>
             </MuiThemeProvider>
         );

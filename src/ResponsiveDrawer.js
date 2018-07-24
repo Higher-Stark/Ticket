@@ -39,9 +39,7 @@ import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import Cart from "./page/Cart";
 import Ballet from './svg/ballet3.svg';
-import Exhibition from './svg/exhibition.svg';
 import Vocal from './svg/ic-vocal.svg';
-import Curtain from './svg/curtain.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
 import Acrobatics from './svg/acrobatics.svg';
@@ -173,8 +171,7 @@ class ResponsiveDrawer extends React.Component {
 
     toggleSearch = () => {
         this.props.history.push({
-            pathname: '/search',
-            search: `s=${this.state.search}`,
+            pathname: '/search/'+this.state.search,
         });
     };
 
@@ -200,14 +197,6 @@ class ResponsiveDrawer extends React.Component {
                 <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Exhibition'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/opera'>
                     <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
@@ -252,17 +241,13 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/concert'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Exhibition'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/opera'>
                     <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
@@ -272,11 +257,11 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
+                <ListItem button component={NavLink} to='/category/dancing'>
                     <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
+                <ListItem button component={NavLink} to='/category/parenting'>
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
@@ -382,7 +367,7 @@ class ResponsiveDrawer extends React.Component {
                         <Redirect to='/signin'/>) : (<Account {...props} user={this.state.user}/>)
                         )}/>
                     <Route path='/category/:category' component={Category}/>
-                    <Route path='/search' component={Search}/>
+                    <Route path='/search/:search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
                     <Route path="empty" component={null} key="empty"/>

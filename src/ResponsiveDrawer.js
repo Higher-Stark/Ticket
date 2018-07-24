@@ -47,6 +47,8 @@ import Parent from './svg/parenting.svg';
 import Acrobatics from './svg/acrobatics.svg';
 import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';
+import Order from './page/Order'
+import AfterPay from './page/AfterPay'
 
 const listStyles = {
     home: {
@@ -390,6 +392,8 @@ class ResponsiveDrawer extends React.Component {
                     <Route path="empty" component={null} key="empty"/>
                     <Route path="/orderconfirm" component={OrderConfirm}/>
                     <Route path="/payconfirm" component={PayConfirm}/>
+                    <Route path="/order" component={Order}/>
+                    <Route path="/afterpay" component={AfterPay}/>
                 </main>
             </div>
         );

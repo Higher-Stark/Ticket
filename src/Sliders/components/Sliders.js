@@ -83,7 +83,7 @@ export default class Sliders extends Component {
         };
         return (
             <div className="huge">
-                <div className="small" >
+                <div className="small">
                     <div
                         className="wrapper-left"
                         onMouseOver={() => clearInterval(this.timer)}

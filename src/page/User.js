@@ -16,7 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
-import Cancel from '@material-ui/icons/Cancel';
+import ClearIcon from '@material-ui/icons/Clear';
 import Provinces from '../data/provinces';
 import {decomposeAddr, UserError, composeAddr, getDistricts, getCities, chinese} from "../util/utils";
 
@@ -469,7 +469,7 @@ class User extends Component {
                                         <SaveIcon/>
                                     </Button>
                                         <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
-                                            <Cancel/>
+                                            <ClearIcon/>
                                         </Button>
                                     </div> :
                                     <Button variant='fab' color='primary' onClick={this.toggleEdit} className={classNames(classes.action, classes.button)}>
@@ -541,11 +541,13 @@ class User extends Component {
                     <Tab label="User info"/>
                     <Tab label="Modify Password"/>
                     <Tab label="修改支付密码"/>
+                    <Tab label="注销账户"/>
                 </Tabs>
                 </AppBar>
                 { tab === 0 && info }
                 { tab === 1 && modify }
                 { tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography> }
+                { tab === 3 && <Typography variant='subheading' component='h3' gutterBottom>{'暂不支持注销账户，请谅解'}</Typography> }
             </div>
         )
     }

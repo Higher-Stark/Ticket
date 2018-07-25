@@ -105,7 +105,7 @@ class Category extends Component {
         return false;
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentWillUpdate(prevProps, prevState, snapshot) {
         const {match} = this.props;
         const category = match.params.category;
         const {page} = this.state;

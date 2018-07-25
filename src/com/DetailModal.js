@@ -40,7 +40,7 @@ const styles = theme => ({
     },
     modal: {
         // height: 0,
-        paddingTop: '56.25%',    // 16:9
+        // paddingTop: '56.25%',    // 16:9
         display: 'flex',
         overflow: 'hidden',
         justifyContent: 'center',
@@ -162,11 +162,8 @@ class DetailModal extends Component {
                         {card.title}
                     </Typography>
                     <Typography variant='subheading' component='h3' color='secondary'>
-                        {card.city}
-                    </Typography>
-                    <Typography variant='subheading' component='h3' color='secondary'>
                         <PlaceIcon/>
-                        {card.venue}
+                        {'['}{card.city}{'] '}{card.venue}
                     </Typography>
                     <Typography variant='body1' component='p' color='textSecondary'>
                         Introduction

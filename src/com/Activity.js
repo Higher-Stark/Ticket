@@ -15,7 +15,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Modal from '@material-ui/core/Modal';
 import MusicCircle from 'mdi-material-ui/MusicCircle';
 import Basketball from 'mdi-material-ui/Basketball';
-import TheaterIcon from 'mdi-material-ui/Theater';
+import Ballet from '../svg/ballet3.svg';
+import Vocal from '../svg/ic-vocal.svg';
+import Curtain from '../svg/curtain.svg';
+import Mask from '../svg/mask.svg';
+import Parent from '../svg/parenting.svg';
+import Acrobatics from '../svg/acrobatics.svg';
 import StarIcon from 'mdi-material-ui/Star';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
@@ -79,6 +84,10 @@ const styles = theme => ({
         display: 'flex',
         justifyContent: 'space-between',
     },
+    svg: {
+        width: 20,
+        height: 20,
+    },
 });
 
 class Activity extends Component {
@@ -106,8 +115,13 @@ class Activity extends Component {
         const actIcon = () => {
             const type = card.type;
             if (type.indexOf('sports') !== -1) return <Basketball/>;
+            else if (type.indexOf("show") !== -1) return <img src={Curtain} alt="Show" className={classes.svg}/>;
+            else if (type.indexOf('dancing') !== -1) return <img src={Ballet} alt='dance' className={classes.svg}/>;
+            else if (type.indexOf('vocal concert') !== -1) return <img src={Vocal} alt='vocal' className={classes.svg}/>;
             else if (type.indexOf("concert") !== -1) return <MusicCircle/>;
-            else if (type.indexOf("show") !== -1) return <TheaterIcon/>;
+            else if (type.indexOf("acrobatics") !== -1) return <img src={Acrobatics} alt="Acrobatics" className={classes.svg}/>;
+            else if (type.indexOf("parenting") !== -1) return <img src={Parent} alt='parenting' className={classes.svg}/>;
+            else if (type.indexOf("opera") !== -1) return <img src={Mask} alt='Opera' className={classes.svg}/>;
             else return (<MoreHoriz/>);
         };
 

@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
+import Collapse from '@material-ui/core/Collapse';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,9 +22,14 @@ import SearchIcon from '@material-ui/icons/Search';
 import Avatar from '@material-ui/core/Avatar';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import AccountBox from '@material-ui/icons/AccountBox';
+import AccountBalanceWallet from '@material-ui/icons/AccountBalanceWallet';
+import ListIcon from '@material-ui/icons/List';
 import HomeIcon from '@material-ui/icons/Home';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Person from '@material-ui/icons/Person';
+import UnfoldMore from '@material-ui/icons/UnfoldMore';
+import UnFoldLess from '@material-ui/icons/UnfoldLess';
 import Collections from '@material-ui/icons/Collections';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import BasketballIcon from 'mdi-material-ui/Basketball';
@@ -117,6 +124,9 @@ const styles = theme => ({
         position: 'absolute',
         right: '0px',
     },
+    nested: {
+        paddingLeft: theme.spacing.unit * 4,
+    },
 });
 
 class ResponsiveDrawer extends React.Component {
@@ -126,6 +136,7 @@ class ResponsiveDrawer extends React.Component {
             mobileOpen: false,
             user: null,
             search: null,
+            accountOpen: false,
         };
     }
 
@@ -176,6 +187,10 @@ class ResponsiveDrawer extends React.Component {
             pathname: '/search',
             search: `s=${this.state.search}`,
         });
+    };
+
+    togglePerson = () => {
+        this.setState({accountOpen: !this.state.accountOpen})
     };
 
     render() {
@@ -235,10 +250,33 @@ class ResponsiveDrawer extends React.Component {
 // login
         const NavMenuList2 = (
             <div>
-                <ListItem button component={NavLink} to='/account'>
+                <ListItem button onClick={this.togglePerson}>
                     <ListItemIcon><Person/></ListItemIcon>
                     <ListItemText inset primary='Account'/>
+                    { this.state.accountOpen ? <UnFoldLess/> : <UnfoldMore/> }
                 </ListItem>
+                <Collapse in={this.state.accountOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItem button component={NavLink} className={classes.nested} to='/user/account'>
+                            <ListItemIcon>
+                                <AccountBox/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Info center"/>
+                        </ListItem>
+                        <ListItem button component={NavLink} className={classes.nested} to='/user/wallet'>
+                            <ListItemIcon>
+                                <AccountBalanceWallet/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Wallet"/>
+                        </ListItem>
+                        <ListItem button component={NavLink} className={classes.nested} to='/user/orders'>
+                            <ListItemIcon>
+                                <ListIcon/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Orders"/>
+                        </ListItem>
+                    </List>
+                </Collapse>
                 <ListItem button component={NavLink} to='/cart'>
                     <ListItemIcon><ShoppingCart/></ListItemIcon>
                     <ListItemText inset primary='Cart'/>
@@ -379,7 +417,13 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/activating' component={Activating}/>
                     <Route path='/activated/:uuid' component={Activated}/>
                     <Route path='/signin' component={LoginWrapper}/>
-                    <Route path='/account' component={this.state.user === null ? redirectTo : User }/>
+                    <Route path='/user/account' component={this.state.user === null ? redirectTo : User }/>
+                    {
+                        /*
+                    <Route path='/user/wallet' component={this.state.user === null ? redirectTo : User }/>
+                    <Route path='/user/orders' component={this.state.user === null ? redirectTo : User }/>
+                         */
+                    }
                     <Route path='/category/:category' component={Category}/>
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>

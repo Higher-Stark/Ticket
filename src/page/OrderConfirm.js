@@ -21,19 +21,14 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import PaymentIcon from '@material-ui/icons/Payment'
+import PaymentIcon from '@material-ui/icons/Payment';
+import {NavLink,withRouter} from 'react-router-dom';
 
 let id = 0
 function createData(title, number, price) {
     id += 1;
     return { title,number,price };
 }
-  
-const data = [
-    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,500),
-    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
-    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,880)
-];
 
 const theme = createMuiTheme({
     palette: {
@@ -84,6 +79,133 @@ const styles = theme => ({
 class OrderConfirm extends Component{
     constructor(props){
         super(props)
+        this.state ={
+            userDetail:{},
+            items:[],
+            data:[]
+        }
+    }
+
+    fetchUserDetail = ()=>{
+        let storage = window.localStorage;
+        let token = JSON.parse(storage.getItem("user")).token;
+        let s = `token=${token}`;
+        fetch('http://pipipan.cn:30009/UserDetail/QueryByUserid',{
+            method:'POST',
+            body:s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text =>{
+                console.log(text);
+                this.setState({
+                    userDetail: JSON.parse(text)
+                });
+                console.log(this.state.userDetail)
+            });
+    };
+
+    fetchItems = ()=>{
+        console.log("the state tickets")
+        let storage = window.localStorage;
+        let orderConfirmTickets = JSON.parse(storage.getItem("orderConfirmTickets"));
+        if(orderConfirmTickets == null)
+            return;
+        for(var i = 0; i<orderConfirmTickets.length ;i++){
+            var eachTicket = orderConfirmTickets[i];
+            var tmpItem;
+            var tmpArray = this.state.items;
+            fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`,{
+                method:'GET',
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                })
+                .then(text => {
+                    tmpItem = JSON.parse(text);
+                    delete tmpItem.dates;
+                    delete tmpItem.startDate;
+                    delete tmpItem.endDate;
+                    delete tmpItem.lowprice;
+                    delete tmpItem.highprice;
+                    tmpItem['date'] = eachTicket.date;
+                    tmpItem['price'] = eachTicket.price;
+                    tmpItem['number'] = eachTicket.number;
+
+                    tmpArray.push(tmpItem)
+
+                    this.setState({
+                        items: tmpArray
+                    });
+
+                    var tmpData = this.state.data;
+                    tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price))
+                    this.setState({
+                        data:tmpData
+                    })
+                })
+        }
+    };
+
+    addOrderToBackend = () => {
+        let storage = window.localStorage;
+        let ordertype = storage.getItem("orderType");
+        let token = JSON.parse(storage.getItem("user")).token;
+        var address = document.getElementById('address').value;
+        var username = document.getElementById('username').value;
+        var phone = document.getElementById('phone').value;
+
+        if(address === "" || address == null)
+            address = document.getElementById('address').placeholder;
+        if(username === "" || username == null)
+            username = document.getElementById('username').placeholder;
+        if(phone === "" || phone == null)
+            phone = document.getElementById('phone').placeholder;
+
+        if(ordertype === "orderInDetailPage"){
+            console.log("in orderInDetailPage");
+
+            let s = `token=${token}&ticketid=${this.state.items[0].id}&price=${this.state.items[0].price}&date=${this.state.items[0].date}&number=${this.state.items[0].number}&receiver=${username}&phone=${phone}&address=${address}`;
+            fetch('http://pipipan.cn:30011/Order/AddInDetailPage',{
+                method:"POST",
+                body:s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                })
+                .then(text=>{
+                    console.log(text)
+                    text = JSON.parse(text);
+                    storage.setItem("orderid",text.id)
+                    this.props.history.push({
+                        pathname:'/payconfirm'
+                    })
+                })
+        }
+    }
+    routerToPayConfirm(){
+        this.addOrderToBackend();
+    }
+
+    componentWillMount(){
+        this.fetchUserDetail();
+        this.fetchItems();
     }
 
     render(){
@@ -108,8 +230,9 @@ class OrderConfirm extends Component{
                                     </Typography>
                             </Grid>
                             <Grid item xs={5} style={{marginTop:"1.8%"}}>
-                                <Input 
-                                    placeholder="打爆潘子奕狗头 打爆潘子奕狗头 打爆潘子奕狗头"
+                                <Input
+                                    id = "address"
+                                    placeholder={this.state.userDetail.address}
                                     fullWidth
                                     className={classes.input}
                                     inputProps={{
@@ -125,9 +248,9 @@ class OrderConfirm extends Component{
                                     </Typography>
                             </Grid>
                             <Grid item xs={5} style={{ marginTop:"-1%"}}>
-                                <Input 
-                                    placeholder="打爆潘子奕狗头"
-                                    
+                                <Input
+                                    id = "username"
+                                    placeholder={this.state.userDetail.username}
                                     inputProps={{
                                         'aria-label': 'Description',
                                     }}>
@@ -141,8 +264,9 @@ class OrderConfirm extends Component{
                                     </Typography>
                             </Grid>
                             <Grid item xs={5} style={{ marginTop:"-1%"}}>
-                                <Input 
-                                    placeholder="打爆潘子奕狗头"
+                                <Input
+                                    id = "phone"
+                                    placeholder={this.state.userDetail.phone}
                                     className={classes.input}
                                     inputProps={{
                                         'aria-label': 'Description',
@@ -169,7 +293,7 @@ class OrderConfirm extends Component{
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {data.map(n => {
+                                            {this.state.data.map(n => {
                                                 return (
                                                     <TableRow key={n.id}>
                                                         <TableCell component="th" scope="row" style={{textAlign:'center'}}>
@@ -188,7 +312,7 @@ class OrderConfirm extends Component{
                         <Divider style={{ marginTop: "2%" }} />
                         <Grid container spacing={24}>
                             <Grid item xs={12} style={{ textAlign: 'center', marginTop: "1%" }}>
-                                <Button variant="extendedFab" style={{ marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC" }}>
+                                <Button variant="extendedFab" style={{ marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC" }} onClick={()=>this.routerToPayConfirm()}>
                                     <PaymentIcon />
                                     <Typography variant='body1' style={{ paddingLeft: '10px', color: "#FF6699" }}>
                                         {'提交'}
@@ -212,4 +336,4 @@ class OrderConfirm extends Component{
 OrderConfirm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(OrderConfirm);
+export default withRouter(withStyles(styles)(OrderConfirm));

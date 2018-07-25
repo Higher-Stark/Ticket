@@ -76,7 +76,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
-        let flash = storage.getItem('flash') || false;
+        let flash = storage.getItem('flash');
         this.state = {
             flash: flash,
         };
@@ -92,7 +92,9 @@ class App extends Component {
     }
 
     cancelFlash(){
-        console.log(this.state.flash)
+        if(this.state.flash)
+            return;
+        console.log(this.state.flash+"1")
         let storage = window.sessionStorage;
         storage.setItem("flash",true);
         this.setState({
@@ -102,6 +104,8 @@ class App extends Component {
     }
 
     slideshow() {
+        if(this.state.flash)
+            return;
         console.log(document.getElementById("background"))
         if(document.getElementById("background")==null)
             return;

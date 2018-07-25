@@ -142,27 +142,47 @@ class Order extends Component{
         super(props)
         this.state={
             data: [
-                createData('Cupcake', 305, 3.7),
-                createData('Donut', 452, 25.0),
-                createData('Eclair', 262, 16.0),
-                createData('Frozen yoghurt', 159, 6.0),
-                createData('Gingerbread', 356, 16.0),
-                createData('Honeycomb', 408, 3.2),
-                createData('Ice cream sandwich', 237, 9.0),
-                createData('Jelly Bean', 375, 0.0),
-                createData('KitKat', 518, 26.0),
-                createData('Lollipop', 392, 0.2),
-                createData('Marshmallow', 318, 0),
-                createData('Nougat', 360, 19.0),
-                createData('Oreo', 437, 18.0),
-            ].sort((a, b) => (a.calories < b.calories ? -1 : 1)),
+                createData('Cupcake', 305, 3.7)
+            ],
             page: 0,
-            rowsPerPage: 5,
-        }
-        this.calcuTotal = this.calcuTotal.bind(this)
-        this.getUserOrder = this.getUserOrder.bind(this)
-        this.buildOrderEntry = this.buildOrderEntry.bind(this)
-        this.buildTable = this.buildTable.bind(this)
+            rowsPerPage: 0,
+            totalNumber: 0,
+            pageOrder: [],
+        };
+        this.routerToAfterPay = this.routerToAfterPay.bind(this)
+    }
+
+    componentWillMount(){
+        this.fetchUserOrders();
+    }
+
+    fetchUserOrders=()=>{
+        let storage = window.localStorage;
+        let token = JSON.parse(storage.getItem("user")).token;
+        console.log(token);
+        let s = `token=${token}&pagenumber=1`;
+        fetch('http://pipipan.cn:30011/Order/QueryByUserid',{
+            method:"POST",
+            body: s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include",
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text=>{
+                console.log("hello from the outside");
+                text = JSON.parse(text);
+                console.log(text);
+                this.setState({
+                    rowsPerPage : text.size,
+                    totalNumber : text.totalElements,
+                    pageOrder : text.content,
+                })
+            })
     }
 
     handleChangePage = (event, page) => {
@@ -173,169 +193,313 @@ class Order extends Component{
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    calcuTotal(){
-        console.log(data)
-        let totalPrice = 0;
-        data.forEach(element => {
-            totalPrice += element.number * element.eachPrice;
-        });
-        return totalPrice
+    routerToAfterPay (e){
+        console.log("click")
+        console.log(e.target.get)
+        console.log(e.target.id)
     }
 
-    getUserOrder(){
-        let storage = window.localStorage;
-        let token = storage.getItem("user")
-        console.log(token)
-        fetch()
-    }
-
-    buildOrderEntry(order,classes){
+    buildOrderEntry=(order,classes)=>{
         const expanPanel = (<ExpansionPanel style={{marginTop:'2%',marginBottom:'4%'}}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <Grid container spacing={24} >
                     <Grid item xs={2} style={{ textAlign: 'right' }}>
                         <Typography style={{ fontSize: "100%", fontWeight: "normal" }}>
-                            订单1
+                            {"订单"+order.id}
                         </Typography>
                     </Grid>
                     <Grid item xs={4} style={{ textAlign: 'center' }}>
                         <Typography style={{ fontSize: "100%", fontWeight: "normal" }}>
-                            时间：2018年07月24日
+                            {"时间："+order.orderTime}
                         </Typography>
                     </Grid>
                     <Grid item xs={4} ></Grid>
                     <Grid item xs={2} style={{ textAlign: 'left' }}>
-                        <Typography style={{ fontSize: "100%", fontWeight: "normal" }}>
-                            待付款
-                        </Typography>
+                        {order.status==="待发货"?
+                            (<Typography style={{ fontSize: "100%", fontWeight: "normal" ,color: "#3399FF"}}>
+                                {order.status}
+                            </Typography>):
+                            (<Typography style={{ fontSize: "100%", fontWeight: "normal" ,color: "#FF3399"}}>
+                                {order.status}
+                            </Typography>)
+                        }
                     </Grid>
                 </Grid>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-                <Card>
-                    <CardContent>
-                        <Typography variant="headline" color="textSecondary">
-                            详细信息
-                        </Typography>
-
-                        <Divider style={{marginTop: "1%"}}/>
-                        <Grid container spacing={24}>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
-                                <Typography>
-                                    订单编号
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
-                                <Typography>
-                                    {order["订单编号"]}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
-                                <Typography>
-                                    用户姓名
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
-                                <Typography>
-                                    潘子奕狗头
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
-                                <Typography>
-                                    手机号码
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
-                                <Typography>
-                                    54739110
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"1.5%"}}>
-                                <Typography>
-                                    收获地址
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={10} style={{textAlign:'left',marginTop:"1.5%"}}>
-                                <Typography>
-                                    上海市 闵行校区 东川路800号 上海交大闵行校区
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Divider style={{marginTop: "2%"}}/>
-                        <Typography variant="headline" style={{marginTop: "1.5%"}}
-                                    className={classes.headline}>
-                            票品清单
-                        </Typography>
-                        <Grid container spacing={24}>
-                            <Grid item xs={12} style={{textAlign: 'right', marginTop: "2%"}}>
-                                <Paper className={classes.root} style={{marginLeft: "10%"}}>
-                                    {/* 以下显示票品的信息:title number price */}
-                                    <Table className={classes.table}>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell
-                                                    style={{textAlign: 'center'}}>标题</TableCell>
-                                                <TableCell style={{textAlign: 'center'}}
-                                                           numeric>数量</TableCell>
-                                                <TableCell style={{textAlign: 'center'}}
-                                                           numeric>单价</TableCell>
-                                                <TableCell style={{textAlign: 'center'}}
-                                                           numeric>合计</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {data.map(n => {
-                                                return (
-                                                    <TableRow key={n.id}>
-                                                        <TableCell component="th" scope="row"
-                                                                   style={{textAlign: 'center'}}>
-                                                            {n.title}
-                                                        </TableCell>
-                                                        <TableCell style={{textAlign: 'center'}}
-                                                                   numeric>{n.number}</TableCell>
-                                                        <TableCell style={{textAlign: 'center'}}
-                                                                   numeric>{'¥'+n.eachPrice}</TableCell>
-                                                        <TableCell style={{textAlign: 'center'}}
-                                                                   numeric>{'¥'+n.eachPrice*n.number}</TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                        <Divider style={{marginTop: "2%"}}/>
-                        <Grid container spacing={24}>
-                            {/* <Grid item xs={1} style={{marginTop:"1.5%"}}></Grid> */}
-                            <Grid item xs={3} style={{textAlign:'right',marginTop:"1.5%"}}>
-                                <Typography className={classes.headline} style={{ fontSize: "125%", marginTop: "2%", marginLeft: "6%" }}>
-                                    总费用
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={4} style={{textAlign:'left',marginTop:"1.5%"}}>
-                                <Typography  style={{ fontSize: "125%", marginTop: "2%"}}>
-                                    {'¥'+this.calcuTotal()}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2} style={{marginTop:"1.5%"}}/>
-                            <Grid item xs={3} style={{marginTop:"1.5%"}}>
-                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}}
-                                        onClick={this.getUserOrder}>
-                                    支付
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-                </Card>
+                {this.buildPanelDetails(order,classes)}
             </ExpansionPanelDetails>
         </ExpansionPanel>)
 
         return expanPanel;
     }
 
-    buildTable(orders,classes,emptyRows){
-        const { data, rowsPerPage, page } = this.state;
+    buildPanelDetails=(order,classes)=>{
+        const afterPayDetail = (
+            <div>
+                <Typography variant="headline" color="textSecondary">
+                    详细信息
+                </Typography>
+
+                <Divider style={{marginTop: "1%"}}/>
+                <Grid container spacing={24}>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            订单编号
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.id}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            用户姓名
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.receiver}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            手机号码
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.phone}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right'}}>
+                        <Typography>
+                            收获地址
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={10} style={{textAlign: 'left'}}>
+                        <Typography>
+                            {order.address}
+                        </Typography>
+                    </Grid>
+                </Grid>
+
+                <Divider style={{marginTop: "1.5%"}}/>
+                <Typography className={classes.headline}
+                            style={{fontSize: "125%", marginTop: "2%", marginLeft: "6%"}}>
+                    订单票品
+                </Typography>
+                <Paper className={classes.root} style={{marginTop: "2%"}}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{textAlign: 'center'}}>商品名称</TableCell>
+                                <TableCell style={{textAlign: 'center'}} numeric>数量</TableCell>
+                                <TableCell style={{textAlign: 'center'}} numeric>单价</TableCell>
+                                <TableCell style={{textAlign: 'center'}} numeric>合计</TableCell>
+                                <TableCell style={{textAlign: 'center'}} numeric>是否成功</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {order.items.map(n => {
+                                return (
+                                    <TableRow key={n.id}>
+                                        <TableCell component="th" scope="row"
+                                                   style={{textAlign: 'center'}}>
+                                            {n.title}
+                                        </TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>{n.number}</TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>{'¥' + n.price}</TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>{'¥' + n.number * n.price}</TableCell>
+                                        {(n.status === "成功") ?
+                                            <TableCell
+                                                style={{color: "#3399FF", textAlign: 'center'}}
+                                                numeric>{n.status}</TableCell> :
+                                            <TableCell
+                                                style={{color: "#FF3399", textAlign: 'center'}}
+                                                numeric>{n.status}</TableCell>}
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Paper>
+                <Divider style={{marginTop: "1.5%"}}/>
+                <Grid container spacing={24}>
+                    {/* <Grid item xs={1} style={{marginTop:"1.5%"}}></Grid> */}
+
+                    <Grid item xs={4} style={{marginTop: "1.5%"}}></Grid>
+                    <Grid item xs={2} style={{marginTop: "1.5%"}}/>
+                    <Grid item xs={3} style={{textAlign: 'right', marginTop: "1.5%"}}>
+                        <Typography className={classes.headline}
+                                    style={{fontSize: "125%", marginTop: "2%", marginLeft: "6%"}}>
+                            已支付
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={3} style={{marginTop: "1.5%"}}>
+                        <Typography style={{fontSize: "125%", marginTop: "2%"}}>
+                            {
+                                function(order) {
+                                    var tmpTotalPrice = 0;
+                                    for (var i = 0; i < order.items.length; i++) {
+                                        var tmpItem = order.items[i]
+                                        if (tmpItem.status === "成功")
+                                            tmpTotalPrice += tmpItem.number * tmpItem.price
+                                    }
+                                    return '¥'+tmpTotalPrice;
+                                }(order)
+                            }
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+
+        const beforePayDetail = (
+            <div>
+                <Typography variant="headline" color="textSecondary">
+                    详细信息
+                </Typography>
+
+                <Divider style={{marginTop: "1%"}}/>
+                <Grid container spacing={24}>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            订单编号
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.id}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            用户姓名
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.receiver}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Typography>
+                            手机号码
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+                        <Typography>
+                            {order.phone}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{textAlign: 'right'}}>
+                        <Typography>
+                            收获地址
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={10} style={{textAlign: 'left'}}>
+                        <Typography>
+                            {order.address}
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <Divider style={{marginTop: "2%"}}/>
+                <Typography variant="headline" style={{marginTop: "1.5%"}}
+                            className={classes.headline}>
+                    票品清单
+                </Typography>
+                <Grid container spacing={24}>
+                    <Grid item xs={12} style={{textAlign: 'right', marginTop: "2%"}}>
+                        <Paper className={classes.root} style={{marginLeft: "10%"}}>
+                            {/* 以下显示票品的信息:title number price */}
+                            <Table className={classes.table}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell
+                                            style={{textAlign: 'center'}}>标题</TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>数量</TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>单价</TableCell>
+                                        <TableCell style={{textAlign: 'center'}}
+                                                   numeric>合计</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {order.items.map(n => {
+                                        return (
+                                            <TableRow key={n.id}>
+                                                <TableCell component="th" scope="row"
+                                                           style={{textAlign: 'center'}}>
+                                                    {n.title}
+                                                </TableCell>
+                                                <TableCell style={{textAlign: 'center'}}
+                                                           numeric>{n.number}</TableCell>
+                                                <TableCell style={{textAlign: 'center'}}
+                                                           numeric>{'¥' + n.price}</TableCell>
+                                                <TableCell style={{textAlign: 'center'}}
+                                                           numeric>{'¥' + n.price * n.number}</TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    </Grid>
+                </Grid>
+                <Divider style={{marginTop: "2%"}}/>
+                <Grid container spacing={24}>
+                    {/* <Grid item xs={1} style={{marginTop:"1.5%"}}></Grid> */}
+                    <Grid item xs={3} style={{textAlign: 'right', marginTop: "1.5%"}}>
+                        <Typography className={classes.headline}
+                                    style={{fontSize: "125%", marginTop: "2%", marginLeft: "6%"}}>
+                            总费用
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4} style={{textAlign: 'left', marginTop: "1.5%"}}>
+                        <Typography style={{fontSize: "125%", marginTop: "2%"}}>
+                            {'¥' + function(items){
+                                var tmpTotalPrice = 0;
+                                for(var i = 0 ; i < items.length ; i++){
+                                    tmpTotalPrice+=items[i].price*items[i].number
+                                }
+                                return tmpTotalPrice;
+                            }(order.items)}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} style={{marginTop: "1.5%"}}/>
+                    <Grid item xs={3} style={{marginTop: "1.5%"}}>
+                        <Button variant="contained"
+                                id = {"orderid"+order.id}
+                                style={{
+                            marginRight: '3%',
+                            color: "#FFFFFF",
+                            borderBottom: '100%',
+                            backgroundColor: "#FF6699"
+                        }}
+                                onClick={this.routerToAfterPay}>
+                            支付
+                        </Button>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+
+        return (
+            <Card>
+                <CardContent>
+                    {order.status === "待发货"?afterPayDetail:beforePayDetail}
+                </CardContent>
+            </Card>)
+    };
+
+    buildTable=(orders,classes,emptyRows)=>{
+        const { rowsPerPage, page } = this.state;
 
         const table = (
             <Card>
@@ -343,7 +507,7 @@ class Order extends Component{
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table}>
                             <TableBody>
-                                {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+                                {this.state.pageOrder.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
                                     return (
                                         <TableRow key={n.id}>
                                             {this.buildOrderEntry(n, classes)}
@@ -360,7 +524,7 @@ class Order extends Component{
                                 <TableRow>
                                     <TablePagination
                                         colSpan={3}
-                                        count={data.length}/*13个*/
+                                        count={this.state.totalNumber}/*16个*/
                                         rowsPerPage={rowsPerPage}
                                         page={page}
                                         onChangePage={this.handleChangePage}
@@ -381,7 +545,7 @@ class Order extends Component{
         const { classes } = this.props;
         const orders = [{"订单编号":201807230000}]
         const { data, rowsPerPage, page } = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.totalNumber - page * rowsPerPage);
 
         const Order = (
             <div>
@@ -399,7 +563,7 @@ class Order extends Component{
                     </CardContent>
                 </Card>
             </div>
-        )
+        );
         return (<div>{Order}</div>)
     }
 }
@@ -409,3 +573,55 @@ Order.propTypes = {
 };
 
 export default withStyles(styles)(Order);
+
+//
+// <Typography variant="headline" color="textSecondary">
+//     详细信息
+// </Typography>
+//
+// <Divider style={{marginTop: "1%"}}/>
+// <Grid container spacing={24}>
+//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+//         <Typography>
+//             订单编号
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+//         <Typography>
+//             1232131
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+//         <Typography>
+//             用户姓名
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+//         <Typography>
+//             234234234
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+//         <Typography>
+//             手机号码
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
+//         <Typography>
+//             234234234
+//         </Typography>
+//     </Grid>
+// </Grid>
+// <Divider style={{marginTop: "1.5%"}}/>
+// <Grid container spacing={24}>
+//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "1.5%"}}>
+//         <Typography>
+//             收获地址
+//         </Typography>
+//     </Grid>
+//     <Grid item xs={10} style={{textAlign: 'left', marginTop: "1.5%"}}>
+//         <Typography>
+//             234234234
+//         </Typography>
+//     </Grid>
+// </Grid>

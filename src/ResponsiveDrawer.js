@@ -42,6 +42,8 @@ import Ballet from './svg/ballet3.svg';
 import Vocal from './svg/ic-vocal.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
+import Curtain from './svg/curtain.svg'
+import Exhibition from './svg/exhibition.svg'
 import Acrobatics from './svg/acrobatics.svg';
 import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';

@@ -28,8 +28,8 @@ import ListIcon from '@material-ui/icons/List';
 import HomeIcon from '@material-ui/icons/Home';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import Person from '@material-ui/icons/Person';
-import UnfoldMore from '@material-ui/icons/UnfoldMore';
-import UnFoldLess from '@material-ui/icons/UnfoldLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
 import Collections from '@material-ui/icons/Collections';
 import LogoutVariant from 'mdi-material-ui/LogoutVariant';
 import BasketballIcon from 'mdi-material-ui/Basketball';
@@ -50,7 +50,7 @@ import Exhibition from './svg/exhibition.svg';
 import Vocal from './svg/ic-vocal.svg';
 import Curtain from './svg/curtain.svg';
 import Mask from './svg/mask.svg';
-import Parent from './svg/parenting.svg';
+import Parent from './svg/parent-child.svg';
 import Acrobatics from './svg/acrobatics.svg';
 
 const listStyles = {
@@ -253,7 +253,7 @@ class ResponsiveDrawer extends React.Component {
                 <ListItem button onClick={this.togglePerson}>
                     <ListItemIcon><Person/></ListItemIcon>
                     <ListItemText inset primary='Account'/>
-                    { this.state.accountOpen ? <UnFoldLess/> : <UnfoldMore/> }
+                    { this.state.accountOpen ? <ExpandLess/> : <ExpandMore/> }
                 </ListItem>
                 <Collapse in={this.state.accountOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
@@ -290,7 +290,7 @@ class ResponsiveDrawer extends React.Component {
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>

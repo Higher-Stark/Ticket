@@ -451,7 +451,7 @@ class User extends Component {
                         <div className={classes.imageSec}>
                             <img alt={user.name} src={user.avatar} className={classes.image}/>
                         </div>
-                        <div>
+                        <div className={classes.wrapper}>
                             <input accept="image/*" className={classes.input} id="flat-button-file" type="file" onChange={this.setImg}/>
                             <label htmlFor="flat-button-file">
                                 <Button component="span" variant="contained" className={classes.button}>
@@ -502,28 +502,28 @@ class User extends Component {
             <div className={classes.root}>
                 <Paper elevation={10} className={classes.paper}>
                     <div className={classes.form}>
-                    <Typography variant='headline' component='h2' color="primary" align='center'>修改密码</Typography>
-                    <TextField label="原密码" value={this.state.oldPwd || ""}
-                               name="Old Password"
-                               placeholder="原密码"
-                               onChange={this.handleChange("oldPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="oldPwd" margin='normal' type='password' required fullWidth
-                    />
-                    <TextField label="新密码" value={this.state.newPwd || ""}
-                               name="New Password"
-                               placeholder="新密码"
-                               onChange={this.handleChange("newPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="newPwd" margin='normal' type='password' required fullWidth
-                    />
-                    <TextField label="确认新密码" value={this.state.renewPwd || ""}
-                               name="renew Password"
-                               placeholder="原密码"
-                               onChange={this.handleChange("renewPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="renewPwd" margin='normal' type='password' required fullWidth
-                    />
+                        <Typography variant='headline' component='h2' color="primary" align='center'>修改密码</Typography>
+                        <TextField label="原密码" value={this.state.oldPwd || ""}
+                                   name="Old Password"
+                                   placeholder="原密码"
+                                   onChange={this.handleChange("oldPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="oldPwd" margin='normal' type='password' required fullWidth
+                        />
+                        <TextField label="新密码" value={this.state.newPwd || ""}
+                                   name="New Password"
+                                   placeholder="新密码"
+                                   onChange={this.handleChange("newPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="newPwd" margin='normal' type='password' required fullWidth
+                        />
+                        <TextField label="确认新密码" value={this.state.renewPwd || ""}
+                                   name="renew Password"
+                                   placeholder="原密码"
+                                   onChange={this.handleChange("renewPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="renewPwd" margin='normal' type='password' required fullWidth
+                        />
                         <div className={classes.wrapper}>
                             <Button variant='contained' color='primary' className={classes.updateButton} onClick={this.modifyPwd}>
                                 {"修改密码"}

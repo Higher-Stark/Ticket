@@ -229,59 +229,6 @@ const styles = theme => ({
 
 });
 
-/*class CartRow extends React.Component {
-    render() {
-        const {isSelected,n,classes} = this.props;
-
-        return(
-            <TableRow
-                hover
-                role="checkbox"
-                aria-checked={isSelected}
-                tabIndex={-1}
-                key={n.id}
-                selected={isSelected}
-            >
-                <TableCell padding="checkbox"
-                           onClick={event => this.handleClick(event, n.id)}>
-                    <Checkbox checked={isSelected}/>
-                </TableCell>
-                <TableCell className={classes.info} component="th" scope="row"
-                           padding="none" onClick={() => this.detail(n.id)}>
-                    <Grid container spacing={8} className={classes.root} key={n.id}>
-                        <Grid item xs={6}>
-                            <img src={n.image} className={classes.image}
-                                 alt={n.title}/>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography variant='title' component='h2' color='primary'
-                                        className={classes.title}>
-                                {`[${n.title}]`}
-                            </Typography>
-                            <Typography variant='subheading' color='secondary'>
-                                {n.city}{' '}{n.venue}
-                            </Typography>
-                            <Typography variant='subheading' color='inherit'>
-                                {n.date}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </TableCell>
-                <TableCell numeric>￥{n.price}</TableCell>
-                <TableCell numeric>
-                    <Button disabled={n.number === 1} onClick={event => this.handleSub(event, n.id)}>-</Button>
-                    {n.number}
-                    <Button
-                        onClick={event => this.handleAdd(event, n.id)}>+</Button></TableCell>
-                <TableCell numeric>￥{n.price * n.number}</TableCell>
-                <TableCell numeric><Button
-                    onClick={event => this.handleDelete(event, n.id)}>删除</Button></TableCell>
-            </TableRow>
-        )
-    }
-}*/
-
-
 class Cart extends React.Component {
     QueryByUserId = "http://pipipan.cn:30007/Cart/QueryByUserId";
     NumberEditInCart = "http://pipipan.cn:30007/Cart/NumberEditInCart";
@@ -333,13 +280,13 @@ class Cart extends React.Component {
         let newData = this.state.data.slice();
         let newTotalElements = this.state.totalElements;
         newTotalElements--;
-        let i = 0;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
         let batchentryid = [id];
-        for (; i < newData.length; i++) {
+        let i;
+        for ( i = 0; i < newData.length; i++) {
             if (newData[i].id === id) {
                 fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchentryid}`)
                     .then(response => response.headers)
@@ -400,12 +347,11 @@ class Cart extends React.Component {
         if (event.target.value < 1)
             return;
         let newData = this.state.data.slice();
-        let i = 0;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        for (; i < newData.length; i++) {
+        for (let i = 0; i < newData.length; i++) {
             if (newData[i].id === id) {
                 newData[i].number = event.target.value;
                 if (this.state.dirties[i] === 1)
@@ -430,15 +376,14 @@ class Cart extends React.Component {
         let newSelected = this.state.selected.slice();
         let newTotalElements = this.state.totalElements;
         newTotalElements -= newSelected.length;
-        let i = 0;
-        let j = 0;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
         console.log(newData);
-        for (; i < newSelected.length; i++) {
-            for (; j < newData.length; j++) {
+        let j;
+        for (let i = 0; i < newSelected.length; i++) {
+            for (j = 0; j < newData.length; j++) {
                 console.log(j);
                 if (newSelected[i] === newData[j].id) {
                     fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
@@ -468,6 +413,21 @@ class Cart extends React.Component {
         this.setState({data: newData});
         this.setState({totalElements: newTotalElements});
         this.setState({selected: []});
+    };
+
+    handleCheck=()=>{
+        let cartProducts=[];
+        const {selected,data}=this.state;
+        for (let i = 0; i < selected.length; i++) {
+            for (let j = 0; j < data.length; j++) {
+                if (selected[i] === data[j].id) {
+                    cartProducts.push(data[j]);
+                }
+            }
+        }
+        let storage = window.localStorage;
+        storage.setItem("cartProducts", JSON.stringify(cartProducts));
+        window.location.href = "/orderconfirm";
     };
 
 
@@ -630,7 +590,7 @@ class Cart extends React.Component {
                                 > 合计：￥{totalPrice}
                                 </TableCell>
                                 <TableCell>
-                                    <Button disabled={selected.length === 0}>结算</Button>
+                                    <Button disabled={selected.length === 0} onClick={() => this.handleCheck()}>结算</Button>
                                 </TableCell>
                                 <TablePagination
                                     count={totalElements}

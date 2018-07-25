@@ -18,7 +18,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import Cancel from '@material-ui/icons/Cancel';
 import Provinces from '../data/provinces';
-import {decomposeAddr, UserError, composeAddr, getDistricts, getCities, chinese} from "../util/utils";
+import {decomposeAddr, composeAddr, getDistricts, getCities, chinese, urlEncode} from "../util/utils";
 
 const styles = theme => ({
     root: {
@@ -46,13 +46,13 @@ const styles = theme => ({
         maxWidth: 540,
         minWidth: 160,
     },
-    input : {
+    input: {
         display: 'none',
     },
     button: {
         margin: theme.spacing.unit,
     },
-    actions : {
+    actions: {
         display: 'block',
         justifyContent: 'right',
     },
@@ -60,7 +60,7 @@ const styles = theme => ({
         display: 'block',
         float: 'right',
     },
-    label:{
+    label: {
         display: 'inline-block',
         paddingRight: theme.spacing.unit,
     },
@@ -128,7 +128,7 @@ class User extends Component {
     };
 
     componentWillMount() {
-        // fetchInfo();
+        this.fetchInfo();
         let storage = window.localStorage;
         let user = storage.getItem("user") || null;
         // user = user === null ? Users[0] : user;
@@ -136,20 +136,20 @@ class User extends Component {
             username: 'Invinsible',
             avatar: 'https://image.flaticon.com/icons/svg/25/25231.svg',
             intro: 'For Asgard!',
-            nickname: 'menhera',
+            nickName: 'menhera',
             email: 'aco@aoc.com',
             phone: 1000100,
             account: 900,
             address: "上海市市辖区闵行区江川路街道",
         };
 
-        this.setState({ user });
+        this.setState({user});
     };
 
     updateUserInfo = name => event => {
         const {user} = this.state;
         user[name] = event.target.value;
-        this.setState({ user });
+        this.setState({user});
     };
 
     handleChange = name => event => {
@@ -163,6 +163,7 @@ class User extends Component {
         const detailAddr = decomposeAddr(this.state.user.address);
         let cities = null;
         let districts = null;
+        console.log(detailAddr);
         if (detailAddr.province) cities = getCities(detailAddr.province);
         if (detailAddr.city) districts = getDistricts(detailAddr.province, detailAddr.city);
         this.setState({
@@ -173,6 +174,10 @@ class User extends Component {
     };
 
     toggleSave = () => {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
         this.setState({
             edit: false,
         });
@@ -187,6 +192,51 @@ class User extends Component {
                 else alert("Update profile failed");
             })
         */
+
+        const {phone, nickName, address, account} = this.state.user;
+
+        let body = {
+            token: token,
+            phone: phone,
+            nickname: nickName,
+            address: address,
+            account: account
+        };
+
+        console.log(body);
+
+        fetch(`${this.serviceUrl}/UserDetail/UpdateByUserid`, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let headers = response.headers;
+            console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(data => {
+                console.log(data);
+                this.setState({user: data});
+            })
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            })
     };
 
     toggleCancel = () => {
@@ -203,7 +253,11 @@ class User extends Component {
     };
 
     setImg = event => {
-        let newImg = event.target.files[0];
+        let newImg = event.target.files[0]; //File
+        if (newImg.name.indexOf('.svg') > -1) {
+            alert('Sorry, we do not accept images in svg format');
+            return;
+        }
         if (typeof FileReader === "undefined") {
             alert("Your Browser doesn't support FileReader, Please upgrade your browser. Latest Google Chrome is recommended.");
             return;
@@ -211,59 +265,93 @@ class User extends Component {
         let reader = new FileReader();
         reader.readAsDataURL(newImg);
         let that = this;
-        reader.onload = function(e) {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        reader.onload = function (e) {
             const {user} = that.state;
-            user.image = this.result;
+            user.avatar = this.result;  //base 64 string
             that.setState({user});
-        }
+        };
+        let formData = new FormData();
+        formData.append("avatar", newImg);
+        formData.append("token", token);
+        fetch(`${that.serviceUrl}/UserDetail/UpdateByUserid`, {
+            method: 'POST',
+            credentials: "include",
+            body: formData,
+        }).then(response => {
+            let headers = response.headers;
+            console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(data => {
+                console.log(data);
+                that.setState({user: data});
+            })
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            })
+
     };
 
     fetchInfo = () => {
-        fetch(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${this.state.user.token}`, {
+        console.log('fetch info');
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        console.log(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${token}`);
+        fetch(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${token}`, {
             method: 'GET',
             credentials: "include",
-        }).then( response => {
+        }).then(response => {
             let headers = response.headers;
+            console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
-                case 0 : return response.json();
-                case 1 : {
+                case '0' :
+                    return response.json();
+                case '1' : {
                     throw Error("You haven't signed in yet.");
                 }
-                case 2 : throw UserError("You identity match!");
-                case 3 : throw UserError("Your account is frozen!");
-                default: throw UserError("Unexpected response received from server! Please try again later.");
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
             }
         })
-            .then(data => this.setState({user: data}))
+            .then(data => {
+                console.log(data);
+                this.setState({user: data});
+            })
             .catch(e => {
                 if (e instanceof SyntaxError) {
-                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${this.state.user.token}`)
-                        .then(response => {
-                            let headers = response.headers;
-                            switch (headers.get("errornum")) {
-                                case 0 : return response.json();
-                                case 1 : {
-                                    throw Error("You haven't signed in yet.");
-                                }
-                                case 2 : throw UserError("You identity match!");
-                                case 3 : throw UserError("Your account is frozen!");
-                                default: throw UserError("Unexpected response received from server! Please try again later.");
-                            }
-                        })
-                        .then(data => this.setState({user: data}))
-                        .catch(event => {
-                            if (event instanceof UserError) {
-                                alert(event.message);
-                                window.location.href = "/signin";
-                            }
-                        })
+                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(this.fetchInfo());
                 }
-                else if (e instanceof UserError) {
+                else {
                     alert(e.message);
                     window.location.href = "/signin";
                 }
+
             })
     };
+
 
     modifyPwd = () => {
         const {oldPwd, newPwd, renewPwd} = this.state;
@@ -271,6 +359,44 @@ class User extends Component {
             alert("Password recheck failed");
             return;
         }
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        console.log(`${this.serviceUrl}/UserDetail/UpdateOldPassword?token=${token}&oldpassword=${oldPwd}&newpassword=${newPwd}`);
+        fetch(`${this.serviceUrl}/UserDetail/UpdateOldPassword?token=${token}&oldpassword=${oldPwd}&newpassword=${newPwd}`, {
+            method: 'GET',
+        }).then(response => {
+            let headers = response.headers;
+            console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.text();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(text => {
+                    if (text === "false") {
+                        alert('Wrong old password!');
+                    }
+                    else {
+                        alert("success!");
+                        window.location.href = "/signin";
+                    }
+                }
+            )
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            });
         /*
          * let tmp = {
          *      oldPwd: oldPwd,
@@ -286,7 +412,7 @@ class User extends Component {
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username", "account", "email"];
+        let filter = ["avatar", "id", "username", /*"account",*/ "email", 'address'];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);
@@ -319,7 +445,7 @@ class User extends Component {
             detailAddr.city = value;
             detailAddr.district = null;
             detailAddr.detail = null;
-            // console.log(detailAddr);
+            console.log(detailAddr);
             const districts = getDistricts(detailAddr.province, detailAddr.city);
             // console.log(districts instanceof Array);
             user.address = composeAddr(detailAddr);
@@ -364,7 +490,8 @@ class User extends Component {
         ) : (
             <div className={classes.block} key={key}>
                 <Typography variant='title' className={classes.label} color='primary'>{chinese(key)}{': '}</Typography>
-                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{value}</Typography>
+                <Typography className={classes.inline} variant="subheading" component="h3"
+                            color="default">{value}</Typography>
             </div>
         );
 
@@ -372,11 +499,12 @@ class User extends Component {
         let {provinces, cities, districts} = this.state;
         cities = cities || [];
         districts = districts || [];
-        const address = ! edit ? (
-            <div className={classes.block}>
-                <Typography variant="title" className={classes.label} color="primary">{"地址: "}</Typography>
-                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.address}</Typography>
-            </div>
+        const address = !edit ? (
+                <div className={classes.block}>
+                    <Typography variant="title" className={classes.label} color="primary">{"地址: "}</Typography>
+                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                color="default">{user.address}</Typography>
+                </div>
             )
             :
             (
@@ -446,55 +574,65 @@ class User extends Component {
 
         const info = (
             <div>
-                <Grid container spacing={24}>
-                    <Grid item xs={2} className={classes.imgGrid}>
-                        <div className={classes.imageSec}>
-                            <img alt={user.name} src={user.avatar} className={classes.image}/>
-                        </div>
-                        <div>
-                            <input accept="image/*" className={classes.input} id="flat-button-file" type="file" onChange={this.setImg}/>
-                            <label htmlFor="flat-button-file">
-                                <Button component="span" variant="contained" className={classes.button}>
-                                    Upload Profile
-                                </Button>
-                            </label>
-                        </div>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <div className={classes.actions}>
-                            {
-                                edit ?
-                                    <div>
-                                    <Button variant='fab' color='secondary' onClick={this.toggleSave} className={classNames(classes.action, classes.button)}>
-                                        <SaveIcon/>
+                <Paper elevation={10} className={classes.paper}>
+                    <Grid container spacing={24}>
+                        <Grid item xs={2} className={classes.imgGrid}>
+                            <div className={classes.imageSec}>
+                                <img alt={user.name} src={user.avatar} className={classes.image}/>
+                            </div>
+                            <div>
+                                <input accept="image/*" className={classes.input} id="flat-button-file" type="file"
+                                       onChange={this.setImg}/>
+                                <label htmlFor="flat-button-file">
+                                    <Button component="span" variant="contained" className={classes.button}>
+                                        Upload Profile
                                     </Button>
-                                        <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
-                                            <Cancel/>
+                                </label>
+                            </div>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <div className={classes.actions}>
+                                {
+                                    edit ?
+                                        <div>
+                                            <Button variant='fab' color='secondary' onClick={this.toggleSave}
+                                                    className={classNames(classes.action, classes.button)}>
+                                                <SaveIcon/>
+                                            </Button>
+                                            <Button variant='fab' color='primary' onClick={this.toggleCancel}
+                                                    className={classNames(classes.action, classes.button)}>
+                                                <Cancel/>
+                                            </Button>
+                                        </div> :
+                                        <Button variant='fab' color='primary' onClick={this.toggleEdit}
+                                                className={classNames(classes.action, classes.button)}>
+                                            <EditIcon/>
                                         </Button>
-                                    </div> :
-                                    <Button variant='fab' color='primary' onClick={this.toggleEdit} className={classNames(classes.action, classes.button)}>
-                                        <EditIcon/>
-                                    </Button>
-                            }
-                        </div>
-                        <div className={classes.padding}>
-                            <div className={classes.block} key="username">
-                                <Typography variant='title' className={classes.label} color='primary'>{"用户名: "}</Typography>
-                                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.username}</Typography>
+                                }
                             </div>
-                            <div className={classes.block} key="email">
-                                <Typography variant='title' className={classes.label} color='primary'>{"邮箱: "}</Typography>
-                                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.email}</Typography>
+                            <div className={classes.padding}>
+                                <div className={classes.block} key="username">
+                                    <Typography variant='title' className={classes.label}
+                                                color='primary'>{"用户名: "}</Typography>
+                                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                                color="default">{user.username}</Typography>
+                                </div>
+                                <div className={classes.block} key="email">
+                                    <Typography variant='title' className={classes.label}
+                                                color='primary'>{"邮箱: "}</Typography>
+                                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                                color="default">{user.email}</Typography>
+                                </div>
+                                {
+                                    keys.map(s => (
+                                        infoItem(s, user[s])
+                                    ))
+                                }
+                                {address}
                             </div>
-                            {
-                                keys.map(s => (
-                                    infoItem(s, user[s])
-                                ))
-                            }
-                            {address}
-                        </div>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Paper>
             </div>
         );
 
@@ -502,30 +640,31 @@ class User extends Component {
             <div className={classes.root}>
                 <Paper elevation={10} className={classes.paper}>
                     <div className={classes.form}>
-                    <Typography variant='headline' component='h2' color="primary" align='center'>修改密码</Typography>
-                    <TextField label="原密码" value={this.state.oldPwd || ""}
-                               name="Old Password"
-                               placeholder="原密码"
-                               onChange={this.handleChange("oldPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="oldPwd" margin='normal' type='password' required fullWidth
-                    />
-                    <TextField label="新密码" value={this.state.newPwd || ""}
-                               name="New Password"
-                               placeholder="新密码"
-                               onChange={this.handleChange("newPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="newPwd" margin='normal' type='password' required fullWidth
-                    />
-                    <TextField label="确认新密码" value={this.state.renewPwd || ""}
-                               name="renew Password"
-                               placeholder="原密码"
-                               onChange={this.handleChange("renewPwd")}
-                               className={classNames(classes.textField, classes.password)}
-                               id="renewPwd" margin='normal' type='password' required fullWidth
-                    />
+                        <Typography variant='headline' component='h2' color="primary" align='center'>修改密码</Typography>
+                        <TextField label="原密码" value={this.state.oldPwd || ""}
+                                   name="Old Password"
+                                   placeholder="原密码"
+                                   onChange={this.handleChange("oldPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="oldPwd" margin='normal' type='password' required fullWidth
+                        />
+                        <TextField label="新密码" value={this.state.newPwd || ""}
+                                   name="New Password"
+                                   placeholder="新密码"
+                                   onChange={this.handleChange("newPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="newPwd" margin='normal' type='password' required fullWidth
+                        />
+                        <TextField label="确认新密码" value={this.state.renewPwd || ""}
+                                   name="renew Password"
+                                   placeholder="原密码"
+                                   onChange={this.handleChange("renewPwd")}
+                                   className={classNames(classes.textField, classes.password)}
+                                   id="renewPwd" margin='normal' type='password' required fullWidth
+                        />
                         <div className={classes.wrapper}>
-                            <Button variant='contained' color='primary' className={classes.updateButton} onClick={this.modifyPwd}>
+                            <Button variant='contained' color='primary' className={classes.updateButton}
+                                    onClick={this.modifyPwd}>
                                 {"修改密码"}
                             </Button>
                         </div>
@@ -537,15 +676,15 @@ class User extends Component {
         return (
             <div className={classes.root}>
                 <AppBar position='static'>
-                <Tabs value={tab} onChange={this.toggleTab}>
-                    <Tab label="User info"/>
-                    <Tab label="Modify Password"/>
-                    <Tab label="修改支付密码"/>
-                </Tabs>
+                    <Tabs value={tab} onChange={this.toggleTab}>
+                        <Tab label="User info"/>
+                        <Tab label="Modify Password"/>
+                        <Tab label="修改支付密码"/>
+                    </Tabs>
                 </AppBar>
-                { tab === 0 && info }
-                { tab === 1 && modify }
-                { tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography> }
+                {tab === 0 && info}
+                {tab === 1 && modify}
+                {tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography>}
             </div>
         )
     }

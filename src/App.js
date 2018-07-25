@@ -91,6 +91,8 @@ class App extends Component {
     }
 
     cancelFlash() {
+        if(this.state.flash)
+            return;
         let storage = window.sessionStorage;
         storage.setItem('flash', true);
         this.setState({

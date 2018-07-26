@@ -273,6 +273,13 @@ class DetailModal extends Component {
                                 {card.highprice}
                             </Button>
                         </Badge>
+                        <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                            {'库存: '}
+                            <Typography variant='body1' component='p' color='textSecondary'
+                                        className={classes.inline}>
+                                { card.stock}
+                            </Typography>
+                        </Typography>
                     </div>
                     </div>
                     <div className={classes.action}>

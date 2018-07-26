@@ -153,7 +153,7 @@ class NavMenuList2 extends Component{
 
         return(
             <div>
-                <ListItem button onClick={this.handleClick} component={NavLink} to='/account'>
+                <ListItem button onClick={this.handleClick} >
                     <ListItemIcon><Person/></ListItemIcon>
                     <ListItemText inset primary="Account" />
                     {this.state.open ? <ExpandLess /> : <ExpandMore />}
@@ -161,7 +161,7 @@ class NavMenuList2 extends Component{
 
                 <Collapse in={this.state.open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItem button >
+                        <ListItem button component={NavLink} to='/account'>
                             <ListItemIcon>
                                 <UserInfoIcon />
                             </ListItemIcon>

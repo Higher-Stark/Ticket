@@ -25,13 +25,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 import PaymentIcon from '@material-ui/icons/Payment'
-import $ from 'jquery';
 
 const styles = ()=>({
     headline:{
         color: pink[300],
     }
-})
+});
 
 let id = 0;
 function createData(title, number, eachPrice) {
@@ -114,6 +113,7 @@ class PayConfirm extends Component{
         let storage = window.localStorage;
         let token = JSON.parse(storage.getItem("user")).token;
         let orderid = parseInt(storage.getItem("orderid"));
+        let batchentryid=storage.getItem("cartProducts");
 
         let s =`token=${token}&orderid=${orderid}`;
         console.log(token)
@@ -135,6 +135,26 @@ class PayConfirm extends Component{
                 storage.setItem("message",text.message);
                 if(text.message === 'success')
                     storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
+
+                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchentryid}`)
+                    .then(response => response.headers)
+                    .then(headers => {
+                        let errornum = headers.get('errornum');
+                        if (errornum === '0') {
+                            return;
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    })
+                    .catch(e => console.log(e));
                 this.routeToAfterPay()
             })
     }

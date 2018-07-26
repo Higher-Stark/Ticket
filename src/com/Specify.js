@@ -176,6 +176,32 @@ class Specify extends Component {
         })
     };
 
+    toggleBuy = () => {
+        const {detail, price, date, quantity} = this.state;
+
+        const {selectedDate, selectedPrice} = this.state;
+        if (selectedDate === -1 || selectedPrice === -1) {
+            console.log("You haven't selected any time or price");
+            return;
+        }
+        
+        let storage = window.localStorage;
+        let tickets = [
+            {
+                id: detail.id,
+                date: date,
+                price: price,
+                number: quantity
+            }
+        ];
+
+        storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
+        storage.setItem("orderType","orderInDetailPage")
+        this.props.history.push({
+            pathname: '/orderconfirm',
+        });
+    }
+
     handleChange = (e) => {
         if (e.target.value < 1)
             return;

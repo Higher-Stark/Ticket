@@ -44,6 +44,7 @@ import Search from './page/Search';
 import Specify from './com/Specify';
 import Activating from "./page/Activating";
 import Activated from "./page/Activated";
+import Comments from './page/Comments';
 import Cart from "./page/Cart";
 import Ballet from './svg/ballet3.svg';
 import Exhibition from './svg/exhibition.svg';
@@ -107,7 +108,7 @@ const styles = theme => ({
         flexGrow: 1,
         backgroundAttachment: 'fixed',
         background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing.unit,
     },
     avatar: {
         margin: 10,
@@ -428,6 +429,7 @@ class ResponsiveDrawer extends React.Component {
                     <Route path='/search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
+                    <Route path='/comments' component={Comments}/>
                     <Route path="empty" component={null} key="empty"/>
                 </main>
             </div>

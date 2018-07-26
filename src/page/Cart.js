@@ -372,24 +372,11 @@ class Cart extends React.Component {
 
 
     handleDeleteSelected = (event) => {
-        let newData = this.state.data.slice();
         let newSelected = this.state.selected.slice();
-        let newTotalElements = this.state.totalElements;
-        newTotalElements -= newSelected.length;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        console.log(newData);
-        let j;
-        for (let i = 0; i < newSelected.length; i++) {
-            for (j = 0; j < newData.length; j++) {
-                console.log(j);
-                if (newSelected[i] === newData[j].id) {
-                    newData.splice(j, 1);
-                }
-            }
-        }
         fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
             .then(response => response.headers)
             .then(headers => {
@@ -408,9 +395,36 @@ class Cart extends React.Component {
                 }
                 this.props.history.push('/signin');
             })
+            .then(()=>{
+                const {page}=this.state;
+                fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+                    .then(response => {
+                            let errornum = response.headers.get('errornum');
+                            if (errornum === '0') {
+                                return response.status === 200 ? response.json() : null;
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            this.props.history.push('/signin');
+                        }
+                    )
+                    .then(data => {
+                        if (data === null) throw Error("Response error!");
+                        this.setState({
+                            data: data.content,
+                            totalElements: data.totalElements
+                        });
+                    })
+                    .catch(e => console.log(e));
+            })
             .catch(e => console.log(e));
-        this.setState({data: newData});
-        this.setState({totalElements: newTotalElements});
         this.setState({selected: []});
     };
 

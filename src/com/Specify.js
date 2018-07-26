@@ -184,7 +184,7 @@ class Specify extends Component {
             console.log("You haven't selected any time or price");
             return;
         }
-        
+
         let storage = window.localStorage;
         let tickets = [
             {

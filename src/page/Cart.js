@@ -427,6 +427,7 @@ class Cart extends React.Component {
         }
         let storage = window.localStorage;
         storage.setItem("cartProducts", JSON.stringify(cartProducts));
+        storage.setItem("orderType","orderInCart");
         window.location.href = "/orderconfirm";
     };
 

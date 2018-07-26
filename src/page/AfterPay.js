@@ -114,6 +114,7 @@ class AfterPay extends Component{
                 storage.removeItem("orderid");
                 storage.removeItem("orderType");
                 storage.removeItem("orderConfirmTickets")
+                storage.removeItem("cartProducts")
             });
     }
 

@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import IconButton from '@material-ui/core/IconButton';
+import TextField from '@material-ui/core/TextField';
 import CommentMultiple from 'mdi-material-ui/CommentMultiple';
 import CommentText from 'mdi-material-ui/CommentText';
 
@@ -149,6 +150,24 @@ class Comments extends Component {
                     {
                         item({classes: classes, comment: this.comment, reply: this.toggleReply})
                     }
+                    <Grid item xs={12} md={12} className={classes.grid}>
+                        <Grid item xs={12} md={6}>
+                            <TextField multiline fullWidth rows={3} rowsMax={6}
+                                       placeholder={`回复${this.comment.ownername}`}
+                                       InputProps={{
+                                           disableUnderline: true,
+                                           classes: {
+                                               root: classes.commentRoot,
+                                               input : classes.commentInput,
+                                           }
+                                       }}
+                                       label="回复" id="reply" InputLabelProps={{
+                                           shrink: true, classes: classes.commentFormLabel,
+                            }}
+
+                                       />
+                        </Grid>
+                    </Grid>
                     {
                         this.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
                     }

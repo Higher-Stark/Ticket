@@ -114,11 +114,12 @@ class OrderConfirm extends Component {
             //     return response.text();
             // })
             .then(text => {
-                console.log(text);
                 this.setState({
-                    userDetail: JSON.parse(text)
+                    userDetail: JSON.parse(text),
+                    address: JSON.parse(text).address,
+                    username: JSON.parse(text).username,
+                    phone: JSON.parse(text).phone,
                 });
-                console.log(this.state.userDetail)
             })
             .catch(e => {
                 alert(e.message);
@@ -128,7 +129,6 @@ class OrderConfirm extends Component {
     };
 
     fetchItems = () => {
-        console.log("the state tickets");
         let storage = window.localStorage;
         let orderType = storage.getItem("orderType");
         var tmpItem;
@@ -300,9 +300,23 @@ class OrderConfirm extends Component {
         }
 
 
-    }
+    };
+
+    handleChange = name => event => {
+        this.setState({
+            [name]: event.target.value,
+        });
+    };
 
     routerToPayConfirm() {
+        const {address,username,phone}=this.state;
+        if((address.length===0)
+            ||(username.length===0)
+            ||(phone.length===0))
+        {
+            alert("请输入完整的收货人信息");
+            return ;
+        }
         this.addOrderToBackend();
     }
 
@@ -317,13 +331,13 @@ class OrderConfirm extends Component {
         const orderAddressFrom = (
             <div>
                 <Typography variant="display1" gutterBottom className={classes.headline}>
-                    取票人信息
+                    收货人信息
                 </Typography>
                 <Divider light={true}/>
                 <Card>
                     <CardContent>
                         <Typography variant="headline" color="textSecondary">
-                            取货信息
+                            收货信息
                         </Typography>
                         <Divider style={{marginTop: "1%"}}/>
                         <Grid container spacing={24}>
@@ -336,6 +350,7 @@ class OrderConfirm extends Component {
                                 <Input
                                     id="address"
                                     placeholder={this.state.userDetail.address}
+                                    onChange={this.handleChange('address')}
                                     fullWidth
                                     className={classes.input}
                                     inputProps={{
@@ -354,6 +369,7 @@ class OrderConfirm extends Component {
                                 <Input
                                     id="username"
                                     placeholder={this.state.userDetail.username}
+                                    onChange={this.handleChange('username')}
                                     inputProps={{
                                         'aria-label': 'Description',
                                     }}>
@@ -370,6 +386,7 @@ class OrderConfirm extends Component {
                                 <Input
                                     id="phone"
                                     placeholder={this.state.userDetail.phone}
+                                    onChange={this.handleChange('phone')}
                                     className={classes.input}
                                     inputProps={{
                                         'aria-label': 'Description',
@@ -396,9 +413,9 @@ class OrderConfirm extends Component {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {this.state.data.map(n => {
+                                            {this.state.data.map((n,i) => {
                                                 return (
-                                                    <TableRow key={n.id}>
+                                                    <TableRow key={i}>
                                                         <TableCell component="th" scope="row"
                                                                    style={{textAlign: 'center'}}>
                                                             {n.title}

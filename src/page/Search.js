@@ -14,7 +14,6 @@ import PlaceIcon from '@material-ui/icons/Place';
 import blue from '@material-ui/core/colors/blue';
 import indigo from '@material-ui/core/colors/indigo';
 import PageBar from '../com/PageBar';
-import {data} from '../test-data/data';
 import {locale} from '../util/utils';
 
 const itemStyles = theme => ({
@@ -66,22 +65,28 @@ const itemStyles = theme => ({
 
 class ActivityItem extends Component {
 
+
+    detail = (id) => {
+        this.props.history.push("/detail/" + id)
+    };
+
     render() {
         const {classes, data} = this.props;
-
         return (
             <div>
                 <Grid spacing={8} container>
                     {
                         data.map(s => {
                             return (
-                                <Grid container spacing={8} className={classes.root} key={s.id}>
+                                <Grid container spacing={8} className={classes.root} key={s.id}
+                                      onClick={() => this.detail(s.id)}>
                                     <Grid item xs={2} className={classes.pic}>
                                         <img src={s.image} className={classes.image} alt={s.title}/>
                                     </Grid>
                                     <Grid item xs={10}>
                                         <div>
-                                            <Typography variant='title' component='h2' color='primary' className={classes.title} gutterBottom>
+                                            <Typography variant='title' component='h2' color='primary'
+                                                        className={classes.title} gutterBottom>
                                                 {`${s.city} | ${s.title}`}
                                             </Typography>
                                             <Typography variant='subheading' color='textSecondary' gutterBottom>
@@ -123,7 +128,7 @@ const styles = theme => ({
         display: 'inline-block',
         flexGrow: 1,
     },
-    textSelect : {
+    textSelect: {
         display: 'inline-block',
         flexGrow: 1,
         margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
@@ -146,10 +151,19 @@ const styles = theme => ({
 });
 
 class Search extends Component {
+    url = "http://pipipan.cn:30005/Ticket/QueryByCityAndTypePage";
+
+    cities = ['all', '上海', '北京', '厦门', '天津', '广州', '成都', '杭州', '武汉', '深圳', '福州', '苏州', '重庆', '宁波', '深圳', '香港', '温州', '长沙',
+    ];
+
+    types = ['all', 'concert', 'vocal concert', 'opera', 'sports', 'dancing', 'parenting', 'acrobatics'];
+
     constructor(props) {
         super(props);
         this.state = {
-            pages: 0,
+            search: null,
+            page: 1,
+            totalPages: 0,
             value: 0,
             data: [],
             selected: {
@@ -159,47 +173,96 @@ class Search extends Component {
         };
     };
 
-    componentDidMount() {
-        const {search} = this.props.location;
-        console.log(search);
-        /*
-        fetch (`/search?q=${search}`, {
-            method: 'GET',
-        })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error encountered");
-                return response.json();
-            })
+    componentWillMount() {
+        const {page, selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
-                this.setState({data: data});
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
             })
-            .catch(e => alert(e.message));
-        */
+            .catch(e => console.log(e));
+
+        this.setState({
+            search:this.props.match.params.search,
+            page: 1,
+        });
     }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        const {match} = nextProps;
+        const {page, selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+
+        this.setState({
+            search: match.params.search,
+            page: 1,
+        });
+    }
+
+    viewPage = (idx) => {
+        const {selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${idx}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error");
+                this.setState({
+                    data: data.content,
+                    page: idx,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+    };
 
     handleChange = (event, value) => {
         this.setState({value});
     };
 
     handleClick = (e, name, value) => {
-        const {selected} = this.state;
+        const {page, selected} = this.state;
         selected[name] = value;
         this.setState({
             selected: selected,
+            page: 1,
         });
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
     };
 
     render() {
         const {classes} = this.props;
-        const {value, selected} = this.state;
+        const {value, selected, page, data} = this.state;
 
-        const cities = ['All', 'Beijing', 'Shanghai', 'Ningbo', 'Shengzheng', 'New York', 'Manhattan', 'California',
-            'Munich', 'Berlin', 'London', 'Hongkong', 'Sydney'
-        ];
-        const types = ['All', '演唱会', '体育赛事', '亲子', '展览', '动漫', '音乐会'];
-
-
-        return(
+        return (
             <div>
                 <Grid container spacing={8} className={classes.root}>
                     <Grid item xs={12} className={classes.root}>
@@ -209,11 +272,11 @@ class Search extends Component {
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
-                            {cities.map((s, i) => {
+                            {this.cities.map((s, i) => {
                                 return <Typography variant='button'
                                                    className={classNames(classes.textSelect, i === selected.city ? classes.selected : classes.nonselected)}
                                                    key={i} component={Button} size='small'
-                                                    onClick={(e) => this.handleClick(e, 'city', i)}
+                                                   onClick={(e) => this.handleClick(e, 'city', i)}
                                 >
                                     {s}
                                 </Typography>
@@ -229,12 +292,12 @@ class Search extends Component {
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
                             {
-                                types.map((s, i) => {
+                                this.types.map((s, i) => {
                                     return <Typography variant='button' key={i} component={Button} size='small'
                                                        onClick={e => this.handleClick(e, 'type', i)}
                                                        className={classNames(classes.textSelect, i === selected.type ? classes.selected : classes.nonselected)}
-                                                       >
-                                            {s}
+                                    >
+                                        {s}
                                     </Typography>
                                 })
                             }
@@ -243,17 +306,17 @@ class Search extends Component {
                     <Divider/>
                 </Grid>
                 <div>
-                    <AppBar position='static' >
+                    <AppBar position='static'>
                         <Tabs value={value} onChange={this.handleChange}>
                             <Tab label={'By Relevance'}/>
                             <Tab label={'By heat'}/>
                             <Tab label={'By Date'}/>
                         </Tabs>
                     </AppBar>
-                    <ActivityWithStyle data={data.content}/>
+                    <ActivityWithStyle data={data} history={this.props.history}/>
                 </div>
                 <div>
-                    <PageBar current={3} max={7} goto={(i) => console.log(i)}/>
+                    <PageBar current={page} max={this.state.totalPages} goto={this.viewPage}/>
                 </div>
             </div>
         )

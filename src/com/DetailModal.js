@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,7 +14,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
-import {locale} from '../util/utils';
+import {locale, urlEncode} from '../util/utils';
 
 const styles = theme => ({
     paper: {
@@ -116,33 +117,97 @@ class DetailModal extends Component {
 
     toggleCart = () => {
         const {selectedDate, selectedPrice, quantity} = this.state;
-        if (selectedDate === -1 || selectedPrice === -1) console.log("You haven't selected any time or price");
+        if (selectedDate === -1 || selectedPrice === -1)
+        {
+            alert("You haven't selected any time or price");
+            return;
+        }
         const dates = this.props.card.dates.split(" , ");
         const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
-        let ticket = {
-            id: this.props.card.id,
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+        let body = {
+            token: user.token,
+            ticketid: this.props.card.id,
             date: dates[selectedDate],
             price: price,
-            quantity: quantity,
+            number: quantity,
         };
-        console.log(ticket);
-        /*
-        fetch ('/add_to_cart?id='+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw new Error("Add to Cart failed!");
-                else alert("Add to cart succeed");
+        const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage";
+        fetch(url, {
+            method: 'POST',
+            mode: "cors",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+            credentials: "include",
+        })
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum=headers.get('errornum');
+                if(errornum==='0')
+                {
+                    alert("成功！");
+                    return ;
+                }
+                else if(errornum==='1')
+                {
+                    alert("尚未登录！");
+                }
+                else if(errornum==='2')
+                {
+                    alert("身份不对应！");
+                }
+                else if(errornum==='3')
+                {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
             })
-            .catch(e => console.log(e));
-         */
     };
 
     toggleBuy = (id) => {
-        fetch("/buy?id="+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw new Error("Buy failed");
-                else alert("Add to cart succeed");
-            })
-            .catch(e => console.log(e));
+        const {selectedDate, selectedPrice, quantity} = this.state;
+        if (selectedDate === -1 || selectedPrice === -1) {
+            alert("You haven't selected any time or price");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+
+        const dates = this.props.card.dates.split(" , ");
+        const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
+        let tickets = [
+            {
+                id: this.props.card.id,
+                date: dates[selectedDate],
+                price: price,
+                number: quantity
+            }
+        ];
+
+        storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
+        storage.setItem("orderType","orderInDetailPage")
+        this.props.history.push({
+            pathname: '/orderconfirm',
+        });
     };
 
     toggleMore = () => this.setState({open: ! this.state.open});
@@ -222,6 +287,13 @@ class DetailModal extends Component {
                                 {card.highprice}
                             </Button>
                         </Badge>
+                        <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                            {'库存: '}
+                            <Typography variant='body1' component='p' color='textSecondary'
+                                        className={classes.inline}>
+                                { card.stock}
+                            </Typography>
+                        </Typography>
                     </div>
                     </div>
                     <div className={classes.action}>
@@ -229,7 +301,7 @@ class DetailModal extends Component {
                             <CartPlusIcon/>
                             Add
                         </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
+                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={()=>this.toggleBuy(card.id)}>
                             <ShoppingIcon/>
                             Pay
                         </Button>
@@ -245,4 +317,5 @@ DetailModal.propTypes = {
     card: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DetailModal);
+// component={NavLink} to="/order"
+export default withRouter(withStyles(styles)(DetailModal));

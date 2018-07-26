@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -132,7 +131,7 @@ const styles = theme => ({
     },
 });
 
-class Specify extends Component{
+class Specify extends Component {
     url = {
         detail: 'http://pipipan.cn:30005/Ticket/QueryById',
     };
@@ -180,19 +179,27 @@ class Specify extends Component{
         if (selectedDate === date)
             this.setState({
                 date: null,
-                quantity: 0,
+                quantity: 1,
             });
         else
             this.setState({
                 date: selectedDate,
-                quantity: 0
+                quantity: 1
             })
     };
 
     toggleCart = () => {
         const {detail, price, date, quantity} = this.state;
         let storage = window.localStorage;
-        let user = storage.getItem("user");
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
         let body = {
             token: user.token,
             ticketid: detail.id,
@@ -201,19 +208,77 @@ class Specify extends Component{
             number: quantity,
         };
         const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage";
-        fetch (url, {
+
+        fetch(url, {
             method: 'POST',
+            mode: "cors",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
             body: urlEncode(body),
             credentials: "include",
         })
-            .then(response => response.text())
-            .then(text => {
-                alert(text);
-            })
+        .then(response => response.headers)
+        .then(headers => {
+            let errornum=headers.get('errornum');
+            if(errornum==='0')
+            {
+                alert("成功！");
+                return ;
+            }
+            else if(errornum==='1')
+            {
+                alert("尚未登录！");
+            }
+            else if(errornum==='2')
+            {
+                alert("身份不对应！");
+            }
+            else if(errornum==='3')
+            {
+                alert("账户被冻结！");
+            }
+            this.props.history.push('/signin');
+        })
     };
 
+    toggleBuy = () => {
+        const {detail, price, date, quantity} = this.state;
+
+        const {selectedDate, selectedPrice} = this.state;
+        if (selectedDate === -1 || selectedPrice === -1) {
+            console.log("You haven't selected any time or price");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+
+        let tickets = [
+            {
+                id: detail.id,
+                date: date,
+                price: price,
+                number: quantity
+            }
+        ];
+
+        storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
+        storage.setItem("orderType","orderInDetailPage")
+        this.props.history.push({
+            pathname: '/orderconfirm',
+        });
+    }
+
     handleChange = (e) => {
-        if (e.target.value < 0)
+        if (e.target.value < 1)
             return;
         this.setState({
             quantity: e.target.value,
@@ -229,7 +294,7 @@ class Specify extends Component{
 
     render() {
         const {classes} = this.props;
-        const {detail, price, date, quantity, edit} = this.state;
+        const {detail, price, date, quantity} = this.state;
 
         const fakeComment = [
             {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm'},
@@ -238,18 +303,20 @@ class Specify extends Component{
             {id: 4, ownerId: 10299, ownername: 'October', content: 'Wicked wonderland'},
         ];
 
+        console.log(detail);
         return (
             detail === null ? (
-                <div className={classes.loading}>
-                    <LinearProgress color='secondary' className={classes.loadingBar}/>
-                </div>
+                    <div className={classes.loading}>
+                        <LinearProgress color='secondary' className={classes.loadingBar}/>
+                    </div>
                 ) :
-            <div className={classes.root}>
-                <Grid container spacing={8} className={classes.grid}>
-                    <Grid item xs={12} className={classes.grid}>
-                        <Grid item xs={3} className={classes.imgGrid}>
-                            <Grid container className={classes.container}>
-                                <img src={detail.image} alt={detail.title} className={classes.post}/>
+                <div className={classes.root}>
+                    <Grid container spacing={8} className={classes.grid}>
+                        <Grid item xs={12} className={classes.grid}>
+                            <Grid item xs={3} className={classes.imgGrid}>
+                                <Grid container className={classes.container}>
+                                    <img src={detail.image} alt={detail.title} className={classes.post}/>
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={6} className={classes.content}>
@@ -267,64 +334,76 @@ class Specify extends Component{
                                     </Typography>
                                 </Typography>
                                 <div>
-                                    <Typography component='h3' variant='subheading' color='primary' className={classes.inline}>{'演出时间: '}</Typography>
+                                    <div>
+                                        <Typography component='h3' variant='subheading' color='primary'
+                                                    className={classes.inline}>{'演出时间: '}</Typography>
+                                        {
+                                            detail.dates.split(' , ').map((s, i) => {
+                                                return (
+                                                    <Button variant={s === date ? "contained" : "outlined"}
+                                                            onClick={() => this.selectDate(s)}
+                                                            color='primary'
+                                                            className={classes.selectButton}
+                                                            key={i}
+                                                    >
+                                                        {locale(s)}{' '}{detail.time}
+                                                    </Button>
+                                                )
+                                            })}
+                                    </div>
+                                    <div>
+                                        <Typography variant='subheading' component='h3' color='primary'
+                                                    className={classes.inline}>{"票价选择： "}</Typography>
+                                        <Button variant={price === detail.lowprice ? "contained" : "outlined"}
+                                                onClick={() => this.selectPrice(detail.lowprice)}
+                                                color='primary'
+                                                className={classes.selectButton}
+                                        >
+                                            {detail.lowprice}
+                                        </Button>
+                                        <Button variant={price === detail.highprice ? "contained" : "outlined"}
+                                                onClick={() => this.selectPrice(detail.highprice)}
+                                                color='primary'
+                                                className={classes.selectButton}
+                                        >
+                                            {detail.highprice}
+                                        </Button>
+                                    </div>
+                                    <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                                        {'库存: '}
+                                        <Typography variant='body1' component='p' color='textSecondary'
+                                                    className={classes.inline}>
+                                            { detail.stock}
+                                        </Typography>
+                                    </Typography>
                                     {
-                                        detail.dates.split(' , ').map((s, i) =>{
-                                        return (
-                                            <Button variant={s === date ? "contained" : "outlined"}
-                                                    onClick={() => this.selectDate(s)}
-                                                    color='primary'
-                                                    className={classes.selectButton}
-                                                    key={i}
-                                            >
-                                                {locale(s)}{' '}{detail.time}
-                                            </Button>
+                                        date === null || price === 0 ? null : (
+                                            <div>
+                                                <TextField id='quantity' type='number' label='数量' margin='normal'
+                                                           value={quantity} onChange={this.handleChange}/>
+                                            </div>
                                         )
-                                    })}
-                                </div>
-                                <div>
-                                    <Typography variant='subheading' component='h3' color='primary' className={classes.inline}>{"票价选择： "}</Typography>
-                                    <Button variant={price === detail.lowprice ? "contained" : "outlined"}
-                                            onClick={() => this.selectPrice(detail.lowprice)}
-                                            color='primary'
-                                            className={classes.selectButton}
-                                            >
-                                        {detail.lowprice}
-                                    </Button>
-                                    <Button variant={price === detail.highprice ? "contained" : "outlined"}
-                                            onClick={() => this.selectPrice(detail.highprice)}
-                                            color='primary'
-                                            className={classes.selectButton}
-                                    >
-                                        {detail.highprice}
-                                    </Button>
-                                </div>
-                                {
-                                    date === null || price === 0 ? null :(
-                                        <div>
-                                            <TextField id='quantity' type='number' label='数量' margin='normal' value={quantity} onChange={this.handleChange}/>
-                                        </div>
-                                    )
-                                }
-                                <div className={classes.action}>
-                                    <Button variant='extendedFab'
-                                            color='secondary'
-                                            className={classes.buttonIcon}
-                                            onClick={() => this.toggleCart()}
-                                            disabled={date === null || price === 0}
-                                    >
-                                        <CartPlusIcon/>
-                                        Add
-                                    </Button>
-                                    <Button variant='extendedFab'
-                                            color='primary'
-                                            className={classes.buttonIcon}
-                                            onClick={() => this.toggleBuy()}
-                                            disabled={date === null || price === 0}
-                                    >
-                                        <ShoppingIcon/>
-                                        Pay
-                                    </Button>
+                                    }
+                                    <div className={classes.action}>
+                                        <Button variant='extendedFab'
+                                                color='secondary'
+                                                className={classes.buttonIcon}
+                                                onClick={() => this.toggleCart()}
+                                                disabled={date === null || price === 0}
+                                        >
+                                            <CartPlusIcon/>
+                                            Add
+                                        </Button>
+                                        <Button variant='extendedFab'
+                                                color='primary'
+                                                className={classes.buttonIcon}
+                                                onClick={() => this.toggleBuy()}
+                                                disabled={date === null || price === 0}
+                                        >
+                                            <ShoppingIcon/>
+                                            Pay
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </Grid>
@@ -386,7 +465,6 @@ class Specify extends Component{
                             </Grid>
                         </Grid>
                     ))}
-                </Grid>
             </div>
         )
     }

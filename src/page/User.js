@@ -18,12 +18,11 @@ import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
 import ClearIcon from '@material-ui/icons/Clear';
 import Provinces from '../data/provinces';
-import {decomposeAddr, UserError, composeAddr, getDistricts, getCities, chinese} from "../util/utils";
+import {decomposeAddr, composeAddr, getDistricts, getCities, chinese, urlEncode} from "../util/utils";
 
 const styles = theme => ({
     root: {
         width: 'inherit',
-        // padding: theme.spacing.unit,
     },
     padding: {
         padding: theme.spacing.unit,
@@ -46,13 +45,13 @@ const styles = theme => ({
         maxWidth: 540,
         minWidth: 160,
     },
-    input : {
+    input: {
         display: 'none',
     },
     button: {
         margin: theme.spacing.unit,
     },
-    actions : {
+    actions: {
         display: 'block',
         justifyContent: 'right',
     },
@@ -60,7 +59,7 @@ const styles = theme => ({
         display: 'block',
         float: 'right',
     },
-    label:{
+    label: {
         display: 'inline-block',
         paddingRight: theme.spacing.unit,
     },
@@ -114,7 +113,15 @@ class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: null,
+            user: {
+                username: '',
+                avatar: '',
+                nickName: '',
+                email: '',
+                phone: 0,
+                account: 0,
+                address: "",
+            },
             edit: false,
             tab: 0,
             newImg: null,
@@ -128,28 +135,13 @@ class User extends Component {
     };
 
     componentWillMount() {
-        // fetchInfo();
-        let storage = window.localStorage;
-        let user = storage.getItem("user") || null;
-        // user = user === null ? Users[0] : user;
-        user = {
-            username: 'Invinsible',
-            avatar: 'https://image.flaticon.com/icons/svg/25/25231.svg',
-            intro: 'For Asgard!',
-            nickname: 'menhera',
-            email: 'aco@aoc.com',
-            phone: 1000100,
-            account: 900,
-            address: "上海市市辖区闵行区江川路街道",
-        };
-
-        this.setState({ user });
+        this.fetchInfo();
     };
 
     updateUserInfo = name => event => {
         const {user} = this.state;
         user[name] = event.target.value;
-        this.setState({ user });
+        this.setState({user});
     };
 
     handleChange = name => event => {
@@ -163,6 +155,7 @@ class User extends Component {
         const detailAddr = decomposeAddr(this.state.user.address);
         let cities = null;
         let districts = null;
+        console.log(detailAddr);
         if (detailAddr.province) cities = getCities(detailAddr.province);
         if (detailAddr.city) districts = getDistricts(detailAddr.province, detailAddr.city);
         this.setState({
@@ -173,20 +166,55 @@ class User extends Component {
     };
 
     toggleSave = () => {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
         this.setState({
             edit: false,
         });
-        /*
-        const url = "/update/profile";
-        fetch (url, {
-            method: "GET",
-            body: urlEncode(this.state.user),
+
+        const {phone, nickName, address, account} = this.state.user;
+
+        let body = {
+            token: token,
+            phone: phone,
+            nickname: nickName,
+            address: address,
+            account: account
+        };
+
+        fetch(`${this.serviceUrl}/UserDetail/UpdateByUserid`, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let headers = response.headers;
+            console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
         })
-            .then(response => {
-                if (response.status === 200) alert("Update profile succeeded");
-                else alert("Update profile failed");
+            .then(data => {
+                this.setState({user: data});
             })
-        */
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            })
     };
 
     toggleCancel = () => {
@@ -203,7 +231,11 @@ class User extends Component {
     };
 
     setImg = event => {
-        let newImg = event.target.files[0];
+        let newImg = event.target.files[0]; //File
+        if (newImg.name.indexOf('.svg') > -1) {
+            alert('Sorry, we do not accept images in svg format');
+            return;
+        }
         if (typeof FileReader === "undefined") {
             alert("Your Browser doesn't support FileReader, Please upgrade your browser. Latest Google Chrome is recommended.");
             return;
@@ -211,82 +243,183 @@ class User extends Component {
         let reader = new FileReader();
         reader.readAsDataURL(newImg);
         let that = this;
-        reader.onload = function(e) {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        reader.onload = function (e) {
             const {user} = that.state;
-            user.image = this.result;
+            user.avatar = this.result;  //base 64 string
             that.setState({user});
-        }
+        };
+        let formData = new FormData();
+        formData.append("avatar", newImg);
+        formData.append("token", token);
+        fetch(`${that.serviceUrl}/UserDetail/UpdateByUserid`, {
+            method: 'POST',
+            credentials: "include",
+            body: formData,
+        }).then(response => {
+            let headers = response.headers;
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(data => {
+                that.setState({user: data});
+            })
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            })
+
     };
 
     fetchInfo = () => {
-        fetch(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${this.state.user.token}`, {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        fetch(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${token}`, {
             method: 'GET',
             credentials: "include",
-        }).then( response => {
+        }).then(response => {
             let headers = response.headers;
             switch (headers.get("errornum")) {
-                case 0 : return response.json();
-                case 1 : {
+                case '0' :
+                    return response.json();
+                case '1' : {
                     throw Error("You haven't signed in yet.");
                 }
-                case 2 : throw UserError("You identity match!");
-                case 3 : throw UserError("Your account is frozen!");
-                default: throw UserError("Unexpected response received from server! Please try again later.");
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
             }
         })
-            .then(data => this.setState({user: data}))
+            .then(data => {
+                this.setState({user: data});
+            })
             .catch(e => {
                 if (e instanceof SyntaxError) {
-                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${this.state.user.token}`)
-                        .then(response => {
-                            let headers = response.headers;
-                            switch (headers.get("errornum")) {
-                                case 0 : return response.json();
-                                case 1 : {
-                                    throw Error("You haven't signed in yet.");
-                                }
-                                case 2 : throw UserError("You identity match!");
-                                case 3 : throw UserError("Your account is frozen!");
-                                default: throw UserError("Unexpected response received from server! Please try again later.");
-                            }
-                        })
-                        .then(data => this.setState({user: data}))
-                        .catch(event => {
-                            if (event instanceof UserError) {
-                                alert(event.message);
-                                window.location.href = "/signin";
-                            }
-                        })
+                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(()=>{this.fetchInfo()});
                 }
-                else if (e instanceof UserError) {
+                else {
                     alert(e.message);
                     window.location.href = "/signin";
                 }
             })
     };
 
+
+    check_pwd = (password) => {
+        let pattern = /^[\w-$%#]{6,25}$/;
+        let test = pattern.test(password);
+        test = test && (password.match(/\d/) !== null);
+        test = test && (password.match(/\w/) !== null);
+        return test;
+    };
+
     modifyPwd = () => {
         const {oldPwd, newPwd, renewPwd} = this.state;
-        if (newPwd !== renewPwd) {
-            alert("Password recheck failed");
+        if (oldPwd.length === 0) {
+            alert("旧密码不能为空");
             return;
         }
-        /*
-         * let tmp = {
-         *      oldPwd: oldPwd,
-         *      newPwd: newPwd,
-         *      renewPwd: renewPwd,
-         * };
-         * fetch (url, {
-         *      method: 'GET',
-         *      body: urlEncode(tmp),
-         *      credentials: 'include',
-         * }
-         */
+        if (newPwd.length === 0) {
+            alert("新密码不能为空");
+            return;
+        }
+        if (renewPwd.length === 0) {
+            alert("请再次输入新密码");
+            return;
+        }
+        if(!this.check_pwd(oldPwd)){
+            alert("旧密码格式错误");
+            return;
+        }
+        if(!this.check_pwd(newPwd)){
+            alert("新密码格式错误");
+            return;
+        }
+        if (newPwd !== renewPwd) {
+            alert("两次输入的新密码不一致");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        fetch(`${this.serviceUrl}/UserDetail/UpdateOldPassword?token=${token}&oldpassword=${oldPwd}&newpassword=${newPwd}`, {
+            method: 'GET',
+        }).then(response => {
+            let headers = response.headers;
+            console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.text();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(text => {
+                    if (text === "false") {
+                        alert('Wrong old password!');
+                    }
+                    else {
+                        alert("success!");
+                        fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
+                            method: 'POST',
+                            credentials: "include",
+                        })
+                            .then(response => response.status)
+                            .then(status => {
+                                if (status === 200) {
+                                    storage.removeItem("user");
+                                    this.setState({user: {
+                                            username: '',
+                                            avatar: '',
+                                            nickName: '',
+                                            email: '',
+                                            phone: 0,
+                                            account: 0,
+                                            address: "",
+                                        }});
+                                }
+                                else throw Error("Connection failed");
+                            })
+                            .then(()=>{window.location.href = "/signin";})
+                            .catch(e => console.log(e));
+                    }
+                }
+            )
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            });
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username", "account", "email"];
+        let filter = ["avatar", "id", "username",  "email", 'address'];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);
@@ -319,11 +452,9 @@ class User extends Component {
             detailAddr.city = value;
             detailAddr.district = null;
             detailAddr.detail = null;
-            // console.log(detailAddr);
+            console.log(detailAddr);
             const districts = getDistricts(detailAddr.province, detailAddr.city);
-            // console.log(districts instanceof Array);
             user.address = composeAddr(detailAddr);
-            // console.log(user.address);
             this.setState({
                 user: user,
                 districts: districts,
@@ -342,7 +473,6 @@ class User extends Component {
             let detailAddr = decomposeAddr(user.address);
             detailAddr.detail = value;
             user.address = composeAddr(detailAddr);
-            // console.log(user.address);
             this.setState({user});
         }
         else console.log("unknown name");
@@ -364,7 +494,8 @@ class User extends Component {
         ) : (
             <div className={classes.block} key={key}>
                 <Typography variant='title' className={classes.label} color='primary'>{chinese(key)}{': '}</Typography>
-                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{value}</Typography>
+                <Typography className={classes.inline} variant="subheading" component="h3"
+                            color="default">{value}</Typography>
             </div>
         );
 
@@ -372,11 +503,12 @@ class User extends Component {
         let {provinces, cities, districts} = this.state;
         cities = cities || [];
         districts = districts || [];
-        const address = ! edit ? (
-            <div className={classes.block}>
-                <Typography variant="title" className={classes.label} color="primary">{"地址: "}</Typography>
-                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.address}</Typography>
-            </div>
+        const address = !edit ? (
+                <div className={classes.block}>
+                    <Typography variant="title" className={classes.label} color="primary">{"地址: "}</Typography>
+                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                color="default">{user.address}</Typography>
+                </div>
             )
             :
             (
@@ -446,6 +578,7 @@ class User extends Component {
 
         const info = (
             <div>
+                <Paper elevation={10} className={classes.paper}>
                 <Grid container spacing={24}>
                     <Grid item xs={2} className={classes.imgGrid}>
                         <div className={classes.imageSec}>
@@ -470,31 +603,37 @@ class User extends Component {
                                     </Button>
                                         <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
                                             <ClearIcon/>
+                                            </Button>
+                                        </div> :
+                                        <Button variant='fab' color='primary' onClick={this.toggleEdit}
+                                                className={classNames(classes.action, classes.button)}>
+                                            <EditIcon/>
                                         </Button>
-                                    </div> :
-                                    <Button variant='fab' color='primary' onClick={this.toggleEdit} className={classNames(classes.action, classes.button)}>
-                                        <EditIcon/>
-                                    </Button>
-                            }
-                        </div>
-                        <div className={classes.padding}>
-                            <div className={classes.block} key="username">
-                                <Typography variant='title' className={classes.label} color='primary'>{"用户名: "}</Typography>
-                                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.username}</Typography>
+                                }
                             </div>
-                            <div className={classes.block} key="email">
-                                <Typography variant='title' className={classes.label} color='primary'>{"邮箱: "}</Typography>
-                                <Typography className={classes.inline} variant="subheading" component="h3" color="default">{user.email}</Typography>
+                            <div className={classes.padding}>
+                                <div className={classes.block} key="username">
+                                    <Typography variant='title' className={classes.label}
+                                                color='primary'>{"用户名: "}</Typography>
+                                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                                color="default">{user.username}</Typography>
+                                </div>
+                                <div className={classes.block} key="email">
+                                    <Typography variant='title' className={classes.label}
+                                                color='primary'>{"邮箱: "}</Typography>
+                                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                                color="default">{user.email}</Typography>
+                                </div>
+                                {
+                                    keys.map(s => (
+                                        infoItem(s, user[s])
+                                    ))
+                                }
+                                {address}
                             </div>
-                            {
-                                keys.map(s => (
-                                    infoItem(s, user[s])
-                                ))
-                            }
-                            {address}
-                        </div>
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Paper>
             </div>
         );
 
@@ -525,7 +664,8 @@ class User extends Component {
                                    id="renewPwd" margin='normal' type='password' required fullWidth
                         />
                         <div className={classes.wrapper}>
-                            <Button variant='contained' color='primary' className={classes.updateButton} onClick={this.modifyPwd}>
+                            <Button variant='contained' color='primary' className={classes.updateButton}
+                                    onClick={this.modifyPwd}>
                                 {"修改密码"}
                             </Button>
                         </div>

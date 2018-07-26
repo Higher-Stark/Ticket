@@ -76,7 +76,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
-        let flash = storage.getItem('flash') || false;
+        let flash = storage.getItem('flash');
         this.state = {
             flash: flash,
         };
@@ -90,22 +90,28 @@ class App extends Component {
 
     }
 
-    cancelFlash() {
+    cancelFlash(){
         if(this.state.flash)
             return;
+        console.log(this.state.flash+"1")
         let storage = window.sessionStorage;
-        storage.setItem('flash', true);
+        storage.setItem("flash",true);
         this.setState({
-            flash: true
-        });
+            flash:true
+        })
+        console.log(this.state.flash)
     }
 
     slideshow() {
-        let background = document.getElementById("background");
-        if (background === null)
+        if(this.state.flash)
             return;
-        let imgs = background.getElementsByTagName("img"), //得到图片们
-            current = 0; //current为当前活跃的图片编号
+        console.log(document.getElementById("background"))
+        if(document.getElementById("background")==null)
+            return;
+        var imgs=document.getElementById("background").getElementsByTagName("img"), //得到图片们
+        
+        current=0; //current为当前活跃的图片编号
+      
         function slideOff() {
             imgs[current].className = ""; //图片淡出
         }
@@ -142,7 +148,7 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ? <ResponsiveDrawer/>: Welcome}
+                    {this.state.flash ?  <ResponsiveDrawer/>:Welcome}
                 </Router>
             </MuiThemeProvider>
         );

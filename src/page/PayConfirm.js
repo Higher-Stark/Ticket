@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+
+import {NavLink,withRouter} from 'react-router-dom';
+import red from '@material-ui/core/colors/red';
+import lime from '@material-ui/core/colors/lime';
+import indigo from '@material-ui/core/colors/indigo';
+import deepOrange from '@material-ui/core/colors/deepOrange';
+import grey from '@material-ui/core/colors/grey';
+import green from '@material-ui/core/colors/green';
+
 import pink from '@material-ui/core/colors/pink';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -15,6 +24,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import PaymentIcon from '@material-ui/icons/Payment'
+import $ from 'jquery';
+
 const styles = ()=>({
     headline:{
         color: pink[300],
@@ -27,26 +39,103 @@ function createData(title, number, eachPrice) {
   return { id, title, number, eachPrice};
 }
 
-const data = [
-  createData('璀璨之境 克里姆特映像艺术大展—上海站', 5, 500),
-  createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
-  createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10, 880)
-];
-
-
 class PayConfirm extends Component{
     constructor(props){
-        super(props)
-        this.calcuTotal = this.calcuTotal.bind()
+        super(props);
+        this.state = {
+            order:{},
+            data:[]
+        };
     }
 
-    calcuTotal(){
-        console.log(data)
+    calcuTotal=()=>{
         let totalPrice = 0;
-        data.forEach(element => {
+        this.state.data.forEach(element => {
             totalPrice += element.number * element.eachPrice;
         });
         return totalPrice
+    }
+
+    fetchOrder = ()=>{
+        let storage = window.localStorage;
+        let orderid = storage.getItem("orderid");
+        let token = JSON.parse(storage.getItem("user")).token;
+        let s = `token=${token}&orderid=${orderid}`;
+        fetch('http://pipipan.cn:30011/Order/QueryByOrderid',{
+            method:'POST',
+            body:s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text =>{
+                text = JSON.parse(text);
+                console.log(text);
+                this.setState({
+                    order:text,
+                    items:text.items
+                })
+                this.createItems();
+            });
+    };
+
+    createItems = ()=>{
+        let Items = this.state.items;
+        console.log(Items);
+        for(var i = 0;i<Items.length;i++){
+            var eachItem = Items[i];
+            var tmpArray = this.state.data;
+            tmpArray.push(createData(eachItem.title,eachItem.number,eachItem.price))
+            console.log("the tmparray")
+            console.log(tmpArray)
+            this.setState({
+                data:tmpArray,
+            })
+        }
+    }
+
+    componentWillMount(){
+        this.fetchOrder();
+    }
+
+    routeToAfterPay=()=>{
+        console.log("in ger header")
+        this.props.history.push({
+            pathname:'/afterpay'
+        })
+    }
+
+    buy=()=>{
+        let storage = window.localStorage;
+        let token = JSON.parse(storage.getItem("user")).token;
+        let orderid = parseInt(storage.getItem("orderid"));
+
+        let s =`token=${token}&orderid=${orderid}`;
+        console.log(token)
+        fetch('http://pipipan.cn:30011/Order/Buy',{
+            method: 'POST',
+            body: s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include",
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text => {
+                text = JSON.parse(text);
+                console.log(text);
+                storage.setItem("message",text.message);
+                storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
+                this.routeToAfterPay()
+            })
     }
 
     render(){
@@ -64,17 +153,17 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    201807230000
+                                    {this.state.order.id}
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
                                 <Typography>
-                                    用户姓名
+                                    收货人
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    潘子奕狗头
+                                    {this.state.order.receiver}
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
@@ -84,7 +173,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    54739110
+                                    {this.state.order.phone}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -97,7 +186,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={10} style={{textAlign:'left',marginTop:"1.5%"}}>
                                 <Typography>
-                                    上海市 闵行校区 东川路800号 上海交大闵行校区
+                                    {this.state.order.address}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -116,7 +205,7 @@ class PayConfirm extends Component{
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {data.map(n => {
+                                    {this.state.data.map(n => {
                                         return (
                                             <TableRow key={n.id}>
                                                 <TableCell component="th" scope="row" style ={{textAlign:'center'}}>
@@ -146,7 +235,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{marginTop:"1.5%"}}/>
                             <Grid item xs={3} style={{marginTop:"1.5%"}}>
-                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}}>
+                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}} onClick={this.buy}>
                                     支付
                                 </Button>
                             </Grid>
@@ -168,4 +257,4 @@ PayConfirm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(PayConfirm);
+export default withRouter(withStyles(styles)(PayConfirm));

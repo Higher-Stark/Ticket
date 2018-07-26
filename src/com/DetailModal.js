@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import {NavLink,withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -137,12 +138,28 @@ class DetailModal extends Component {
     };
 
     toggleBuy = (id) => {
-        fetch("/buy?id="+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw new Error("Buy failed");
-                else alert("Add to cart succeed");
-            })
-            .catch(e => console.log(e));
+        const {selectedDate, selectedPrice, quantity} = this.state;
+        if (selectedDate === -1 || selectedPrice === -1) {
+            console.log("You haven't selected any time or price");
+            return;
+        }
+        const dates = this.props.card.dates.split(" , ");
+        const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
+        let storage = window.localStorage;
+        let tickets = [
+            {
+                id: this.props.card.id,
+                date: dates[selectedDate],
+                price: price,
+                number: quantity
+            }
+        ];
+
+        storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
+        storage.setItem("orderType","orderInDetailPage")
+        this.props.history.push({
+            pathname: '/orderconfirm',
+        });
     };
 
     toggleMore = () => this.setState({open: ! this.state.open});
@@ -232,7 +249,7 @@ class DetailModal extends Component {
                             <CartPlusIcon/>
                             Add
                         </Button>
-                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={() => this.toggleBuy(card.id)}>
+                        <Button variant='extendedFab' color='primary' className={classes.buttonIcon} onClick={()=>this.toggleBuy(card.id)}>
                             <ShoppingIcon/>
                             Pay
                         </Button>
@@ -248,4 +265,5 @@ DetailModal.propTypes = {
     card: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(DetailModal);
+// component={NavLink} to="/order"
+export default withRouter(withStyles(styles)(DetailModal));

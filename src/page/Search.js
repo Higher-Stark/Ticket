@@ -217,7 +217,7 @@ class Search extends Component {
     }
 
     viewPage = (idx) => {
-        const {selected, search} = this.state;
+        const {selected} = this.state;
         let city = this.cities[selected['city']];
         let type = this.types[selected['type']];
         fetch(this.url + `?pagenumber=${idx}&city=${city}&type=${type}&title=${this.props.match.params.search}`)

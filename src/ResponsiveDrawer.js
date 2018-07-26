@@ -42,22 +42,15 @@ import Ballet from './svg/ballet3.svg';
 import Vocal from './svg/ic-vocal.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parenting.svg';
-import Curtain from './svg/curtain.svg'
-import Exhibition from './svg/exhibition.svg'
 import Acrobatics from './svg/acrobatics.svg';
 import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';
 import Order from './page/Order'
 import AfterPay from './page/AfterPay'
-import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import Collapse from '@material-ui/core/Collapse';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
 import BulletIcon from '@material-ui/icons/Tab'
 import OrderIcon from '@material-ui/icons/List'
 import UserInfoIcon from '@material-ui/icons/PermIdentity'
@@ -149,7 +142,7 @@ class NavMenuList2 extends Component{
 
 
     render(){
-        const { classes } = this.props;
+
 
         return(
             <div>
@@ -194,6 +187,10 @@ class NavMenuList2 extends Component{
                 <ListItem button component={NavLink} to='/'>
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/concert'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
                 </ListItem>
                 <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>

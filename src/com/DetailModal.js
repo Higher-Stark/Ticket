@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {NavLink,withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -125,10 +125,17 @@ class DetailModal extends Component {
         const dates = this.props.card.dates.split(" , ");
         const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
         let storage = window.localStorage;
-        let user = storage.getItem("user");
-        user = JSON.parse(user);
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
         let body = {
-            token: user===null?'':user.token,
+            token: user.token,
             ticketid: this.props.card.id,
             date: dates[selectedDate],
             price: price,
@@ -171,12 +178,22 @@ class DetailModal extends Component {
     toggleBuy = (id) => {
         const {selectedDate, selectedPrice, quantity} = this.state;
         if (selectedDate === -1 || selectedPrice === -1) {
-            console.log("You haven't selected any time or price");
+            alert("You haven't selected any time or price");
             return;
         }
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+
         const dates = this.props.card.dates.split(" , ");
         const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
-        let storage = window.localStorage;
         let tickets = [
             {
                 id: this.props.card.id,

@@ -1,14 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-
-import {NavLink,withRouter} from 'react-router-dom';
-import red from '@material-ui/core/colors/red';
-import lime from '@material-ui/core/colors/lime';
-import indigo from '@material-ui/core/colors/indigo';
-import deepOrange from '@material-ui/core/colors/deepOrange';
-import grey from '@material-ui/core/colors/grey';
-import green from '@material-ui/core/colors/green';
-
+import {withRouter} from 'react-router-dom';
 import pink from '@material-ui/core/colors/pink';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -23,8 +15,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
-import PaymentIcon from '@material-ui/icons/Payment'
 
 const styles = ()=>({
     headline:{
@@ -59,9 +49,10 @@ class PayConfirm extends Component{
     fetchOrder = ()=>{
         let storage = window.localStorage;
         let orderid = storage.getItem("orderid");
-        if(orderid == null || orderid.length ==0)
+        if(orderid == null || orderid.length ===0)
             return;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let s = `token=${token}&orderid=${orderid}`;
         fetch('http://pipipan.cn:30011/Order/QueryByOrderid',{
             method:'POST',
@@ -132,18 +123,20 @@ class PayConfirm extends Component{
 
     buy=()=>{
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let type = storage.getItem("orderType")
         if(storage.getItem("orderid")==null||storage.getItem("orderid").length===0)
             return;
 
-        let orderid = parseInt(storage.getItem("orderid"));
+        let orderid = parseInt(storage.getItem("orderid"),0);
         if(type === 'orderInCart') {
             let cartProducts = JSON.parse(storage.getItem("cartProducts"));
             let batchEntryId = [];
 
             cartProducts.map(product => {
-                batchEntryId.push(product.id)
+                batchEntryId.push(product.id);
+                return null;
             });
             let s = `token=${token}&orderid=${orderid}`;
             console.log(token)
@@ -185,7 +178,7 @@ class PayConfirm extends Component{
                         storage.setItem("Inventory shortage", text["Inventory shortage"].toString());
 
                     console.log("the batchentry " + batchEntryId);
-                    fetch("http://pipipan.cn:30007/Cart/DeleteBatchInCart" + `?token=${token}&batchentryid=${batchEntryId}`)
+                    fetch(`http://pipipan.cn:30007/Cart/DeleteBatchInCart?token=${token}&batchentryid=${batchEntryId}`)
                         .then(response => response.headers)
                         .then(headers => {
                             let errornum = headers.get('errornum');

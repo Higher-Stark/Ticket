@@ -11,7 +11,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -19,7 +18,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import PaymentIcon from '@material-ui/icons/Payment'
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import IconButton from '@material-ui/core/IconButton';
@@ -36,11 +34,7 @@ const actionsStyles = theme => ({
     },
 });
 
-let id = 0
-function createData(title, number, eachPrice) {
-    id += 1;
-    return { id, title, number, eachPrice};
-}
+
 
 const styles = ()=>({
     headline:{
@@ -145,7 +139,8 @@ class Order extends Component{
     fetchUserOrders=(pagenumber)=>{
         console.log("in fetch user order")
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let s = `token=${token}&pagenumber=${pagenumber}`;
         fetch('http://pipipan.cn:30011/Order/QueryByUserid',{
             method:"POST",
@@ -203,7 +198,8 @@ class Order extends Component{
     buy(e, order){
         let storage = window.localStorage;
         storage.setItem("orderid",order.id);
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let orderid = order.id;
 
         let s =`token=${token}&orderid=${orderid}`;
@@ -587,7 +583,7 @@ class Order extends Component{
 
     render(){
         const { classes } = this.props;
-        const { data, rowsPerPage, page } = this.state;
+        const {  rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.totalNumber - page * rowsPerPage);
 
         const Order = (

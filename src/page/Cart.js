@@ -241,9 +241,9 @@ class Cart extends React.Component {
             selected: [],
             data: [],
             page: 0,
-            rowsPerPage: 16,
+            rowsPerPage: 8,
             totalElements: 0,
-            dirties: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            dirties: [0, 0, 0, 0, 0, 0, 0, 0],
         };
     }
 
@@ -372,6 +372,7 @@ class Cart extends React.Component {
 
 
     handleDeleteSelected = (event) => {
+        const {rowsPerPage}=this.state;
         let newSelected = this.state.selected.slice();
         let storage = window.localStorage;
         let user = storage.getItem("user");
@@ -397,7 +398,7 @@ class Cart extends React.Component {
             })
             .then(()=>{
                 const {page}=this.state;
-                fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+                fetch(this.QueryByUserId + `?pagenumber=${Math.floor(page/2)  + 1}&token=${token}`)
                     .then(response => {
                             let errornum = response.headers.get('errornum');
                             if (errornum === '0') {
@@ -418,7 +419,7 @@ class Cart extends React.Component {
                     .then(data => {
                         if (data === null) throw Error("Response error!");
                         this.setState({
-                            data: data.content,
+                            data: page%2?data.content.slice(rowsPerPage):data.content.slice(0,rowsPerPage),
                             totalElements: data.totalElements
                         });
                     })
@@ -430,7 +431,7 @@ class Cart extends React.Component {
 
     handleCheck=()=>{
         let cartProducts=[];
-        const {selected,data}=this.state;
+        const {selected,data,rowsPerPage}=this.state;
         for (let i = 0; i < selected.length; i++) {
             for (let j = 0; j < data.length; j++) {
                 if (selected[i] === data[j].id) {
@@ -445,7 +446,7 @@ class Cart extends React.Component {
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        for(let k=0;k<16;k++)
+        for(let k=0;k<rowsPerPage;k++)
         {
             if(this.state.dirties[k])
                 this.handleNumberEdit(token,this.state.data[k].id,k);
@@ -464,12 +465,13 @@ class Cart extends React.Component {
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
         clearTimeout(this.timer);
-        for(let k=0;k<16;k++)
+        const {rowsPerPage}=this.state;
+        for(let k=0;k<rowsPerPage;k++)
         {
             if(this.state.dirties[k])
                 this.handleNumberEdit(token,this.state.data[k].id,k);
         }
-        fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+        fetch(this.QueryByUserId + `?pagenumber=${Math.floor(page/2)  + 1}&token=${token}`)
             .then(response => {
                     let errornum = response.headers.get('errornum');
                     if (errornum === '0') {
@@ -490,7 +492,7 @@ class Cart extends React.Component {
             .then(data => {
                 if (data === null) throw Error("Response error!");
                 this.setState({
-                    data: data.content,
+                    data: page%2?data.content.slice(rowsPerPage):data.content.slice(0,rowsPerPage),
                     totalElements: data.totalElements
                 });
             })
@@ -506,12 +508,12 @@ class Cart extends React.Component {
 
 
     componentWillMount() {
-        const {page} = this.state;
+        const {page,rowsPerPage} = this.state;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+        fetch(this.QueryByUserId + `?pagenumber=${Math.floor(page/2) + 1}&token=${token}`)
             .then(response => {
                     let errornum = response.headers.get('errornum');
                     if (errornum === '0') {
@@ -532,7 +534,7 @@ class Cart extends React.Component {
             .then(data => {
                 if (data === null) throw Error("Response error!");
                 this.setState({
-                    data: data.content,
+                    data: page%2?data.content.slice(rowsPerPage):data.content.slice(0,rowsPerPage),
                     totalElements: data.totalElements
                 });
             })
@@ -573,7 +575,7 @@ class Cart extends React.Component {
                                                 <Checkbox checked={isSelected}/>
                                             </TableCell>
                                             <TableCell className={classes.info} component="th" scope="row"
-                                                       padding="none" onClick={() => this.detail(n.id)}>
+                                                       padding="none" onClick={() => this.detail(n.ticketId)}>
                                                 <Grid container spacing={8} className={classes.root} key={n.id}>
                                                     <Grid item xs={6}>
                                                         <img src={n.image} className={classes.image}

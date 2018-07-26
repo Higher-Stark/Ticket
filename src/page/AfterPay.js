@@ -56,23 +56,18 @@ class AfterPay extends Component{
                 afterPayTitle:"账户余额不足，请充值"
             })
         }
-        else{
-            console.log("hello1")
-            this.setState({
-                afterPayTitle:"支付成功"
-            })
-        }
 
         console.log("hello")
 
-        if(succOrNot == "success"){
+        if(succOrNot === "success"){
             this.fetchOrder()
         }
     };
 
     fetchOrder = ()=>{
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let orderid = storage.getItem("orderid");
 
         let s = `token=${token}&orderid=${orderid}`;
@@ -251,6 +246,17 @@ class AfterPay extends Component{
             if(element.succOrNot==='成功')
                 totalPrice += element.number * element.eachPrice;
         });
+        if (totalPrice===0)
+        {
+            this.setState({afterPayTitle:"库存不足,支付失败"})
+        }
+        else
+        {
+            this.setState({
+                afterPayTitle:"支付成功"
+            })
+        }
+
         return totalPrice
     }
 
@@ -269,7 +275,7 @@ class AfterPay extends Component{
                             </Grid>
                         </Grid>
                         {
-                            this.state.afterPayTitle == "支付成功" ? (this.state.success) : (function(){
+                            this.state.afterPayTitle === "支付成功"|| "库存不足,支付失败"? (this.state.success) : (function(){
                                 let storage = window.localStorage;
                                 storage.removeItem("orderid");
                                 storage.removeItem("message");

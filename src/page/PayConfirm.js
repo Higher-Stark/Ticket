@@ -133,7 +133,7 @@ class PayConfirm extends Component{
                 text = JSON.parse(text);
                 console.log(text);
                 storage.setItem("message",text.message);
-                if(text.message != 'success')
+                if(text.message === 'success')
                     storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
                 this.routeToAfterPay()
             })

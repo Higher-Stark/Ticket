@@ -195,7 +195,7 @@ class NavMenuList2 extends Component{
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
@@ -228,7 +228,7 @@ class NavMenuList2 extends Component{
                     <ListItemText inset primary='Acrobatics'/>
                 </ListItem>
                 <Divider/>
-                <ListItem button onClick={this.toggleLogout}>
+                <ListItem button onClick={this.props.toggleLogout}>
                     <ListItemIcon><LogoutVariant/></ListItemIcon>
                     <ListItemText inset primary='Logout'/>
                 </ListItem>
@@ -276,6 +276,7 @@ class ResponsiveDrawer extends React.Component {
         })
             .then(response => response.status)
             .then(status => {
+                console.log(status);
                 if (status === 200) {
                     storage.removeItem("user");
                     this.setState({user: null});
@@ -291,7 +292,7 @@ class ResponsiveDrawer extends React.Component {
 
     toggleSearch = () => {
         this.props.history.push({
-            pathname: '/search/'+this.state.search,
+            pathname: '/search/'+(this.state.search===null?'all':this.state.search),
         });
     };
 
@@ -352,7 +353,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : <NavMenuList2/>}
+                {this.state.user === null ? NavMenuList1 : <NavMenuList2 toggleLogout={this.toggleLogout}/>}
             </div>
         );
 

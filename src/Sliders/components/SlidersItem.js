@@ -33,6 +33,12 @@ export default class SlidersItem extends Component{
                 >
                     <img src={this.props.images[1].src} alt=""/>
                 </li>
+                <li
+                    className="slider"
+                    key={this.props.images.length+2}
+                >
+                    <img src={this.props.images[2].src} alt=""/>
+                </li>
             </ul>
         )
     }

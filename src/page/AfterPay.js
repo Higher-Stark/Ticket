@@ -72,7 +72,8 @@ class AfterPay extends Component{
 
     fetchOrder = ()=>{
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let orderid = storage.getItem("orderid");
 
         let s = `token=${token}&orderid=${orderid}`;

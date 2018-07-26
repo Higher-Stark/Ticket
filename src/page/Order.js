@@ -139,7 +139,8 @@ class Order extends Component{
     fetchUserOrders=(pagenumber)=>{
         console.log("in fetch user order")
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let s = `token=${token}&pagenumber=${pagenumber}`;
         fetch('http://pipipan.cn:30011/Order/QueryByUserid',{
             method:"POST",
@@ -197,7 +198,8 @@ class Order extends Component{
     buy(e, order){
         let storage = window.localStorage;
         storage.setItem("orderid",order.id);
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let orderid = order.id;
 
         let s =`token=${token}&orderid=${orderid}`;

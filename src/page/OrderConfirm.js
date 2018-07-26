@@ -6,7 +6,7 @@ import indigo from '@material-ui/core/colors/indigo';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import grey from '@material-ui/core/colors/grey';
 import pink from '@material-ui/core/colors/pink';
-import { withStyles,  } from '@material-ui/core/styles';
+import {withStyles,} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Card from '@material-ui/core/Card';
@@ -24,17 +24,16 @@ import PaymentIcon from '@material-ui/icons/Payment';
 import {withRouter} from 'react-router-dom';
 
 function createData(title, number, price) {
-    return { title,number,price };
+    return {title, number, price};
 }
-
 
 
 const styles = theme => ({
     root: {
-      width: '100%',
-      maxWidth: 800,
+        width: '100%',
+        maxWidth: 800,
     },
-    headline:{
+    headline: {
         color: pink[300],
     },
     bullet: {
@@ -67,25 +66,26 @@ const styles = theme => ({
         accent2: lime.A200,
         optional: '#FFC107',
     },
-  });
+});
 
-class OrderConfirm extends Component{
-    constructor(props){
+class OrderConfirm extends Component {
+    constructor(props) {
         super(props)
-        this.state ={
-            userDetail:{},
-            items:[],
-            data:[]
+        this.state = {
+            userDetail: {},
+            items: [],
+            data: []
         }
     }
 
-    fetchUserDetail = ()=>{
+    fetchUserDetail = () => {
         let storage = window.localStorage;
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         let s = `token=${token}`;
-        fetch('http://pipipan.cn:30009/UserDetail/QueryByUserid',{
-            method:'POST',
-            body:s,
+        fetch('http://pipipan.cn:30009/UserDetail/QueryByUserid', {
+            method: 'POST',
+            body: s,
             headers: new Headers({
                 'Content-Type': 'application/x-www-form-urlencoded',
             }),
@@ -113,32 +113,36 @@ class OrderConfirm extends Component{
             //     if (response.status !== 200) throw Error("Error !" + response);
             //     return response.text();
             // })
-            .then(text =>{
+            .then(text => {
                 console.log(text);
                 this.setState({
                     userDetail: JSON.parse(text)
                 });
                 console.log(this.state.userDetail)
+            })
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+
             });
     };
 
-    fetchItems = ()=>{
+    fetchItems = () => {
         console.log("the state tickets");
         let storage = window.localStorage;
         let orderType = storage.getItem("orderType");
         var tmpItem;
         var tmpArray;
         var i;
-        if( orderType === "orderInDetailPage")
-        {
+        if (orderType === "orderInDetailPage") {
             let orderConfirmTickets = JSON.parse(storage.getItem("orderConfirmTickets"));
-            if(orderConfirmTickets == null)
+            if (orderConfirmTickets == null)
                 return;
-            orderConfirmTickets.map((n,i)=>{
+            orderConfirmTickets.map((n, i) => {
                 var eachTicket = orderConfirmTickets[i];
                 tmpArray = this.state.items;
-                fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`,{
-                    method:'GET',
+                fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`, {
+                    method: 'GET',
                     headers: new Headers({
                         'Content-Type': 'application/x-www-form-urlencoded',
                     }),
@@ -166,26 +170,26 @@ class OrderConfirm extends Component{
                         });
 
                         var tmpData = this.state.data;
-                        tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price));
+                        tmpData.push(createData(tmpItem.title, tmpItem.number, tmpItem.price));
                         this.setState({
-                            data:tmpData
+                            data: tmpData
                         })
                     })
                 return null;
             })
         }
-        else if( orderType === "orderInCart"){
+        else if (orderType === "orderInCart") {
             let cartProducts = JSON.parse(storage.getItem("cartProducts"));
-            if(cartProducts == null){
+            if (cartProducts == null) {
                 return;
             }
-            for( i = 0; i<cartProducts.length ;i++){
+            for (i = 0; i < cartProducts.length; i++) {
                 tmpArray = this.state.items;
-                 tmpItem = cartProducts[i];
+                tmpItem = cartProducts[i];
                 var tmpData = this.state.data;
-                tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price));
+                tmpData.push(createData(tmpItem.title, tmpItem.number, tmpItem.price));
                 this.setState({
-                    data:tmpData
+                    data: tmpData
                 })
             }
 
@@ -196,16 +200,17 @@ class OrderConfirm extends Component{
     addOrderToBackend = () => {
         let storage = window.localStorage;
         let ordertype = storage.getItem("orderType");
-        let token = JSON.parse(storage.getItem("user")).token;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
         var address = document.getElementById('address').value;
         var username = document.getElementById('username').value;
         var phone = document.getElementById('phone').value;
 
-        if(address === "" || address == null)
+        if (address === "" || address == null)
             address = document.getElementById('address').placeholder;
-        if(username === "" || username == null)
+        if (username === "" || username == null)
             username = document.getElementById('username').placeholder;
-        if(phone === "" || phone == null)
+        if (phone === "" || phone == null)
             phone = document.getElementById('phone').placeholder;
 
         if (ordertype === "orderInDetailPage") {
@@ -250,12 +255,12 @@ class OrderConfirm extends Component{
         else if (ordertype === "orderInCart") {
             let cartProducts = JSON.parse(storage.getItem("cartProducts"));
             var cartIds = [];
-            for(var i = 0; i < cartProducts.length ; i++){
+            for (var i = 0; i < cartProducts.length; i++) {
                 cartIds.push(cartProducts[i].id)
             }
 
-            console.log('['+cartIds.toString()+']');
-            cartIds = '['+cartIds.toString()+']';
+            console.log('[' + cartIds.toString() + ']');
+            cartIds = '[' + cartIds.toString() + ']';
             let s = `token=${token}&cartids=${cartIds}&receiver=${username}&phone=${phone}&address=${address}`;
             console.log(s)
             fetch('http://pipipan.cn:30011/Order/AddBatchInCart', {
@@ -287,7 +292,7 @@ class OrderConfirm extends Component{
                 .then(text => {
                     text = JSON.parse(text)
                     console.log(text)
-                    storage.setItem("orderid",text.id);
+                    storage.setItem("orderid", text.id);
                     this.props.history.push({
                         pathname: '/payconfirm'
                     })
@@ -295,41 +300,41 @@ class OrderConfirm extends Component{
         }
 
 
-
     }
-    routerToPayConfirm(){
+
+    routerToPayConfirm() {
         this.addOrderToBackend();
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.fetchUserDetail();
         this.fetchItems();
     }
 
-    render(){
-        const { classes } = this.props;
+    render() {
+        const {classes} = this.props;
 
         const orderAddressFrom = (
             <div>
-                <Typography variant="display1" gutterBottom className={classes.headline}> 
+                <Typography variant="display1" gutterBottom className={classes.headline}>
                     取票人信息
                 </Typography>
-                <Divider light = {true} />
+                <Divider light={true}/>
                 <Card>
                     <CardContent>
-                        <Typography variant="headline" color="textSecondary" >
+                        <Typography variant="headline" color="textSecondary">
                             取货信息
                         </Typography>
-                        <Divider style={{marginTop:"1%"}}/>
+                        <Divider style={{marginTop: "1%"}}/>
                         <Grid container spacing={24}>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
-                                    <Typography style={{ fontSize: "125%" , fontWeight:"normal"}}>
-                                        收货地址
-                                    </Typography>
+                            <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
+                                <Typography style={{fontSize: "125%", fontWeight: "normal"}}>
+                                    收货地址
+                                </Typography>
                             </Grid>
-                            <Grid item xs={5} style={{marginTop:"1.8%"}}>
+                            <Grid item xs={5} style={{marginTop: "1.8%"}}>
                                 <Input
-                                    id = "address"
+                                    id="address"
                                     placeholder={this.state.userDetail.address}
                                     fullWidth
                                     className={classes.input}
@@ -338,32 +343,32 @@ class OrderConfirm extends Component{
                                     }}>
                                 </Input>
                             </Grid>
-                            <Grid item xs={5} style={{marginTop:"2%"}}>
+                            <Grid item xs={5} style={{marginTop: "2%"}}>
                             </Grid>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"-1%"}}>
-                                    <Typography style={{ fontSize: "125%",fontWeight:"normal"}}>
-                                        用户姓名
-                                    </Typography>
+                            <Grid item xs={2} style={{textAlign: 'right', marginTop: "-1%"}}>
+                                <Typography style={{fontSize: "125%", fontWeight: "normal"}}>
+                                    用户姓名
+                                </Typography>
                             </Grid>
-                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            <Grid item xs={5} style={{marginTop: "-1%"}}>
                                 <Input
-                                    id = "username"
+                                    id="username"
                                     placeholder={this.state.userDetail.username}
                                     inputProps={{
                                         'aria-label': 'Description',
                                     }}>
                                 </Input>
                             </Grid>
-                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            <Grid item xs={5} style={{marginTop: "-1%"}}>
                             </Grid>
-                            <Grid item xs={2} style={{textAlign:'right',marginTop:"-1%"}}>
-                                    <Typography style={{ fontSize: "125%",fontWeight:"normal"}}>
-                                        手机号码
-                                    </Typography>
+                            <Grid item xs={2} style={{textAlign: 'right', marginTop: "-1%"}}>
+                                <Typography style={{fontSize: "125%", fontWeight: "normal"}}>
+                                    手机号码
+                                </Typography>
                             </Grid>
-                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            <Grid item xs={5} style={{marginTop: "-1%"}}>
                                 <Input
-                                    id = "phone"
+                                    id="phone"
                                     placeholder={this.state.userDetail.phone}
                                     className={classes.input}
                                     inputProps={{
@@ -371,34 +376,37 @@ class OrderConfirm extends Component{
                                     }}>
                                 </Input>
                             </Grid>
-                            <Grid item xs={5} style={{ marginTop:"-1%"}}>
+                            <Grid item xs={5} style={{marginTop: "-1%"}}>
                             </Grid>
                         </Grid>
-                        <Divider style={{marginTop:"2%"}}/>
-                        <Typography variant="headline"  style={{marginTop:"1.5%"}} className={classes.headline}>
+                        <Divider style={{marginTop: "2%"}}/>
+                        <Typography variant="headline" style={{marginTop: "1.5%"}} className={classes.headline}>
                             票品清单
                         </Typography>
                         <Grid container spacing={24}>
-                            <Grid item xs={12} style={{textAlign:'right',marginTop:"2%"}}>
-                                <Paper className={classes.root} style={{marginLeft:"10%"}} >
-                                {/* 以下显示票品的信息:title number price */}
-                                    <Table className={classes.table} >
+                            <Grid item xs={12} style={{textAlign: 'right', marginTop: "2%"}}>
+                                <Paper className={classes.root} style={{marginLeft: "10%"}}>
+                                    {/* 以下显示票品的信息:title number price */}
+                                    <Table className={classes.table}>
                                         <TableHead>
-                                            <TableRow >
-                                                <TableCell style={{textAlign:'center'}}>Title</TableCell>
-                                                <TableCell style={{textAlign:'center'}} numeric>Number</TableCell>
-                                                <TableCell style={{textAlign:'center'}} numeric>Price</TableCell>
+                                            <TableRow>
+                                                <TableCell style={{textAlign: 'center'}}>Title</TableCell>
+                                                <TableCell style={{textAlign: 'center'}} numeric>Number</TableCell>
+                                                <TableCell style={{textAlign: 'center'}} numeric>Price</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {this.state.data.map(n => {
                                                 return (
                                                     <TableRow key={n.id}>
-                                                        <TableCell component="th" scope="row" style={{textAlign:'center'}}>
+                                                        <TableCell component="th" scope="row"
+                                                                   style={{textAlign: 'center'}}>
                                                             {n.title}
                                                         </TableCell>
-                                                        <TableCell style={{textAlign:'center'}} numeric>{n.number}</TableCell>
-                                                        <TableCell style={{textAlign:'center'}} numeric>{'¥'+n.price}</TableCell>
+                                                        <TableCell style={{textAlign: 'center'}}
+                                                                   numeric>{n.number}</TableCell>
+                                                        <TableCell style={{textAlign: 'center'}}
+                                                                   numeric>{'¥' + n.price}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}
@@ -407,12 +415,14 @@ class OrderConfirm extends Component{
                                 </Paper>
                             </Grid>
                         </Grid>
-                        <Divider style={{ marginTop: "2%" }} />
+                        <Divider style={{marginTop: "2%"}}/>
                         <Grid container spacing={24}>
-                            <Grid item xs={12} style={{ textAlign: 'center', marginTop: "1%" }}>
-                                <Button variant="extendedFab" style={{ marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC" }} onClick={()=>this.routerToPayConfirm()}>
-                                    <PaymentIcon />
-                                    <Typography variant='body1' style={{ paddingLeft: '10px', color: "#FF6699" }}>
+                            <Grid item xs={12} style={{textAlign: 'center', marginTop: "1%"}}>
+                                <Button variant="extendedFab"
+                                        style={{marginTop: "1%", color: "#FF6699", backgroundColor: "#CCCCCC"}}
+                                        onClick={() => this.routerToPayConfirm()}>
+                                    <PaymentIcon/>
+                                    <Typography variant='body1' style={{paddingLeft: '10px', color: "#FF6699"}}>
                                         {'提交'}
                                     </Typography>
                                 </Button>
@@ -423,7 +433,7 @@ class OrderConfirm extends Component{
 
             </div>
         )
-        return(
+        return (
             <div>
                 {orderAddressFrom}
             </div>

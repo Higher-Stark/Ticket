@@ -132,10 +132,17 @@ class Specify extends Component {
     toggleCart = () => {
         const {detail, price, date, quantity} = this.state;
         let storage = window.localStorage;
-        let user = storage.getItem("user");
-        user = JSON.parse(user);
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
         let body = {
-            token: user===null?'':user.token,
+            token: user.token,
             ticketid: detail.id,
             price: price,
             date: date,
@@ -184,8 +191,17 @@ class Specify extends Component {
             console.log("You haven't selected any time or price");
             return;
         }
-
         let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+
         let tickets = [
             {
                 id: detail.id,

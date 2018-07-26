@@ -420,7 +420,7 @@ class Cart extends React.Component {
         for (let i = 0; i < selected.length; i++) {
             for (let j = 0; j < data.length; j++) {
                 if (selected[i] === data[j].id) {
-                    cartProducts.push(data[j].id);
+                    cartProducts.push(data[j]);
                 }
             }
         }

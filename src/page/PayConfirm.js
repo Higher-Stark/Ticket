@@ -113,8 +113,9 @@ class PayConfirm extends Component{
         let storage = window.localStorage;
         let token = JSON.parse(storage.getItem("user")).token;
         let orderid = parseInt(storage.getItem("orderid"));
-        let batchentryid=storage.getItem("cartProducts");
-
+        let cartProducts=storage.getItem("cartProducts");
+        let batchEntryId=[];
+        cartProducts.map(product=>{batchEntryId.push(product.id)});
         let s =`token=${token}&orderid=${orderid}`;
         console.log(token)
         fetch('http://pipipan.cn:30011/Order/Buy',{
@@ -136,7 +137,7 @@ class PayConfirm extends Component{
                 if(text.message === 'success')
                     storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
 
-                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchentryid}`)
+                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchEntryId}`)
                     .then(response => response.headers)
                     .then(headers => {
                         let errornum = headers.get('errornum');

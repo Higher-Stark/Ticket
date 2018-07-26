@@ -154,7 +154,7 @@ class ResponsiveDrawer extends React.Component {
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user.token;
-        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })

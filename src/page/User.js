@@ -23,7 +23,6 @@ import {decomposeAddr, composeAddr, getDistricts, getCities, chinese, urlEncode}
 const styles = theme => ({
     root: {
         width: 'inherit',
-        // padding: theme.spacing.unit,
     },
     padding: {
         padding: theme.spacing.unit,
@@ -114,7 +113,15 @@ class User extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: null,
+            user: {
+                username: '',
+                avatar: '',
+                nickName: '',
+                email: '',
+                phone: 0,
+                account: 0,
+                address: "",
+            },
             edit: false,
             tab: 0,
             newImg: null,
@@ -129,21 +136,6 @@ class User extends Component {
 
     componentWillMount() {
         this.fetchInfo();
-        let storage = window.localStorage;
-        let user = storage.getItem("user") || null;
-        // user = user === null ? Users[0] : user;
-        user = {
-            username: 'Invinsible',
-            avatar: 'https://image.flaticon.com/icons/svg/25/25231.svg',
-            intro: 'For Asgard!',
-            nickName: 'menhera',
-            email: 'aco@aoc.com',
-            phone: 1000100,
-            account: 900,
-            address: "上海市市辖区闵行区江川路街道",
-        };
-
-        this.setState({user});
     };
 
     updateUserInfo = name => event => {
@@ -181,17 +173,6 @@ class User extends Component {
         this.setState({
             edit: false,
         });
-        /*
-        const url = "/update/profile";
-        fetch (url, {
-            method: "GET",
-            body: urlEncode(this.state.user),
-        })
-            .then(response => {
-                if (response.status === 200) alert("Update profile succeeded");
-                else alert("Update profile failed");
-            })
-        */
 
         const {phone, nickName, address, account} = this.state.user;
 
@@ -202,8 +183,6 @@ class User extends Component {
             address: address,
             account: account
         };
-
-        console.log(body);
 
         fetch(`${this.serviceUrl}/UserDetail/UpdateByUserid`, {
             method: 'POST',
@@ -230,7 +209,6 @@ class User extends Component {
             }
         })
             .then(data => {
-                console.log(data);
                 this.setState({user: data});
             })
             .catch(e => {
@@ -283,7 +261,6 @@ class User extends Component {
             body: formData,
         }).then(response => {
             let headers = response.headers;
-            console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
                 case '0' :
                     return response.json();
@@ -299,7 +276,6 @@ class User extends Component {
             }
         })
             .then(data => {
-                console.log(data);
                 that.setState({user: data});
             })
             .catch(e => {
@@ -310,18 +286,15 @@ class User extends Component {
     };
 
     fetchInfo = () => {
-        console.log('fetch info');
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        console.log(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${token}`);
         fetch(`${this.serviceUrl}/UserDetail/QueryByUserid?token=${token}`, {
             method: 'GET',
             credentials: "include",
         }).then(response => {
             let headers = response.headers;
-            console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
                 case '0' :
                     return response.json();
@@ -337,33 +310,58 @@ class User extends Component {
             }
         })
             .then(data => {
-                console.log(data);
                 this.setState({user: data});
             })
             .catch(e => {
                 if (e instanceof SyntaxError) {
-                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(this.fetchInfo());
+                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(()=>{this.fetchInfo()});
                 }
                 else {
                     alert(e.message);
                     window.location.href = "/signin";
                 }
-
             })
     };
 
 
+    check_pwd = (password) => {
+        let pattern = /^[\w-$%#]{6,25}$/;
+        let test = pattern.test(password);
+        test = test && (password.match(/\d/) !== null);
+        test = test && (password.match(/\w/) !== null);
+        return test;
+    };
+
     modifyPwd = () => {
         const {oldPwd, newPwd, renewPwd} = this.state;
+        if (oldPwd.length === 0) {
+            alert("旧密码不能为空");
+            return;
+        }
+        if (newPwd.length === 0) {
+            alert("新密码不能为空");
+            return;
+        }
+        if (renewPwd.length === 0) {
+            alert("请再次输入新密码");
+            return;
+        }
+        if(!this.check_pwd(oldPwd)){
+            alert("旧密码格式错误");
+            return;
+        }
+        if(!this.check_pwd(newPwd)){
+            alert("新密码格式错误");
+            return;
+        }
         if (newPwd !== renewPwd) {
-            alert("Password recheck failed");
+            alert("两次输入的新密码不一致");
             return;
         }
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        console.log(`${this.serviceUrl}/UserDetail/UpdateOldPassword?token=${token}&oldpassword=${oldPwd}&newpassword=${newPwd}`);
         fetch(`${this.serviceUrl}/UserDetail/UpdateOldPassword?token=${token}&oldpassword=${oldPwd}&newpassword=${newPwd}`, {
             method: 'GET',
         }).then(response => {
@@ -389,7 +387,28 @@ class User extends Component {
                     }
                     else {
                         alert("success!");
-                        window.location.href = "/signin";
+                        fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
+                            method: 'POST',
+                            credentials: "include",
+                        })
+                            .then(response => response.status)
+                            .then(status => {
+                                if (status === 200) {
+                                    storage.removeItem("user");
+                                    this.setState({user: {
+                                            username: '',
+                                            avatar: '',
+                                            nickName: '',
+                                            email: '',
+                                            phone: 0,
+                                            account: 0,
+                                            address: "",
+                                        }});
+                                }
+                                else throw Error("Connection failed");
+                            })
+                            .then(()=>{window.location.href = "/signin";})
+                            .catch(e => console.log(e));
                     }
                 }
             )
@@ -397,22 +416,10 @@ class User extends Component {
                 alert(e.message);
                 window.location.href = "/signin";
             });
-        /*
-         * let tmp = {
-         *      oldPwd: oldPwd,
-         *      newPwd: newPwd,
-         *      renewPwd: renewPwd,
-         * };
-         * fetch (url, {
-         *      method: 'GET',
-         *      body: urlEncode(tmp),
-         *      credentials: 'include',
-         * }
-         */
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username", /*"account",*/ "email", 'address'];
+        let filter = ["avatar", "id", "username",  "email", 'address'];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);
@@ -447,9 +454,7 @@ class User extends Component {
             detailAddr.detail = null;
             console.log(detailAddr);
             const districts = getDistricts(detailAddr.province, detailAddr.city);
-            // console.log(districts instanceof Array);
             user.address = composeAddr(detailAddr);
-            // console.log(user.address);
             this.setState({
                 user: user,
                 districts: districts,
@@ -468,7 +473,6 @@ class User extends Component {
             let detailAddr = decomposeAddr(user.address);
             detailAddr.detail = value;
             user.address = composeAddr(detailAddr);
-            // console.log(user.address);
             this.setState({user});
         }
         else console.log("unknown name");

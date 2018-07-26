@@ -117,7 +117,11 @@ class DetailModal extends Component {
 
     toggleCart = () => {
         const {selectedDate, selectedPrice, quantity} = this.state;
-        if (selectedDate === -1 || selectedPrice === -1) console.log("You haven't selected any time or price");
+        if (selectedDate === -1 || selectedPrice === -1)
+        {
+            alert("You haven't selected any time or price");
+            return;
+        }
         const dates = this.props.card.dates.split(" , ");
         const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
         let storage = window.localStorage;

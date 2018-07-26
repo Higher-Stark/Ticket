@@ -4,6 +4,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
+import {NavLink} from 'react-router-dom';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const styles = theme => ({
     container: {
@@ -15,10 +18,10 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
-        width: '100%',
+        width: '90%',
     },
     verifyImg: {
-        width: '30%',
+        width: '27%',
         height: '85%',
         marginTop: theme.spacing.unit,
         marginBottom: theme.spacing.unit,
@@ -99,7 +102,7 @@ class SignUp extends Component{
         let pattern = /^[\w-$%#]{6,25}$/;
         let test = pattern.test(this.state.password);
         test = test && (this.state.password.match(/\d/) !== null);
-        test = test && (this.state.password.match(/\w/) !== null);
+        test = test && (this.state.password.match(/\D/) !== null);
         return test;
     };
 
@@ -111,18 +114,26 @@ class SignUp extends Component{
         return pattern.test(this.state.email);
     };
 
-    getCookie(key) {
-        const cookies = document.cookie;
-        let idx = cookies.indexOf(key);
-        let idxEqual = cookies.indexOf("=", idx);
-        let idxSemi = cookies.indexOf(";", idx);
-        return cookies.substring(idxEqual + 1, idxSemi);
-    }
 
     signup = () => {
+        const {name, password, email, authCode} = this.state;
+        if (name.length === 0) {
+            alert("用户名不能为空");
+            return;
+        }
+        if (password.length === 0) {
+            alert("密码不能为空");
+            return;
+        }
+        if (email.length === 0) {
+            alert("邮箱不能为空");
+            return;
+        }
+        if (authCode.length === 0) {
+            alert("验证码不能为空");
+            return;
+        }
         if (this.check_name() && this.check_pwd() && this.check_email()) {
-            const {name, password, email, authCode} = this.state;
-            console.log(this.state);
             fetch ('http://120.79.58.85:30004/Sign/Up', {
                 method: 'POST',
                 headers: new Headers({
@@ -134,25 +145,32 @@ class SignUp extends Component{
                 .then(response => response.text())
                 .then(text => {
                     if (text === "success") {
-                        alert("注册成功");
-                        this.props.history.push('/');
+                        alert("注册成功,我们已向您的邮箱发送了一封激活邮件,请查收");
+                        this.props.history.push('/activating');
                         return;
                     }
                     else if (text === "code") {
                         alert("验证码错误");
                     } else if (text === "resend") {
                         alert("尚未激活，已经重新发送邮件");
+                        this.props.history.push('/activating');
+                        return;
                     } else if (text === 'exited') {
                         alert("用户名已经存在");
                     } else if (text === "fail") {
-                        alert("失败");
+                        alert("注册失败，未知错误");
                     }
                     this.changeVerifyImg();
-                    return;
-                })
+                });
         }
-        else {
-            alert("信息不全");
+        else if(!this.check_name()){
+            alert("Wrong username format");
+        }
+        else if(!this.check_pwd()){
+            alert("Wrong password format");
+        }
+        else if(!this.check_email()){
+            alert("Wrong email format");
         }
     };
 
@@ -161,45 +179,49 @@ class SignUp extends Component{
 
         return (
             <div className={classes.root}>
-                <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
-                <form className={classes.container} autoComplete='off'>
-                    <TextField placeholder='User Name' id='name' name='name'
-                               value={this.state.name} label='User name'
-                               className={classes.textField}
-                               margin='normal'
-                               required
-                               onChange={this.handleChange('name')}/>
-                    <TextField placeholder='Password' id='password' name='password'
-                               value={this.state.password} label='Password'
-                               className={classes.textField}
-                               margin='normal'
-                               type='password'
-                               required
-                               onChange={this.handleChange('password')}/>
-                    <TextField placeholder='Email Address' id='email' name='email'
-                               value={this.state.email} label='Email'
-                               className={classes.textField}
-                               margin='normal'
-                               type='email'
-                               required
-                               onChange={this.handleChange('email')}/>
-                    <TextField id='authCode' name='authCode'
-                               value={this.state.authCode} label='Verification Code'
-                               className={classes.authInput}
-                               margin='normal'
-                               onChange={this.handleChange('authCode')}/>
-                    <img src={this.state.verifyUrl} alt="img"
-                         onClick={this.changeVerifyImg}
-                         className={classes.verifyImg}/>
-                    <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
-                        Sign Up
-                    </Button>
-                </form>
-                <div>
-                    <Typography variant='body1' align='center' noWrap color='secondary' className={classes.reminder}>
-                        Already have an account? <a href='signin'>Sign in</a>
-                    </Typography>
-                </div>
+                <Card>
+                    <CardContent>
+                        <Typography noWrap className={classes.header} align='center' color='primary' variant='display2'>Sign up</Typography>
+                        <form className={classes.container} autoComplete='off'>
+                            <TextField placeholder='User Name' id='name' name='name'
+                                value={this.state.name} label='User name'
+                                className={classes.textField}
+                                margin='normal'
+                                required
+                                onChange={this.handleChange('name')} />
+                            <TextField placeholder='Password' id='password' name='password'
+                                value={this.state.password} label='Password'
+                                className={classes.textField}
+                                margin='normal'
+                                type='password'
+                                required
+                                onChange={this.handleChange('password')} />
+                            <TextField placeholder='Email Address' id='email' name='email'
+                                value={this.state.email} label='Email'
+                                className={classes.textField}
+                                margin='normal'
+                                type='email'
+                                required
+                                onChange={this.handleChange('email')} />
+                            <TextField id='authCode' name='authCode'
+                                value={this.state.authCode} label='Verification Code'
+                                className={classes.authInput}
+                                margin='normal'
+                                onChange={this.handleChange('authCode')} />
+                            <img src={this.state.verifyUrl} alt="img"
+                                onClick={this.changeVerifyImg}
+                                className={classes.verifyImg} />
+                            <Button color='primary' onClick={this.signup} className={classes.button} variant='contained'>
+                                Sign Up
+                            </Button>
+                        </form>
+                        <div>
+                            <Typography variant='body1' align='center' noWrap style={{color: "#FF6699"}} className={classes.reminder}>
+                                Already have an account? <NavLink to='/signin'>Sign in</NavLink>
+                            </Typography>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         )
     }

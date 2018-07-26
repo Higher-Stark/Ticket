@@ -1,80 +1,105 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
 import PlaceIcon from '@material-ui/icons/Place';
-import KeyBoardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import KeyBoardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-
-import {Cards} from '../test-data/Cards';
+import blue from '@material-ui/core/colors/blue';
+import indigo from '@material-ui/core/colors/indigo';
+import PageBar from '../com/PageBar';
+import {locale} from '../util/utils';
 
 const itemStyles = theme => ({
     root: {
         [theme.breakpoints.down('sm')]: {
-            height: 120,
+            height: 80,
         },
         [theme.breakpoints.up('sm')]: {
-            minHeight: 320,
+            height: 200,
         },
         margin: theme.spacing.unit,
         padding: theme.spacing.unit,
         display: 'flex',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: '4px',
     },
     title: {
         margin: theme.spacing.unit,
     },
     image: {
+        /*
         [theme.breakpoints.down('sm')]:{
             maxWidth: 60,
         },
         [theme.breakpoints.up('sm')]: {
             maxWidth: 240,
         },
-        height: 'inherit',
+        [theme.breakpoints.down('sm')]: {
+            maxHeight: 120,
+        },
+        [theme.breakpoints.up('sm')]: {
+            maxHeight: 320,
+        },
+        */
+        maxHeight: '100%',
+        maxWidth: '100%',
+        padding: 'auto auto',
     },
     pic: {
-        width: '15%',
+        display: 'flex',
+        width: 'inherit',
+        height: 'inherit',
         padding: theme.spacing.unit,
         overflow: 'hidden',
+        justifyContent: 'right',
+        alignItems: 'center',
     }
 });
 
 class ActivityItem extends Component {
+
+
+    detail = (id) => {
+        this.props.history.push("/detail/" + id)
+    };
+
     render() {
         const {classes, data} = this.props;
-
         return (
             <div>
                 <Grid spacing={8} container>
                     {
                         data.map(s => {
                             return (
-                                <Grid container spacing={8} className={classes.root} key={s.id}>
+                                <Grid container spacing={8} className={classes.root} key={s.id}
+                                      onClick={() => this.detail(s.id)}>
                                     <Grid item xs={2} className={classes.pic}>
-                                        <img src={s.images.s3_4} className={classes.image} alt={s.title}/>
+                                        <img src={s.image} className={classes.image} alt={s.title}/>
                                     </Grid>
                                     <Grid item xs={10}>
                                         <div>
-                                            <Typography variant='title' component='h2' color='primary' className={classes.title}>
-                                                {`[${s.city}] ${s.title}`}
+                                            <Typography variant='title' component='h2' color='primary'
+                                                        className={classes.title} gutterBottom>
+                                                {`${s.city} | ${s.title}`}
                                             </Typography>
-                                            <Typography variant='subheading' color='secondary'>
-                                                {s.brief}
-                                            </Typography>
-                                            <Typography variant='body1' component='p'>
-                                                <CalendarToday/>{s.dates.length === 1 ? s.dates[0] : `${s.dates[0]} - ${s.dates[s.dates.length - 1]}`}
+                                            <Typography variant='subheading' color='textSecondary' gutterBottom>
+                                                {s.intro}
                                             </Typography>
                                             <Typography variant='body1' component='p'>
-                                                <PlaceIcon/>{s.location}{' - '}{s.city}
+                                                <CalendarToday/>{s.startDate === s.endDate ? locale(s.startDate) : `${locale(s.startDate)} - ${locale(s.endDate)}`}{' | '}{s.time}
                                             </Typography>
-                                            <Typography variant='headline' color='primary'>
-                                                {s.price}{' '}{s.status}
+                                            <Typography variant='body1' component='p'>
+                                                <PlaceIcon/>{s.venue}{' - '}{s.city}
+                                            </Typography>
+                                            <Typography variant='subheading' color='primary'>
+                                                {s.lowprice === s.highprice ? `¥ ${s.lowprice}` : `¥ ${s.lowprice} - ${s.highprice}`}
                                             </Typography>
                                         </div>
                                     </Grid>
@@ -103,16 +128,19 @@ const styles = theme => ({
         display: 'inline-block',
         flexGrow: 1,
     },
-    textSelect : {
+    textSelect: {
         display: 'inline-block',
         flexGrow: 1,
         margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
         '&:hover': {
-            background: '#3e072e',
+            background: indigo[400],
         },
-        '&:active': {
-            background: '#cccc44',
-        },
+    },
+    selected: {
+        background: blue[500],
+    },
+    nonselected: {
+        background: blue[100],
     },
     content: {
         display: 'flex',
@@ -123,81 +151,172 @@ const styles = theme => ({
 });
 
 class Search extends Component {
+    url = "http://pipipan.cn:30005/Ticket/QueryByCityAndTypePage";
+
+    cities = ['all', '上海', '北京', '厦门', '天津', '广州', '成都', '杭州', '武汉', '深圳', '福州', '苏州', '重庆', '宁波', '深圳', '香港', '温州', '长沙',
+    ];
+
+    types = ['all', 'concert', 'vocal concert', 'opera', 'sports', 'dancing', 'parenting', 'acrobatics'];
+
     constructor(props) {
         super(props);
         this.state = {
-            pages: 0,
+            search: null,
+            page: 1,
+            totalPages: 0,
             value: 0,
             data: [],
-            filter: [],
+            selected: {
+                city: 0,
+                type: 0,
+            },
         };
     };
 
-    componentDidMount() {
-        const {search} = this.props.location;
-        console.log(search);
-        /*
-        fetch (`/search?q=${search}`, {
-            method: 'GET',
-        })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error encountered");
-                return response.json();
-            })
+    componentWillMount() {
+        const {page, selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
-                this.setState({data: data});
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
             })
-            .catch(e => alert(e.message));
-        */
+            .catch(e => console.log(e));
+
+        this.setState({
+            search:this.props.match.params.search,
+            page: 1,
+        });
     }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        const {match} = nextProps;
+        const {page, selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+
+        this.setState({
+            search: match.params.search,
+            page: 1,
+        });
+    }
+
+    viewPage = (idx) => {
+        const {selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${idx}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error");
+                this.setState({
+                    data: data.content,
+                    page: idx,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+    };
 
     handleChange = (event, value) => {
         this.setState({value});
     };
 
+    handleClick = (e, name, value) => {
+        const {page, selected} = this.state;
+        selected[name] = value;
+        this.setState({
+            selected: selected,
+            page: 1,
+        });
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+    };
+
     render() {
         const {classes} = this.props;
-        const {value} = this.state;
+        const {value, selected, page, data} = this.state;
 
-        const cities = ['All', 'Beijing', 'Shanghai', 'Ningbo', 'Shengzheng', 'New York', 'Manhattan', 'California',
-            'Munich', 'Berlin', 'London', 'Hongkong', 'Sydney'
-        ];
-
-
-        return(
+        return (
             <div>
                 <Grid container spacing={8} className={classes.root}>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3'>
+                            <Typography variant='headline' component='h3' color='error'>
                                 {'City'}
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
-                            {cities.map((s, i) => {
-                                return <Typography variant='button' className={classes.textSelect} key={i}>{s}</Typography>
+                            {this.cities.map((s, i) => {
+                                return <Typography variant='button'
+                                                   className={classNames(classes.textSelect, i === selected.city ? classes.selected : classes.nonselected)}
+                                                   key={i} component={Button} size='small'
+                                                   onClick={(e) => this.handleClick(e, 'city', i)}
+                                >
+                                    {s}
+                                </Typography>
                             })}
                         </Grid>
                     </Grid>
+                    <Divider/>
+                    <Grid item xs={12} className={classes.root}>
+                        <Grid item xs={1} className={classes.category}>
+                            <Typography variant='headline' component='h3' color='error'>
+                                {'类别'}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={11} className={classes.category}>
+                            {
+                                this.types.map((s, i) => {
+                                    return <Typography variant='button' key={i} component={Button} size='small'
+                                                       onClick={e => this.handleClick(e, 'type', i)}
+                                                       className={classNames(classes.textSelect, i === selected.type ? classes.selected : classes.nonselected)}
+                                    >
+                                        {s}
+                                    </Typography>
+                                })
+                            }
+                        </Grid>
+                    </Grid>
+                    <Divider/>
                 </Grid>
                 <div>
-                    <AppBar position='static' >
+                    <AppBar position='static'>
                         <Tabs value={value} onChange={this.handleChange}>
                             <Tab label={'By Relevance'}/>
                             <Tab label={'By heat'}/>
                             <Tab label={'By Date'}/>
                         </Tabs>
                     </AppBar>
-                    <ActivityWithStyle data={Cards}/>
+                    <ActivityWithStyle data={data} history={this.props.history}/>
                 </div>
                 <div>
-                    <IconButton>
-                    <KeyBoardArrowLeft/>
-                    </IconButton>
-                    {'1 2 3 4'}
-                    <IconButton>
-                    <KeyBoardArrowRight/>
-                    </IconButton>
+                    <PageBar current={page} max={this.state.totalPages} goto={this.viewPage}/>
                 </div>
             </div>
         )

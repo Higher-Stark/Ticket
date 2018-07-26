@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
-import {locale} from '../util/utils';
+import {locale, urlEncode} from '../util/utils';
 
 const styles = theme => ({
     paper: {
@@ -120,21 +120,48 @@ class DetailModal extends Component {
         if (selectedDate === -1 || selectedPrice === -1) console.log("You haven't selected any time or price");
         const dates = this.props.card.dates.split(" , ");
         const price = selectedPrice === 0 ? this.props.card.lowprice : this.props.card.highprice;
-        let ticket = {
-            id: this.props.card.id,
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let body = {
+            token: user===null?'':user.token,
+            ticketid: this.props.card.id,
             date: dates[selectedDate],
             price: price,
-            quantity: quantity,
+            number: quantity,
         };
-        console.log(ticket);
-        /*
-        fetch ('/add_to_cart?id='+id, {method: "GET", credentials: "include"})
-            .then(response => {
-                if (response.status !== 200) throw new Error("Add to Cart failed!");
-                else alert("Add to cart succeed");
+        const url = "http://pipipan.cn:30007/Cart/SaveInDetailPage";
+        fetch(url, {
+            method: 'POST',
+            mode: "cors",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+            credentials: "include",
+        })
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum=headers.get('errornum');
+                if(errornum==='0')
+                {
+                    alert("成功！");
+                    return ;
+                }
+                else if(errornum==='1')
+                {
+                    alert("尚未登录！");
+                }
+                else if(errornum==='2')
+                {
+                    alert("身份不对应！");
+                }
+                else if(errornum==='3')
+                {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
             })
-            .catch(e => console.log(e));
-         */
     };
 
     toggleBuy = (id) => {

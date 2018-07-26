@@ -25,7 +25,7 @@ export default class Sliders extends Component {
 
     turn = (step) => {
         let index = this.state.index;
-        console.log(index);
+        // console.log(index);
         if (index === this.props.images.length && step === 1) {
             index = 0;
             this.set(0, index, 0);
@@ -65,20 +65,24 @@ export default class Sliders extends Component {
         }
     }
 
+    componentWillUnmount(){
+        clearInterval(this.timer);
+    }
+
     render() {
         let styleLeft = {
-            width: 100 + '%',
-            left: this.state.index * -100 + '%',
-            transitionDuration: this.state.speed + 's'
-        };
-        let styleMiddle = {
             width: 100 + '%',
             left: (this.state.index+1) * -100 + '%',
             transitionDuration: this.state.speed + 's'
         };
-        let styleRight = {
+        let styleMiddle = {
             width: 100 + '%',
             left: (this.state.index+2) * -100 + '%',
+            transitionDuration: this.state.speed + 's'
+        };
+        let styleRight = {
+            width: 100 + '%',
+            left: (this.state.index+3) * -100 + '%',
             transitionDuration: this.state.speed + 's'
         };
         return (
@@ -88,11 +92,11 @@ export default class Sliders extends Component {
                         className="wrapper-left"
                         onMouseOver={() => clearInterval(this.timer)}
                         onMouseOut={this.go}
+                        onClick={()=>{this.turn(-1)}}
                     >
                         <SlidersItem
                             images={this.props.images}
                             speed={this.props.speed}
-                            index={(this.state.index + 2) % 3}
                             style={styleLeft}
                         />
                     </div>
@@ -104,24 +108,23 @@ export default class Sliders extends Component {
                         <SlidersItem
                             images={this.props.images}
                             speed={this.props.speed}
-                            index={this.state.index}
                             style={styleMiddle}
                         />
                         <SlidersDots
                             images={this.props.images}
                             turn={this.turn}
-                            index={this.state.index%3}
+                            index={(this.state.index+4)%4}
                         />
                     </div>
                     <div
                         className="wrapper-right"
                         onMouseOver={() => clearInterval(this.timer)}
                         onMouseOut={this.go}
+                        onClick={()=>{this.turn(1)}}
                     >
                         <SlidersItem
                             images={this.props.images}
                             speed={this.props.speed}
-                            index={(this.state.index + 1) % 3}
                             style={styleRight}
                         />
                     </div>

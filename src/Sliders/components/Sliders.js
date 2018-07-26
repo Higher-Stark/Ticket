@@ -65,6 +65,10 @@ export default class Sliders extends Component {
         }
     }
 
+    componentWillUnmount(){
+        clearInterval(this.timer);
+    }
+
     render() {
         let styleLeft = {
             width: 100 + '%',

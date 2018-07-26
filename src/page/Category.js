@@ -105,33 +105,6 @@ class Category extends Component {
         });
     }
 
-    /*shouldComponentUpdate(nextProps, nextState, nextContext) {
-        const {match} = this.props;
-        let preCategory = match.params.category;
-        let nextCategory = match.params.category;
-        if (nextCategory !== preCategory) return true;
-        preCategory = this.state.category;
-        nextCategory = nextState.category;
-        if (preCategory !== nextCategory) return true;
-        return false;
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {match} = this.props;
-        const category = match.params.category;
-        const {page} = this.state;
-        fetch(this.url + `?pagenumber=${page}&type=${category}`)
-            .then(response => response.status === 200 ? response.json() : null)
-            .then(data => {
-                if (data === null) throw Error("Response error!");
-                this.setState({
-                    data: data.content,
-                });
-                this.totalPages = data.totalPages;
-            })
-            .catch(e => console.log(e));
-    }
-**/
     viewPage = (idx) => {
         const category = this.props.match.params.category;
         fetch(this.url + `?pagenumber=${idx}&type=${category}`)

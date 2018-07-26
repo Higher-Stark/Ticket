@@ -5,9 +5,8 @@ import lime from '@material-ui/core/colors/lime';
 import indigo from '@material-ui/core/colors/indigo';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import grey from '@material-ui/core/colors/grey';
-import green from '@material-ui/core/colors/green';
 import pink from '@material-ui/core/colors/pink';
-import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { withStyles,  } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Card from '@material-ui/core/Card';
@@ -24,17 +23,11 @@ import TableRow from '@material-ui/core/TableRow';
 import PaymentIcon from '@material-ui/icons/Payment';
 import {NavLink,withRouter} from 'react-router-dom';
 
-let id = 0
 function createData(title, number, price) {
-    id += 1;
     return { title,number,price };
 }
 
-const theme = createMuiTheme({
-    palette: {
-      primary: green,
-    },
-  });
+
 
 const styles = theme => ({
     root: {

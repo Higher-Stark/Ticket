@@ -20,7 +20,8 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
-import TableFooter from '@material-ui/core/TableFooter'
+import TableFooter from '@material-ui/core/TableFooter';
+import TextField from '@material-ui/core/TextField';
 
 const actionsStyles = theme => ({
     root: {
@@ -241,6 +242,8 @@ class Cart extends React.Component {
             data: [],
             page: 0,
             rowsPerPage: 16,
+            totalElements: 0,
+            dirties: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         };
     }
 
@@ -275,19 +278,33 @@ class Cart extends React.Component {
 
     handleDelete = (event, id) => {
         let newData = this.state.data.slice();
-        let i = 0;
+        let newTotalElements = this.state.totalElements;
+        newTotalElements--;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
-        let token = user.token;
+        let token = user === null ? '' : user.token;
         let batchentryid = [id];
-        for (; i < newData.length; i++) {
+        let i;
+        for ( i = 0; i < newData.length; i++) {
             if (newData[i].id === id) {
                 fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchentryid}`)
                     .then(response => response.headers)
                     .then(headers => {
-                        console.log(headers);
-                        alert("添加成功！");
+                        let errornum = headers.get('errornum');
+                        if (errornum === '0') {
+                            return;
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
                     })
                     .catch(e => console.log(e));
                 break;
@@ -295,49 +312,59 @@ class Cart extends React.Component {
         }
         newData.splice(i, 1);
         this.setState({data: newData});
+        this.setState({totalElements: newTotalElements});
     };
 
-    handleSub = (event, id) => {
+
+    handleNumberEdit = (token, id,  i) => {
+        fetch(this.NumberEditInCart + `?token=${token}&entryid=${id}&number=${this.state.data[i].number}`)
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum = headers.get('errornum');
+                if (errornum === '0') {
+
+                    return;
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+            .catch(e => console.log(e));
+        let newDirty=this.state.dirties.slice();
+        newDirty[i]=0;
+        this.setState({dirties:newDirty});
+    };
+
+
+    handleChange = (event, id) => {
+        if (event.target.value < 1)
+            return;
         let newData = this.state.data.slice();
-        let i = 0;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
-        let token = user.token;
-        for (; i < newData.length; i++) {
+        let token = user === null ? '' : user.token;
+        for (let i = 0; i < newData.length; i++) {
             if (newData[i].id === id) {
-                newData[i].quantity--;
-                fetch(this.NumberEditInCart + `?token=${token}&entryid=${id}&number=${newData[i].quantity}`)
-                    .then(response => response.headers)
-                    .then(headers => {
-                        console.log(headers);
-                        alert("添加成功！");
-                    })
-                    .catch(e => console.log(e));
-                break;
-            }
-        }
-        this.setState({data: newData});
-    };
+                newData[i].number = event.target.value;
+                if (this.state.dirties[i] === 1)
+                    break;
+                else
+                {
+                    let newDirty=this.state.dirties.slice();
+                    let newI=i;
+                    newDirty[i]=1;
+                    this.setState({dirties:newDirty});
+                    setTimeout(()=>{this.handleNumberEdit(token,id,newI)}, 5000);
+                }
 
-    handleAdd = (event, id) => {
-        let newData = this.state.data.slice();
-        let i = 0;
-        let storage = window.localStorage;
-        let user = storage.getItem("user");
-        user = JSON.parse(user);
-        let token = user.token;
-        for (; i < newData.length; i++) {
-            if (newData[i].id === id) {
-                newData[i].quantity++;
-                fetch(this.NumberEditInCart + `?token=${token}&entryid=${id}&number=${newData[i].quantity}`)
-                    .then(response => response.headers)
-                    .then(headers => {
-                        console.log(headers);
-                        alert("添加成功！");
-                    })
-                    .catch(e => console.log(e));
-                break;
             }
         }
         this.setState({data: newData});
@@ -347,32 +374,60 @@ class Cart extends React.Component {
     handleDeleteSelected = (event) => {
         let newData = this.state.data.slice();
         let newSelected = this.state.selected.slice();
-        let i = 0;
-        let j = 0;
-        console.log(this.state.selected);
-        let length = newData.length;
+        let newTotalElements = this.state.totalElements;
+        newTotalElements -= newSelected.length;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
-        let token = user.token;
-        for (; i < newSelected.length; i++) {
-            console.log(i);
-            for (; j < length; j++) {
+        let token = user === null ? '' : user.token;
+        console.log(newData);
+        let j;
+        for (let i = 0; i < newSelected.length; i++) {
+            for (j = 0; j < newData.length; j++) {
+                console.log(j);
                 if (newSelected[i] === newData[j].id) {
                     fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
                         .then(response => response.headers)
                         .then(headers => {
-                            console.log(headers);
-                            alert("添加成功！");
+                            let errornum = headers.get('errornum');
+                            if (errornum === '0') {
+                                return;
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            this.props.history.push('/signin');
                         })
                         .catch(e => console.log(e));
                     break;
                 }
             }
-            newData.splice(i, 1);
+            newData.splice(j, 1);
         }
         this.setState({data: newData});
+        this.setState({totalElements: newTotalElements});
         this.setState({selected: []});
+    };
+
+    handleCheck=()=>{
+        let cartProducts=[];
+        const {selected,data}=this.state;
+        for (let i = 0; i < selected.length; i++) {
+            for (let j = 0; j < data.length; j++) {
+                if (selected[i] === data[j].id) {
+                    cartProducts.push(data[j]);
+                }
+            }
+        }
+        let storage = window.localStorage;
+        storage.setItem("cartProducts", JSON.stringify(cartProducts));
+        window.location.href = "/orderconfirm";
     };
 
 
@@ -382,6 +437,36 @@ class Cart extends React.Component {
 
     handleChangePage = (event, page) => {
         this.setState({page});
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+            .then(response => {
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        return response.status === 200 ? response.json() : null;
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalElements: data.totalElements
+                });
+            })
+            .catch(e => console.log(e));
     };
 
     detail = (id) => {
@@ -397,14 +482,30 @@ class Cart extends React.Component {
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
-        let token = user.token;
+        let token = user === null ? '' : user.token;
         fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
-            .then(response => response.status === 200 ? response.json() : null)
+            .then(response => {
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        return response.status === 200 ? response.json() : null;
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
             .then(data => {
                 if (data === null) throw Error("Response error!");
                 this.setState({
                     data: data.content,
-                    totalPages: data.totalPages
+                    totalElements: data.totalElements
                 });
             })
             .catch(e => console.log(e));
@@ -412,7 +513,7 @@ class Cart extends React.Component {
 
     render() {
         const {classes} = this.props;
-        const {data, selected, rowsPerPage, page} = this.state;
+        const {data, selected, rowsPerPage, page, totalElements} = this.state;
         let totalPrice = 0;
         return (
             <Paper className={classes.root}>
@@ -429,7 +530,7 @@ class Cart extends React.Component {
                             {data
                                 .map(n => {
                                     const isSelected = this.isSelected(n.id);
-                                    totalPrice += isSelected * n.price * n.quantity;
+                                    totalPrice += isSelected * n.price * n.number;
                                     return (
                                         <TableRow
                                             hover
@@ -447,7 +548,7 @@ class Cart extends React.Component {
                                                        padding="none" onClick={() => this.detail(n.id)}>
                                                 <Grid container spacing={8} className={classes.root} key={n.id}>
                                                     <Grid item xs={6}>
-                                                        <img src={n.images.s3_4} className={classes.image}
+                                                        <img src={n.image} className={classes.image}
                                                              alt={n.title}/>
                                                     </Grid>
                                                     <Grid item xs={6}>
@@ -458,15 +559,19 @@ class Cart extends React.Component {
                                                         <Typography variant='subheading' color='secondary'>
                                                             {n.city}{' '}{n.venue}
                                                         </Typography>
+                                                        <Typography variant='subheading' color='inherit'>
+                                                            {n.date}
+                                                        </Typography>
                                                     </Grid>
                                                 </Grid>
                                             </TableCell>
                                             <TableCell numeric>￥{n.price}</TableCell>
-                                            <TableCell
-                                                numeric><Button disabled={n.quantity === 1}
-                                                                onClick={event => this.handleSub(event, n.id)}>-</Button>{n.quantity}<Button
-                                                onClick={event => this.handleAdd(event, n.id)}>+</Button></TableCell>
-                                            <TableCell numeric>￥{n.price * n.quantity}</TableCell>
+                                            <TableCell numeric>
+                                                <TextField id='quantity' type='number' margin='normal'
+                                                           value={n.number}
+                                                           onChange={event => this.handleChange(event, n.id)}/>
+                                            </TableCell>
+                                            <TableCell numeric>￥{n.price * n.number}</TableCell>
                                             <TableCell numeric><Button
                                                 onClick={event => this.handleDelete(event, n.id)}>删除</Button></TableCell>
                                         </TableRow>
@@ -485,10 +590,10 @@ class Cart extends React.Component {
                                 > 合计：￥{totalPrice}
                                 </TableCell>
                                 <TableCell>
-                                    <Button disabled={totalPrice === 0}>结算</Button>
+                                    <Button disabled={selected.length === 0} onClick={() => this.handleCheck()}>结算</Button>
                                 </TableCell>
                                 <TablePagination
-                                    count={data.length}
+                                    count={totalElements}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onChangePage={this.handleChangePage}

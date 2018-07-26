@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import red from '@material-ui/core/colors/red';
-import lime from '@material-ui/core/colors/lime';
-import indigo from '@material-ui/core/colors/indigo';
-import deepOrange from '@material-ui/core/colors/deepOrange';
-import grey from '@material-ui/core/colors/grey';
-import green from '@material-ui/core/colors/green';
 import pink from '@material-ui/core/colors/pink';
-import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { withStyles, } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Card from '@material-ui/core/Card';

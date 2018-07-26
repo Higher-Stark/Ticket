@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {withRouter} from 'react-router-dom';
 import pink from '@material-ui/core/colors/pink';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -19,7 +20,7 @@ const styles = ()=>({
     headline:{
         color: pink[300],
     }
-})
+});
 
 let id = 0;
 function createData(title, number, eachPrice) {
@@ -27,26 +28,220 @@ function createData(title, number, eachPrice) {
   return { id, title, number, eachPrice};
 }
 
-const data = [
-  createData('璀璨之境 克里姆特映像艺术大展—上海站', 5, 500),
-  createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
-  createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10, 880)
-];
-
-
 class PayConfirm extends Component{
+    DeleteBatchInCart = "http://pipipan.cn:30007/Cart/DeleteBatchInCart";
     constructor(props){
-        super(props)
-        this.calcuTotal = this.calcuTotal.bind()
+        super(props);
+        this.state = {
+            order:{},
+            data:[]
+        };
     }
 
-    calcuTotal(){
-        console.log(data)
+    calcuTotal=()=>{
         let totalPrice = 0;
-        data.forEach(element => {
+        this.state.data.forEach(element => {
             totalPrice += element.number * element.eachPrice;
         });
         return totalPrice
+    }
+
+    fetchOrder = ()=>{
+        let storage = window.localStorage;
+        let orderid = storage.getItem("orderid");
+        if(orderid == null || orderid.length ===0)
+            return;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
+        let s = `token=${token}&orderid=${orderid}`;
+        fetch('http://pipipan.cn:30011/Order/QueryByOrderid',{
+            method:'POST',
+            body:s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        if (response.status !== 200) throw Error("Error !" + response);
+                        return response.text();
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
+            // .then(response => {
+            //     if (response.status !== 200) throw Error("Error !" + response);
+            //     return response.text();
+            // })
+            .then(text =>{
+                text = JSON.parse(text);
+                console.log(text);
+                this.setState({
+                    order:text,
+                    items:text.items
+                })
+                this.createItems();
+            });
+    };
+
+    createItems = ()=>{
+        let Items = this.state.items;
+        console.log(Items);
+        for(var i = 0;i<Items.length;i++){
+            var eachItem = Items[i];
+            var tmpArray = this.state.data;
+            tmpArray.push(createData(eachItem.title,eachItem.number,eachItem.price))
+            console.log("the tmparray")
+            console.log(tmpArray)
+            this.setState({
+                data:tmpArray,
+            })
+        }
+    }
+
+    componentWillMount(){
+        this.fetchOrder();
+    }
+
+    routeToAfterPay=()=>{
+        console.log("in ger header")
+        this.props.history.push({
+            pathname:'/afterpay'
+        })
+    }
+
+    buy=()=>{
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        let token = user === null ? '' : user.token;
+        let type = storage.getItem("orderType")
+        if(storage.getItem("orderid")==null||storage.getItem("orderid").length===0)
+            return;
+
+        let orderid = parseInt(storage.getItem("orderid"),0);
+        if(type === 'orderInCart') {
+            let cartProducts = JSON.parse(storage.getItem("cartProducts"));
+            let batchEntryId = [];
+
+            cartProducts.map(product => {
+                batchEntryId.push(product.id);
+                return null;
+            });
+            let s = `token=${token}&orderid=${orderid}`;
+            console.log(token)
+            fetch('http://pipipan.cn:30011/Order/Buy', {
+                method: 'POST',
+                body: s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include",
+            })
+                .then(response => {
+                        let errornum = response.headers.get('errornum');
+                        if (errornum === '0') {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.text();
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    }
+                )
+                // .then(response => {
+                //     if (response.status !== 200) throw Error("Error !" + response);
+                //     return response.text();
+                // })
+                .then(text => {
+                    text = JSON.parse(text);
+                    console.log(text);
+                    storage.setItem("message", text.message);
+                    if (text.message === 'success')
+                        storage.setItem("Inventory shortage", text["Inventory shortage"].toString());
+
+                    console.log("the batchentry " + batchEntryId);
+                    fetch(`http://pipipan.cn:30007/Cart/DeleteBatchInCart?token=${token}&batchentryid=${batchEntryId}`)
+                        .then(response => response.headers)
+                        .then(headers => {
+                            let errornum = headers.get('errornum');
+                            console.log("the error num " + errornum);
+                            if (errornum === '0') {
+                                this.routeToAfterPay();
+                                return;
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            else {
+                                alert('nigenbenmeiyouerrornum')
+                            }
+                            this.props.history.push('/signin');
+                        })
+                        .catch(e => console.log(e));
+                })
+        }
+        else{
+            let s = `token=${token}&orderid=${orderid}`;
+            console.log(token)
+            fetch('http://pipipan.cn:30011/Order/Buy', {
+                method: 'POST',
+                body: s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include",
+            })
+                .then(response => {
+                        let errornum = response.headers.get('errornum');
+                        if (errornum === '0') {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.text();
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    }
+                )
+                .then(text => {
+                    text = JSON.parse(text);
+                    console.log(text);
+                    storage.setItem("message", text.message);
+                    if (text.message === 'success')
+                        storage.setItem("Inventory shortage", text["Inventory shortage"].toString());
+                    this.routeToAfterPay();
+                })
+        }
     }
 
     render(){
@@ -64,17 +259,17 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    201807230000
+                                    {this.state.order.id}
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
                                 <Typography>
-                                    用户姓名
+                                    收货人
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    潘子奕狗头
+                                    {this.state.order.receiver}
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'right',marginTop:"2%"}}>
@@ -84,7 +279,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{textAlign:'left',marginTop:"2%"}}>
                                 <Typography>
-                                    54739110
+                                    {this.state.order.phone}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -97,7 +292,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={10} style={{textAlign:'left',marginTop:"1.5%"}}>
                                 <Typography>
-                                    上海市 闵行校区 东川路800号 上海交大闵行校区
+                                    {this.state.order.address}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -116,7 +311,7 @@ class PayConfirm extends Component{
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {data.map(n => {
+                                    {this.state.data.map(n => {
                                         return (
                                             <TableRow key={n.id}>
                                                 <TableCell component="th" scope="row" style ={{textAlign:'center'}}>
@@ -146,7 +341,7 @@ class PayConfirm extends Component{
                             </Grid>
                             <Grid item xs={2} style={{marginTop:"1.5%"}}/>
                             <Grid item xs={3} style={{marginTop:"1.5%"}}>
-                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}}>
+                                <Button variant="contained" style={{marginRight:'3%',color:"#FFFFFF",borderBottom:'100%',backgroundColor:"#FF6699"}} onClick={this.buy}>
                                     支付
                                 </Button>
                             </Grid>
@@ -168,4 +363,4 @@ PayConfirm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(PayConfirm);
+export default withRouter(withStyles(styles)(PayConfirm));

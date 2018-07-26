@@ -132,10 +132,17 @@ class Specify extends Component {
     toggleCart = () => {
         const {detail, price, date, quantity} = this.state;
         let storage = window.localStorage;
-        let user = storage.getItem("user");
-        user = JSON.parse(user);
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
         let body = {
-            token: user===null?'':user.token,
+            token: user.token,
             ticketid: detail.id,
             price: price,
             date: date,
@@ -176,6 +183,41 @@ class Specify extends Component {
         })
     };
 
+    toggleBuy = () => {
+        const {detail, price, date, quantity} = this.state;
+
+        const {selectedDate, selectedPrice} = this.state;
+        if (selectedDate === -1 || selectedPrice === -1) {
+            console.log("You haven't selected any time or price");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null)
+        {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+
+        let tickets = [
+            {
+                id: detail.id,
+                date: date,
+                price: price,
+                number: quantity
+            }
+        ];
+
+        storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
+        storage.setItem("orderType","orderInDetailPage")
+        this.props.history.push({
+            pathname: '/orderconfirm',
+        });
+    }
+
     handleChange = (e) => {
         if (e.target.value < 1)
             return;
@@ -188,6 +230,7 @@ class Specify extends Component {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
 
+        console.log(detail);
         return (
             detail === null ? (
                     <div className={classes.loading}>
@@ -252,6 +295,13 @@ class Specify extends Component {
                                             {detail.highprice}
                                         </Button>
                                     </div>
+                                    <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                                        {'库存: '}
+                                        <Typography variant='body1' component='p' color='textSecondary'
+                                                    className={classes.inline}>
+                                            { detail.stock}
+                                        </Typography>
+                                    </Typography>
                                     {
                                         date === null || price === 0 ? null : (
                                             <div>

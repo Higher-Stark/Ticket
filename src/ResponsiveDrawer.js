@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{Component} from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
@@ -47,6 +47,13 @@ import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';
 import Order from './page/Order'
 import AfterPay from './page/AfterPay'
+import List from '@material-ui/core/List';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import BulletIcon from '@material-ui/icons/Tab'
+import OrderIcon from '@material-ui/icons/List'
+import UserInfoIcon from '@material-ui/icons/PermIdentity'
 
 const listStyles = {
     home: {
@@ -120,6 +127,112 @@ const styles = theme => ({
         right: '0px',
     },
 });
+class NavMenuList2 extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            open:false
+        };
+        this.handleClick = this.handleClick.bind()
+    }
+
+    handleClick = () => {
+        this.setState(state => ({ open: !state.open }));
+    };
+
+
+    render(){
+
+
+        return(
+            <div>
+                <ListItem button onClick={this.handleClick} >
+                    <ListItemIcon><Person/></ListItemIcon>
+                    <ListItemText inset primary="Account" />
+                    {this.state.open ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+
+                <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItem button component={NavLink} to='/account'>
+                            <ListItemIcon>
+                                <UserInfoIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary="UserInfo" />
+                        </ListItem>
+                        <ListItem button >
+                            <ListItemIcon>
+                                <BulletIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary="Bullet" />
+                        </ListItem>
+                        <ListItem button component={NavLink} to='/order'>
+                            <ListItemIcon>
+                                <OrderIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary="Order" />
+                        </ListItem>
+                    </List>
+                </Collapse>
+
+                <ListItem button component={NavLink} to='/cart'>
+                    <ListItemIcon><ShoppingCart/></ListItemIcon>
+                    <ListItemText inset primary='Cart'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/collection'>
+                    <ListItemIcon><Collections/></ListItemIcon>
+                    <ListItemText inset primary='Collection'/>
+                </ListItem>
+                <Divider/>
+                <ListItem button component={NavLink} to='/'>
+                    <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
+                    <ListItemText inset primary='Home'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/concert'>
+                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
+                    <ListItemText inset primary='Concert'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
+                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Vocal Concert'/>
+                </ListItem>
+                {/*<ListItem button component={NavLink} to='/category/show'>*/}
+                    {/*<ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>*/}
+                    {/*<ListItemText inset primary='Show'/>*/}
+                {/*</ListItem>*/}
+                {/*<ListItem button component={NavLink} to='/category/exhibition'>*/}
+                    {/*<ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>*/}
+                    {/*<ListItemText inset primary='Exhibition'/>*/}
+                {/*</ListItem>*/}
+                <ListItem button component={NavLink} to='/category/opera'>
+                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Opera'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/sports'>
+                    <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
+                    <ListItemText inset primary='Sports'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/dancing'>
+                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Dance'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/parenting'>
+                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Parent-child'/>
+                </ListItem>
+                <ListItem button component={NavLink} to='/category/acrobatics'>
+                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
+                    <ListItemText inset primary='Acrobatics'/>
+                </ListItem>
+                <Divider/>
+                <ListItem button onClick={this.props.toggleLogout}>
+                    <ListItemIcon><LogoutVariant/></ListItemIcon>
+                    <ListItemText inset primary='Logout'/>
+                </ListItem>
+            </div>
+        )
+    }
+}
 
 class ResponsiveDrawer extends React.Component {
     constructor(props) {
@@ -152,14 +265,16 @@ class ResponsiveDrawer extends React.Component {
     toggleLogout = () => {
         let storage = window.localStorage;
         let user = storage.getItem("user");
+        console.log(user);
         user = JSON.parse(user);
         let token = user.token;
-        fetch(`http://120.79.58.85:30004/Sign/Out?token=${token}`, {
+        fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
             method: 'POST',
             credentials: "include",
         })
             .then(response => response.status)
             .then(status => {
+                console.log(status);
                 if (status === 200) {
                     storage.removeItem("user");
                     this.setState({user: null});
@@ -175,7 +290,7 @@ class ResponsiveDrawer extends React.Component {
 
     toggleSearch = () => {
         this.props.history.push({
-            pathname: '/search/'+this.state.search,
+            pathname: '/search/'+(this.state.search===null?'all':this.state.search),
         });
     };
 
@@ -226,60 +341,6 @@ class ResponsiveDrawer extends React.Component {
         );
 
 // login
-        const NavMenuList2 = (
-            <div>
-                <ListItem button component={NavLink} to='/account'>
-                    <ListItemIcon><Person/></ListItemIcon>
-                    <ListItemText inset primary='Account'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/cart'>
-                    <ListItemIcon><ShoppingCart/></ListItemIcon>
-                    <ListItemText inset primary='Cart'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/collection'>
-                    <ListItemIcon><Collections/></ListItemIcon>
-                    <ListItemText inset primary='Collection'/>
-                </ListItem>
-                <Divider/>
-                <ListItem button component={NavLink} to='/'>
-                    <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
-                    <ListItemText inset primary='Home'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/concert'>
-                    <ListItemIcon><MusicCircle style={listStyles.music}/></ListItemIcon>
-                    <ListItemText inset primary='Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal concert'>
-                    <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Vocal Concert'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/opera'>
-                    <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Opera'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/sports'>
-                    <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
-                    <ListItemText inset primary='Sports'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/dancing'>
-                    <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Dance'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/parenting'>
-                    <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Parent-child'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/acrobatics'>
-                    <ListItemIcon><img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Acrobatics'/>
-                </ListItem>
-                <Divider/>
-                <ListItem button onClick={this.toggleLogout}>
-                    <ListItemIcon><LogoutVariant/></ListItemIcon>
-                    <ListItemText inset primary='Logout'/>
-                </ListItem>
-            </div>
-        );
 
         const drawer = (
             <div>
@@ -290,7 +351,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : NavMenuList2}
+                {this.state.user === null ? NavMenuList1 : <NavMenuList2 toggleLogout={this.toggleLogout}/>}
             </div>
         );
 

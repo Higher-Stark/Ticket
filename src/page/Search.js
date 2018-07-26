@@ -67,7 +67,7 @@ class ActivityItem extends Component {
 
 
     detail = (id) => {
-        this.props.history.push("/detail/"+id)
+        this.props.history.push("/detail/" + id)
     };
 
     render() {
@@ -78,7 +78,8 @@ class ActivityItem extends Component {
                     {
                         data.map(s => {
                             return (
-                                <Grid container spacing={8} className={classes.root} key={s.id} onClick={() => this.detail(s.id)}>
+                                <Grid container spacing={8} className={classes.root} key={s.id}
+                                      onClick={() => this.detail(s.id)}>
                                     <Grid item xs={2} className={classes.pic}>
                                         <img src={s.image} className={classes.image} alt={s.title}/>
                                     </Grid>
@@ -152,17 +153,17 @@ const styles = theme => ({
 class Search extends Component {
     url = "http://pipipan.cn:30005/Ticket/QueryByCityAndTypePage";
 
-    cities = ['all','上海', '北京', '厦门','天津','广州','成都','杭州','武汉','深圳','福州','苏州','重庆','宁波', '深圳', '香港','温州','长沙',
+    cities = ['all', '上海', '北京', '厦门', '天津', '广州', '成都', '杭州', '武汉', '深圳', '福州', '苏州', '重庆', '宁波', '深圳', '香港', '温州', '长沙',
     ];
 
-    types = ['all','concert','vocal concert', 'opera', 'sports','dancing', 'parenting', 'acrobatics'];
+    types = ['all', 'concert', 'vocal concert', 'opera', 'sports', 'dancing', 'parenting', 'acrobatics'];
 
     constructor(props) {
         super(props);
         this.state = {
             search: null,
             page: 1,
-            totalPages : 0,
+            totalPages: 0,
             value: 0,
             data: [],
             selected: {
@@ -176,38 +177,57 @@ class Search extends Component {
         const {page, selected} = this.state;
         let city = this.cities[selected['city']];
         let type = this.types[selected['type']];
-        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}`)
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if (data === null) throw Error("Response error!");
                 this.setState({
                     data: data.content,
-                    totalPages:data.totalPages
+                    totalPages: data.totalPages
                 });
             })
             .catch(e => console.log(e));
+
+        this.setState({
+            search:this.props.match.params.search,
+            page: 1,
+        });
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
         const {match} = nextProps;
+        const {page, selected} = this.state;
+        let city = this.cities[selected['city']];
+        let type = this.types[selected['type']];
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${match.params.search}`)
+            .then(response => response.status === 200 ? response.json() : null)
+            .then(data => {
+                if (data === null) throw Error("Response error!");
+                this.setState({
+                    data: data.content,
+                    totalPages: data.totalPages
+                });
+            })
+            .catch(e => console.log(e));
+
         this.setState({
             search: match.params.search,
             page: 1,
-        })
+        });
     }
 
     viewPage = (idx) => {
         const {selected} = this.state;
         let city = this.cities[selected['city']];
         let type = this.types[selected['type']];
-        fetch(this.url + `?pagenumber=${idx}&city=${city}&type=${type}`)
+        fetch(this.url + `?pagenumber=${idx}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if (data === null) throw Error("Response error");
                 this.setState({
                     data: data.content,
                     page: idx,
-                    totalPages:data.totalPages
+                    totalPages: data.totalPages
                 });
             })
             .catch(e => console.log(e));
@@ -222,17 +242,17 @@ class Search extends Component {
         selected[name] = value;
         this.setState({
             selected: selected,
-            page:1,
+            page: 1,
         });
         let city = this.cities[selected['city']];
         let type = this.types[selected['type']];
-        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}`)
+        fetch(this.url + `?pagenumber=${page}&city=${city}&type=${type}&title=${this.props.match.params.search}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if (data === null) throw Error("Response error!");
                 this.setState({
                     data: data.content,
-                    totalPages:data.totalPages
+                    totalPages: data.totalPages
                 });
             })
             .catch(e => console.log(e));

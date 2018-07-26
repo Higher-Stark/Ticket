@@ -53,7 +53,7 @@ const styles = theme => ({
         position: 'relative',
     },
     buttonMore: {
-        backgroundColor : pink[400],
+        backgroundColor: pink[400],
         '&:hover': {
             backgroundColor: pink[200],
         },
@@ -90,19 +90,14 @@ const styles = theme => ({
 
 
 const Img = [
-    {
-        src: 'https://lumiere-a.akamaihd.net/v1/images/r_piratesofthecaribbeandeadmentellnotales_header_postst_a2b0f97a.jpeg?region=0,0,2048,803'
-    },
-    {
-        src: 'https://steamuserimages-a.akamaihd.net/ugc/928183771923008568/3B8DAE51B21FB04474D50BC3492219BECC3862F6/?interpolation=lanczos-none&output-format=jpeg&output-quality=95&fit=inside%7C637%3A358&composite-to=*,*%7C637%3A358&background-color=black'
-    },
-    {
-        src: 'http://pic1.win4000.com/wallpaper/7/590ae44ec3b26.jpg'
-    }
+    {src: "http://image4.xishiqu.cn/upload/apic/920/180/920180606//DF7FD626-25DC-F101-6966-B2676DE254D6.jpg"},
+    {src: "http://image3.xishiqu.cn/upload/apic/920/180/920180601//DD80509A-A417-52C5-90EE-221798DDD239.jpg"},
+    {src: "http://image5.xishiqu.cn/upload/apic/920/180/920180706//B22F8B63-F36A-A1C5-DA7B-520A6A961D34.jpg"},
+    {src: "http://image.xishiqu.cn/upload/apic/920/180/920180629//96E3F75A-FE93-96BE-2FC1-BC8F3CF8F6D6.jpg"}
 ];
 
 class Homepage extends Component {
-    content=[];
+    content = [];
 
     constructor(props) {
         super(props);
@@ -117,7 +112,7 @@ class Homepage extends Component {
     componentDidMount() {
         const {page} = this.state;
         const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
-        fetch (url, {
+        fetch(url, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -163,7 +158,7 @@ class Homepage extends Component {
         const loadingCircle = (
             <div>
                 <Typography variant="title" color="primary" align='center' noWrap>
-                    <CircularProgress className={classes.progress} size={50} />
+                    <CircularProgress className={classes.progress} size={50}/>
                 </Typography>
             </div>
         );
@@ -199,7 +194,7 @@ class Homepage extends Component {
                         }
                     </div>
                 </div>
-                { firstLoad &&
+                {firstLoad &&
                 (<div className={classes.wrapper}>
                     <div className={classes.block}>
                         <Button variant='fab' color='primary'
@@ -208,7 +203,7 @@ class Homepage extends Component {
                         >
                             <ChevronDown/>
                         </Button>
-                        {loading && <CircularProgress size={68} className={classes.fabProgress}/> }
+                        {loading && <CircularProgress size={68} className={classes.fabProgress}/>}
                     </div>
                     <a href="#topAnchor" className={classes.topIcon}>
                         <ArrowCollapseUp/>

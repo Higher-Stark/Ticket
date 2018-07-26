@@ -55,7 +55,12 @@ const extractDistrict = function (addr, prov, city) {
 };
 
 export const decomposeAddr = function (addr) {
-    if (!addr) return null;
+    if (!addr) return {
+        province: "",
+        city: "",
+        district: "",
+        detail: "",
+    };
     let prov = extractProvince(addr) || "";
     let city = extractCity(addr, prov) || "";
     let district = extractDistrict(addr, prov, city) || "";
@@ -98,6 +103,8 @@ let engChi = new Map([]);
 engChi.set("nickName", "昵称");
 engChi.set("nickname", "昵称");
 engChi.set("phone", "手机");
+engChi.set("address", "地址");
+engChi.set("account", "账户余额");
 
 export const chinese = function (key) {
     return engChi.get(key) || key;

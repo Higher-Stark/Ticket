@@ -83,7 +83,7 @@ class Login extends Component{
         let pattern = /^[\w-$%#]{6,25}$/;
         let test = pattern.test(this.state.password);
         test = test && (this.state.password.match(/\d/) !== null);
-        test = test && (this.state.password.match(/\w/) !== null);
+        test = test && (this.state.password.match(/\D/) !== null);
         return test;
     };
 

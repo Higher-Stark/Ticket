@@ -328,7 +328,7 @@ class User extends Component {
         let pattern = /^[\w-$%#]{6,25}$/;
         let test = pattern.test(password);
         test = test && (password.match(/\d/) !== null);
-        test = test && (password.match(/\w/) !== null);
+        test = test && (password.match(/\D/) !== null);
         return test;
     };
 

@@ -453,7 +453,6 @@ class Cart extends React.Component {
         window.location.href = "/orderconfirm";
     };
 
-
     handleChangeRowsPerPage = event => {
         this.setState({rowsPerPage: event.target.value});
     };

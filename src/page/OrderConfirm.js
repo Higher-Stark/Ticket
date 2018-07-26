@@ -105,50 +105,71 @@ class OrderConfirm extends Component{
     };
 
     fetchItems = ()=>{
-        console.log("the state tickets")
+        console.log("the state tickets");
         let storage = window.localStorage;
-        let orderConfirmTickets = JSON.parse(storage.getItem("orderConfirmTickets"));
-        if(orderConfirmTickets == null)
-            return;
-        for(var i = 0; i<orderConfirmTickets.length ;i++){
-            var eachTicket = orderConfirmTickets[i];
-            var tmpItem;
-            var tmpArray = this.state.items;
-            fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`,{
-                method:'GET',
-                headers: new Headers({
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }),
-                credentials: "include"
-            })
-                .then(response => {
-                    if (response.status !== 200) throw Error("Error !" + response);
-                    return response.text();
+        let orderType = storage.getItem("orderType");
+        if( orderType === "orderInDetailPage")
+        {
+            let orderConfirmTickets = JSON.parse(storage.getItem("orderConfirmTickets"));
+            if(orderConfirmTickets == null)
+                return;
+            for(var i = 0; i<orderConfirmTickets.length ;i++){
+                var eachTicket = orderConfirmTickets[i];
+                var tmpItem;
+                var tmpArray = this.state.items;
+                fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`,{
+                    method:'GET',
+                    headers: new Headers({
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }),
+                    credentials: "include"
                 })
-                .then(text => {
-                    tmpItem = JSON.parse(text);
-                    delete tmpItem.dates;
-                    delete tmpItem.startDate;
-                    delete tmpItem.endDate;
-                    delete tmpItem.lowprice;
-                    delete tmpItem.highprice;
-                    tmpItem['date'] = eachTicket.date;
-                    tmpItem['price'] = eachTicket.price;
-                    tmpItem['number'] = eachTicket.number;
-
-                    tmpArray.push(tmpItem)
-
-                    this.setState({
-                        items: tmpArray
-                    });
-
-                    var tmpData = this.state.data;
-                    tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price))
-                    this.setState({
-                        data:tmpData
+                    .then(response => {
+                        if (response.status !== 200) throw Error("Error !" + response);
+                        return response.text();
                     })
-                })
+                    .then(text => {
+                        tmpItem = JSON.parse(text);
+                        delete tmpItem.dates;
+                        delete tmpItem.startDate;
+                        delete tmpItem.endDate;
+                        delete tmpItem.lowprice;
+                        delete tmpItem.highprice;
+                        tmpItem['date'] = eachTicket.date;
+                        tmpItem['price'] = eachTicket.price;
+                        tmpItem['number'] = eachTicket.number;
+
+                        tmpArray.push(tmpItem);
+
+                        this.setState({
+                            items: tmpArray
+                        });
+
+                        var tmpData = this.state.data;
+                        tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price));
+                        this.setState({
+                            data:tmpData
+                        })
+                    })
+            };
         }
+        else if( orderType === "orderInCart"){
+            let cartProducts = JSON.parse(storage.getItem("cartProducts"));
+            if(cartProducts == null){
+                return;
+            }
+            for(var i = 0; i<cartProducts.length ;i++){
+                var tmpArray = this.state.items;
+                var tmpItem = cartProducts[i];
+                var tmpData = this.state.data;
+                tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price));
+                this.setState({
+                    data:tmpData
+                })
+            }
+
+        }
+
     };
 
     addOrderToBackend = () => {
@@ -166,13 +187,13 @@ class OrderConfirm extends Component{
         if(phone === "" || phone == null)
             phone = document.getElementById('phone').placeholder;
 
-        if(ordertype === "orderInDetailPage"){
+        if (ordertype === "orderInDetailPage") {
             console.log("in orderInDetailPage");
 
             let s = `token=${token}&ticketid=${this.state.items[0].id}&price=${this.state.items[0].price}&date=${this.state.items[0].date}&number=${this.state.items[0].number}&receiver=${username}&phone=${phone}&address=${address}`;
-            fetch('http://pipipan.cn:30011/Order/AddInDetailPage',{
-                method:"POST",
-                body:s,
+            fetch('http://pipipan.cn:30011/Order/AddInDetailPage', {
+                method: "POST",
+                body: s,
                 headers: new Headers({
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }),
@@ -182,15 +203,50 @@ class OrderConfirm extends Component{
                     if (response.status !== 200) throw Error("Error !" + response);
                     return response.text();
                 })
-                .then(text=>{
-                    console.log(text)
+                .then(text => {
+                    console.log(text);
                     text = JSON.parse(text);
-                    storage.setItem("orderid",text.id)
+                    storage.setItem("orderid", text.id);
                     this.props.history.push({
-                        pathname:'/payconfirm'
+                        pathname: '/payconfirm'
                     })
                 })
         }
+        else if (ordertype === "orderInCart") {
+            let cartProducts = JSON.parse(storage.getItem("cartProducts"));
+            var cartIds = [];
+            for(var i = 0; i < cartProducts.length ; i++){
+                cartIds.push(cartProducts[i].id)
+            }
+
+            console.log('['+cartIds.toString()+']');
+            cartIds = '['+cartIds.toString()+']';
+            let s = `token=${token}&cartids=${cartIds}&receiver=${username}&phone=${phone}&address=${address}`;
+            console.log(s)
+            fetch('http://pipipan.cn:30011/Order/AddBatchInCart', {
+                method: "POST",
+                body: s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                })
+                .then(text => {
+                    text = JSON.parse(text)
+                    console.log(text)
+                    storage.setItem("orderid",text.id);
+                    this.props.history.push({
+                        pathname: '/payconfirm'
+                    })
+                })
+        }
+
+
+
     }
     routerToPayConfirm(){
         this.addOrderToBackend();
@@ -293,7 +349,7 @@ class OrderConfirm extends Component{
                                                             {n.title}
                                                         </TableCell>
                                                         <TableCell style={{textAlign:'center'}} numeric>{n.number}</TableCell>
-                                                        <TableCell style={{textAlign:'center'}} numeric>{n.price}</TableCell>
+                                                        <TableCell style={{textAlign:'center'}} numeric>{'¥'+n.price}</TableCell>
                                                     </TableRow>
                                                 );
                                             })}

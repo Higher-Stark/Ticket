@@ -39,6 +39,7 @@ function createData(title, number, eachPrice) {
 }
 
 class PayConfirm extends Component{
+    DeleteBatchInCart = "http://pipipan.cn:30007/Cart/DeleteBatchInCart";
     constructor(props){
         super(props);
         this.state = {

@@ -277,6 +277,7 @@ class ResponsiveDrawer extends React.Component {
         })
             .then(response => response.status)
             .then(status => {
+                console.log(status);
                 if (status === 200) {
                     storage.removeItem("user");
                     this.setState({user: null});
@@ -292,7 +293,7 @@ class ResponsiveDrawer extends React.Component {
 
     toggleSearch = () => {
         this.props.history.push({
-            pathname: '/search/'+this.state.search,
+            pathname: '/search/'+(this.state.search===null?'all':this.state.search),
         });
     };
 
@@ -353,7 +354,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : <NavMenuList2 toggleLogout = {this.toggleLogout}/>}
+                {this.state.user === null ? NavMenuList1 : <NavMenuList2 toggleLogout={this.toggleLogout}/>}
             </div>
         );
 

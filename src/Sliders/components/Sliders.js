@@ -96,7 +96,7 @@ export default class Sliders extends Component {
                         <SlidersItem
                             images={this.props.images}
                             speed={this.props.speed}
-                            index={(this.state.index + 2) % 3}
+                            index={(this.state.index + 2) % 4}
                             style={styleLeft}
                         />
                     </div>
@@ -114,7 +114,7 @@ export default class Sliders extends Component {
                         <SlidersDots
                             images={this.props.images}
                             turn={this.turn}
-                            index={this.state.index%3}
+                            index={this.state.index%4}
                         />
                     </div>
                     <div
@@ -125,7 +125,7 @@ export default class Sliders extends Component {
                         <SlidersItem
                             images={this.props.images}
                             speed={this.props.speed}
-                            index={(this.state.index + 1) % 3}
+                            index={(this.state.index + 1) % 4}
                             style={styleRight}
                         />
                     </div>

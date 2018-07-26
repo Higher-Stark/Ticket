@@ -65,7 +65,7 @@ class AfterPay extends Component{
 
         console.log("hello")
 
-        if(succOrNot == "success"){
+        if(succOrNot === "success"){
             this.fetchOrder()
         }
     };
@@ -269,7 +269,7 @@ class AfterPay extends Component{
                             </Grid>
                         </Grid>
                         {
-                            this.state.afterPayTitle == "支付成功" ? (this.state.success) : (function(){
+                            this.state.afterPayTitle === "支付成功" ? (this.state.success) : (function(){
                                 let storage = window.localStorage;
                                 storage.removeItem("orderid");
                                 storage.removeItem("message");

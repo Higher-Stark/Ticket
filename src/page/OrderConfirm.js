@@ -21,7 +21,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PaymentIcon from '@material-ui/icons/Payment';
-import {NavLink,withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 function createData(title, number, price) {
     return { title,number,price };
@@ -126,15 +126,17 @@ class OrderConfirm extends Component{
         console.log("the state tickets");
         let storage = window.localStorage;
         let orderType = storage.getItem("orderType");
+        var tmpItem;
+        var tmpArray;
+        var i;
         if( orderType === "orderInDetailPage")
         {
             let orderConfirmTickets = JSON.parse(storage.getItem("orderConfirmTickets"));
             if(orderConfirmTickets == null)
                 return;
-            for(var i = 0; i<orderConfirmTickets.length ;i++){
+            orderConfirmTickets.map((n,i)=>{
                 var eachTicket = orderConfirmTickets[i];
-                var tmpItem;
-                var tmpArray = this.state.items;
+                tmpArray = this.state.items;
                 fetch(`http://pipipan.cn:30005/Ticket/QueryById?id=${eachTicket.id}`,{
                     method:'GET',
                     headers: new Headers({
@@ -169,16 +171,17 @@ class OrderConfirm extends Component{
                             data:tmpData
                         })
                     })
-            };
+                return null;
+            })
         }
         else if( orderType === "orderInCart"){
             let cartProducts = JSON.parse(storage.getItem("cartProducts"));
             if(cartProducts == null){
                 return;
             }
-            for(var i = 0; i<cartProducts.length ;i++){
-                var tmpArray = this.state.items;
-                var tmpItem = cartProducts[i];
+            for( i = 0; i<cartProducts.length ;i++){
+                tmpArray = this.state.items;
+                 tmpItem = cartProducts[i];
                 var tmpData = this.state.data;
                 tmpData.push(createData(tmpItem.title,tmpItem.number,tmpItem.price));
                 this.setState({

@@ -16,7 +16,6 @@ import {locale} from '../util/utils';
 
 const styles = theme => ({
     root: {
-        display: 'flex',
         flexGrow: 1,
     },
     post: {
@@ -147,6 +146,7 @@ class Specify extends Component {
             date: null,
             quantity: 0,
             edit: false,
+            content: null,
         };
     }
 
@@ -271,11 +271,11 @@ class Specify extends Component {
         ];
 
         storage.setItem("orderConfirmTickets",JSON.stringify(tickets));
-        storage.setItem("orderType","orderInDetailPage")
+        storage.setItem("orderType","orderInDetailPage");
         this.props.history.push({
             pathname: '/orderconfirm',
         });
-    }
+    };
 
     handleChange = (e) => {
         if (e.target.value < 1)
@@ -292,18 +292,27 @@ class Specify extends Component {
         });
     };
 
+    editComment = (e) => {
+        this.setState({
+            content: e.target.value,
+        });
+    };
+
+    viewCommentAndReply = (id) => {
+        console.log("View Comment and Replay of Comment/Reply id= " + id);
+    };
+
     render() {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
 
         const fakeComment = [
-            {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm'},
-            {id: 2, ownerId: 2030, ownername: 'July', content: 'Rhythm of The Rain'},
-            {id: 3, ownerId: 5032, ownername: 'August', content: 'My Love'},
-            {id: 4, ownerId: 10299, ownername: 'October', content: 'Wicked wonderland'},
+            {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm', createDate: '2017-08-04'},
+            {id: 2, ownerId: 2030, ownername: 'July', content: 'Rhythm of The Rain', createDate: '2016-05-09'},
+            {id: 3, ownerId: 5032, ownername: 'August', content: 'My Love', createDate: '2018-05-03'},
+            {id: 4, ownerId: 10299, ownername: 'October', content: 'Wicked wonderland', createDate: '2017-05-04'},
         ];
 
-        console.log(detail);
         return (
             detail === null ? (
                     <div className={classes.loading}>
@@ -318,97 +327,97 @@ class Specify extends Component {
                                     <img src={detail.image} alt={detail.title} className={classes.post}/>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid item xs={6} className={classes.content}>
-                            <div>
-                                <Typography variant='title' component='h2' gutterBottom color='primary'>
-                                    {detail.title}
-                                </Typography>
-                                <Typography variant='subheading' component='h3' gutterBottom color='textSecondary'>
-                                    {detail.city}{' | '}{detail.venue}
-                                </Typography>
-                                <Typography variant='subheading' component='h3' gutterBottom color='secondary'>
-                                    {'日期 '}
-                                    <Typography variant='body1' component='p' color='textSecondary' className={classes.inline}>
-                                        {`${locale(detail.startDate)} - ${locale(detail.endDate)}  ${detail.time}`}
-                                    </Typography>
-                                </Typography>
+                            <Grid item xs={6} className={classes.content}>
                                 <div>
-                                    <div>
-                                        <Typography component='h3' variant='subheading' color='primary'
-                                                    className={classes.inline}>{'演出时间: '}</Typography>
-                                        {
-                                            detail.dates.split(' , ').map((s, i) => {
-                                                return (
-                                                    <Button variant={s === date ? "contained" : "outlined"}
-                                                            onClick={() => this.selectDate(s)}
-                                                            color='primary'
-                                                            className={classes.selectButton}
-                                                            key={i}
-                                                    >
-                                                        {locale(s)}{' '}{detail.time}
-                                                    </Button>
-                                                )
-                                            })}
-                                    </div>
-                                    <div>
-                                        <Typography variant='subheading' component='h3' color='primary'
-                                                    className={classes.inline}>{"票价选择： "}</Typography>
-                                        <Button variant={price === detail.lowprice ? "contained" : "outlined"}
-                                                onClick={() => this.selectPrice(detail.lowprice)}
-                                                color='primary'
-                                                className={classes.selectButton}
-                                        >
-                                            {detail.lowprice}
-                                        </Button>
-                                        <Button variant={price === detail.highprice ? "contained" : "outlined"}
-                                                onClick={() => this.selectPrice(detail.highprice)}
-                                                color='primary'
-                                                className={classes.selectButton}
-                                        >
-                                            {detail.highprice}
-                                        </Button>
-                                    </div>
-                                    <Typography variant='subheading' component='h3' gutterBottom color='primary'>
-                                        {'库存: '}
-                                        <Typography variant='body1' component='p' color='textSecondary'
-                                                    className={classes.inline}>
-                                            { detail.stock}
+                                    <Typography variant='title' component='h2' gutterBottom color='primary'>
+                                        {detail.title}
+                                    </Typography>
+                                    <Typography variant='subheading' component='h3' gutterBottom color='textSecondary'>
+                                        {detail.city}{' | '}{detail.venue}
+                                    </Typography>
+                                    <Typography variant='subheading' component='h3' gutterBottom color='secondary'>
+                                        {'日期 '}
+                                        <Typography variant='body1' component='p' color='textSecondary' className={classes.inline}>
+                                            {`${locale(detail.startDate)} - ${locale(detail.endDate)}  ${detail.time}`}
                                         </Typography>
                                     </Typography>
-                                    {
-                                        date === null || price === 0 ? null : (
-                                            <div>
-                                                <TextField id='quantity' type='number' label='数量' margin='normal'
-                                                           value={quantity} onChange={this.handleChange}/>
-                                            </div>
-                                        )
-                                    }
-                                    <div className={classes.action}>
-                                        <Button variant='extendedFab'
-                                                color='secondary'
-                                                className={classes.buttonIcon}
-                                                onClick={() => this.toggleCart()}
-                                                disabled={date === null || price === 0}
-                                        >
-                                            <CartPlusIcon/>
-                                            Add
-                                        </Button>
-                                        <Button variant='extendedFab'
-                                                color='primary'
-                                                className={classes.buttonIcon}
-                                                onClick={() => this.toggleBuy()}
-                                                disabled={date === null || price === 0}
-                                        >
-                                            <ShoppingIcon/>
-                                            Pay
-                                        </Button>
+                                    <div>
+                                        <div>
+                                            <Typography component='h3' variant='subheading' color='primary'
+                                                        className={classes.inline}>{'演出时间: '}</Typography>
+                                            {
+                                                detail.dates.split(' , ').map((s, i) => {
+                                                    return (
+                                                        <Button variant={s === date ? "contained" : "outlined"}
+                                                                onClick={() => this.selectDate(s)}
+                                                                color='primary'
+                                                                className={classes.selectButton}
+                                                                key={i}
+                                                        >
+                                                            {locale(s)}{' '}{detail.time}
+                                                        </Button>
+                                                    )
+                                                })}
+                                        </div>
+                                        <div>
+                                            <Typography variant='subheading' component='h3' color='primary'
+                                                        className={classes.inline}>{"票价选择： "}</Typography>
+                                            <Button variant={price === detail.lowprice ? "contained" : "outlined"}
+                                                    onClick={() => this.selectPrice(detail.lowprice)}
+                                                    color='primary'
+                                                    className={classes.selectButton}
+                                            >
+                                                {detail.lowprice}
+                                            </Button>
+                                            <Button variant={price === detail.highprice ? "contained" : "outlined"}
+                                                    onClick={() => this.selectPrice(detail.highprice)}
+                                                    color='primary'
+                                                    className={classes.selectButton}
+                                            >
+                                                {detail.highprice}
+                                            </Button>
+                                        </div>
+                                        <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                                            {'库存: '}
+                                            <Typography variant='body1' component='p' color='textSecondary'
+                                                        className={classes.inline}>
+                                                { detail.stock}
+                                            </Typography>
+                                        </Typography>
+                                        {
+                                            date === null || price === 0 ? null : (
+                                                <div>
+                                                    <TextField id='quantity' type='number' label='数量' margin='normal'
+                                                               value={quantity} onChange={this.handleChange}/>
+                                                </div>
+                                            )
+                                        }
+                                        <div className={classes.action}>
+                                            <Button variant='extendedFab'
+                                                    color='secondary'
+                                                    className={classes.buttonIcon}
+                                                    onClick={() => this.toggleCart()}
+                                                    disabled={date === null || price === 0}
+                                            >
+                                                <CartPlusIcon/>
+                                                Add
+                                            </Button>
+                                            <Button variant='extendedFab'
+                                                    color='primary'
+                                                    className={classes.buttonIcon}
+                                                    onClick={() => this.toggleBuy()}
+                                                    disabled={date === null || price === 0}
+                                            >
+                                                <ShoppingIcon/>
+                                                Pay
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Grid>
-                        <Grid item xs={3} className={classes.grid}>
-                            <Typography variant='subheading' component='h3'>{'票务系统信息'}</Typography>
+                            </Grid>
+                            <Grid item xs={3} className={classes.grid}>
+                                <Typography variant='subheading' component='h3'>{'票务系统信息'}</Typography>
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>
@@ -433,6 +442,7 @@ class Specify extends Component {
                         }}
                                    InputLabelProps={{ shrink: true, className: classes.commentFormLabel}}
                                    multiline rowsMax={6} rows={3} placeholder={"说些什么吧..."}
+                                   value={this.content} onChange={this.editComment}
                         />
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>
@@ -447,17 +457,19 @@ class Specify extends Component {
                         </Grid>
                     </Grid>
                     {fakeComment.map(s => (
-                        <Grid key={s.id} item xs={11} md={7} className={classes.grid}>
-                            <Grid item xs={1} md={1} className={classes.bottomBorder}>
-                                <Typography variant='body1' component='p' className={classes.inline}>{s.ownername}</Typography>
+                        <Grid key={s.id} item xs={12} md={8} className={classes.grid}>
+                            <Grid item xs={2} md={2} className={classes.bottomBorder}>
+                                <Typography variant='subheading' component='h3' className={classes.inline}>{s.ownername}</Typography>
+                                <br/>
+                                <Typography variant='caption' className={classes.inline}>{s.createDate}</Typography>
                             </Grid>
-                            <Grid item xs={10} md={8} className={classes.bottomBorder}>
+                            <Grid item xs={10} md={10} className={classes.bottomBorder}>
                                 <div>
                                     <div>
                                         <Typography variant='body1' component='p'>{s.content}</Typography>
                                     </div>
                                     <div className={classes.commentButtonWrapper}>
-                                        <IconButton aria-label="ViewCommentAndReply" className={classes.commentButton}>
+                                        <IconButton aria-label="ViewCommentAndReply" className={classes.commentButton} onClick={() => this.viewCommentAndReply(s.id)}>
                                             <CommentTextOutline/>
                                         </IconButton>
                                     </div>
@@ -465,7 +477,7 @@ class Specify extends Component {
                             </Grid>
                         </Grid>
                     ))}
-            </div>
+                </div>
         )
     }
 }

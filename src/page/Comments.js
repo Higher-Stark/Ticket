@@ -45,6 +45,29 @@ const styles = theme => ({
     user: {
         height: 'inherit',
     },
+    commentRoot: {
+        display: 'block',
+        padding: 0,
+        'label + &': {
+            marginTop: theme.spacing.unit * 3,
+        },
+    },
+    commentInput : {
+        borderRadius: 4,
+        backgroundColor: theme.palette.common.white,
+        border: '1px solid #ced4da',
+        fontSize: 16,
+        padding: '10px 12px',
+        width: 'inherit',
+        transition: theme.transitions.create(['border-color', 'box-shadow']),
+        '&:focus': {
+            borderColor: '#80bdff',
+            boxShadow: '0 0 0 0.2rem rgba(0, 123,255, .23)',
+        },
+    },
+    commentFormLabel: {
+        fontSize: 20,
+    },
 });
 
 const item = props => (
@@ -147,9 +170,28 @@ class Comments extends Component {
         return (
             <div>
                 <Grid container spacing={8} alignContent='center'>
-                    {
-                        item({classes: classes, comment: this.comment, reply: this.toggleReply})
-                    }
+                    <Grid item xs={12} md={12} className={classes.grid} >
+                        <Grid item xs={3} md={1}
+                              className={classNames(classes.grid, classes.inline)}
+                        >
+                            <div className={classes.user}>
+                                <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                                    {this.comment.ownername}
+                                </Typography>
+                                <Typography variant='caption' color='textSecondary'>
+                                    {this.comment.createTime}
+                                </Typography>
+                            </div>
+                        </Grid>
+                        <Grid item xs={9} md={6} className={classNames(classes.grid, classes.inline, classes.bottomBorder)}>
+                            <Grid item xs={12} md={12} className={classes.block}>
+                                <Typography variant='body1' component='p' gutterBottom color='default' className={classes.content}>
+                                    {this.comment.content}
+                                </Typography>
+                            </Grid>
+                            <Grid item md={5}/>
+                        </Grid>
+                    </Grid>
                     <Grid item xs={12} md={12} className={classes.grid}>
                         <Grid item xs={12} md={6}>
                             <TextField multiline fullWidth rows={3} rowsMax={6}
@@ -166,6 +208,16 @@ class Comments extends Component {
                             }}
 
                                        />
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={12} className={classes.grid}>
+                        <Grid item xs={10} md={5} className={classes.grid}>
+                            <div>{"  "}</div>
+                        </Grid>
+                        <Grid item xs={2} md={1} className={classes.grid}>
+                            <IconButton>
+                                <CommentText/>
+                            </IconButton>
                         </Grid>
                     </Grid>
                     {

@@ -85,9 +85,23 @@ class AfterPay extends Component{
             credentials: "include"
         })
             .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
-            })
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        if (response.status !== 200) throw Error("Error !" + response);
+                        return response.text();
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
             .then(text =>{
                 text = JSON.parse(text);
                 console.log("in text");

@@ -71,9 +71,27 @@ class PayConfirm extends Component{
             credentials: "include"
         })
             .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
-            })
+                    let errornum = response.headers.get('errornum');
+                    if (errornum === '0') {
+                        if (response.status !== 200) throw Error("Error !" + response);
+                        return response.text();
+                    }
+                    else if (errornum === '1') {
+                        alert("尚未登录！");
+                    }
+                    else if (errornum === '2') {
+                        alert("身份不对应！");
+                    }
+                    else if (errornum === '3') {
+                        alert("账户被冻结！");
+                    }
+                    this.props.history.push('/signin');
+                }
+            )
+            // .then(response => {
+            //     if (response.status !== 200) throw Error("Error !" + response);
+            //     return response.text();
+            // })
             .then(text =>{
                 text = JSON.parse(text);
                 console.log(text);
@@ -114,40 +132,33 @@ class PayConfirm extends Component{
     buy=()=>{
         let storage = window.localStorage;
         let token = JSON.parse(storage.getItem("user")).token;
-
+        let type = storage.getItem("orderType")
         if(storage.getItem("orderid")==null||storage.getItem("orderid").length===0)
             return;
-        let orderid = parseInt(storage.getItem("orderid"));
-        let cartProducts=storage.getItem("cartProducts");
-        let batchEntryId=[];
-        cartProducts.map(product=>{batchEntryId.push(product.id)});
-        let s =`token=${token}&orderid=${orderid}`;
-        console.log(token)
-        fetch('http://pipipan.cn:30011/Order/Buy',{
-            method: 'POST',
-            body: s,
-            headers: new Headers({
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }),
-            credentials: "include",
-        })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
-            })
-            .then(text => {
-                text = JSON.parse(text);
-                console.log(text);
-                storage.setItem("message",text.message);
-                if(text.message === 'success')
-                    storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
 
-                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchEntryId}`)
-                    .then(response => response.headers)
-                    .then(headers => {
-                        let errornum = headers.get('errornum');
+        let orderid = parseInt(storage.getItem("orderid"));
+        if(type === 'orderInCart') {
+            let cartProducts = JSON.parse(storage.getItem("cartProducts"));
+            let batchEntryId = [];
+
+            cartProducts.map(product => {
+                batchEntryId.push(product.id)
+            });
+            let s = `token=${token}&orderid=${orderid}`;
+            console.log(token)
+            fetch('http://pipipan.cn:30011/Order/Buy', {
+                method: 'POST',
+                body: s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include",
+            })
+                .then(response => {
+                        let errornum = response.headers.get('errornum');
                         if (errornum === '0') {
-                            return;
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.text();
                         }
                         else if (errornum === '1') {
                             alert("尚未登录！");
@@ -159,10 +170,84 @@ class PayConfirm extends Component{
                             alert("账户被冻结！");
                         }
                         this.props.history.push('/signin');
-                    })
-                    .catch(e => console.log(e));
-                this.routeToAfterPay()
+                    }
+                )
+                // .then(response => {
+                //     if (response.status !== 200) throw Error("Error !" + response);
+                //     return response.text();
+                // })
+                .then(text => {
+                    text = JSON.parse(text);
+                    console.log(text);
+                    storage.setItem("message", text.message);
+                    if (text.message === 'success')
+                        storage.setItem("Inventory shortage", text["Inventory shortage"].toString());
+
+                    console.log("the batchentry " + batchEntryId);
+                    fetch("http://pipipan.cn:30007/Cart/DeleteBatchInCart" + `?token=${token}&batchentryid=${batchEntryId}`)
+                        .then(response => response.headers)
+                        .then(headers => {
+                            let errornum = headers.get('errornum');
+                            console.log("the error num " + errornum);
+                            if (errornum === '0') {
+                                this.routeToAfterPay();
+                                return;
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            else {
+                                alert('nigenbenmeiyouerrornum')
+                            }
+                            this.props.history.push('/signin');
+                        })
+                        .catch(e => console.log(e));
+                })
+        }
+        else{
+            let s = `token=${token}&orderid=${orderid}`;
+            console.log(token)
+            fetch('http://pipipan.cn:30011/Order/Buy', {
+                method: 'POST',
+                body: s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include",
             })
+                .then(response => {
+                        let errornum = response.headers.get('errornum');
+                        if (errornum === '0') {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.text();
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    }
+                )
+                .then(text => {
+                    text = JSON.parse(text);
+                    console.log(text);
+                    storage.setItem("message", text.message);
+                    if (text.message === 'success')
+                        storage.setItem("Inventory shortage", text["Inventory shortage"].toString());
+                    this.routeToAfterPay();
+                })
+        }
     }
 
     render(){

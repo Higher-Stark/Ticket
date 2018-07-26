@@ -362,7 +362,7 @@ class Cart extends React.Component {
                     let newI=i;
                     newDirty[i]=1;
                     this.setState({dirties:newDirty});
-                    setTimeout(()=>{this.handleNumberEdit(token,id,newI)}, 5000);
+                    this.timer=setTimeout(()=>{this.handleNumberEdit(token,id,newI)}, 5000);
                 }
 
             }
@@ -372,26 +372,36 @@ class Cart extends React.Component {
 
 
     handleDeleteSelected = (event) => {
-        let newData = this.state.data.slice();
         let newSelected = this.state.selected.slice();
-        let newTotalElements = this.state.totalElements;
-        newTotalElements -= newSelected.length;
         let storage = window.localStorage;
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
-        console.log(newData);
-        let j;
-        for (let i = 0; i < newSelected.length; i++) {
-            for (j = 0; j < newData.length; j++) {
-                console.log(j);
-                if (newSelected[i] === newData[j].id) {
-                    fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
-                        .then(response => response.headers)
-                        .then(headers => {
-                            let errornum = headers.get('errornum');
+        fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${newSelected}`)
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum = headers.get('errornum');
+                if (errornum === '0') {
+                    return;
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+            .then(()=>{
+                const {page}=this.state;
+                fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
+                    .then(response => {
+                            let errornum = response.headers.get('errornum');
                             if (errornum === '0') {
-                                return;
+                                return response.status === 200 ? response.json() : null;
                             }
                             else if (errornum === '1') {
                                 alert("尚未登录！");
@@ -403,15 +413,18 @@ class Cart extends React.Component {
                                 alert("账户被冻结！");
                             }
                             this.props.history.push('/signin');
-                        })
-                        .catch(e => console.log(e));
-                    break;
-                }
-            }
-            newData.splice(j, 1);
-        }
-        this.setState({data: newData});
-        this.setState({totalElements: newTotalElements});
+                        }
+                    )
+                    .then(data => {
+                        if (data === null) throw Error("Response error!");
+                        this.setState({
+                            data: data.content,
+                            totalElements: data.totalElements
+                        });
+                    })
+                    .catch(e => console.log(e));
+            })
+            .catch(e => console.log(e));
         this.setState({selected: []});
     };
 
@@ -428,9 +441,17 @@ class Cart extends React.Component {
         let storage = window.localStorage;
         storage.setItem("cartProducts", JSON.stringify(cartProducts));
         storage.setItem("orderType","orderInCart");
+        clearTimeout(this.timer);
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        for(let k=0;k<16;k++)
+        {
+            if(this.state.dirties[k])
+                this.handleNumberEdit(token,this.state.data[k].id,k);
+        }
         window.location.href = "/orderconfirm";
     };
-
 
     handleChangeRowsPerPage = event => {
         this.setState({rowsPerPage: event.target.value});
@@ -442,6 +463,12 @@ class Cart extends React.Component {
         let user = storage.getItem("user");
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
+        clearTimeout(this.timer);
+        for(let k=0;k<16;k++)
+        {
+            if(this.state.dirties[k])
+                this.handleNumberEdit(token,this.state.data[k].id,k);
+        }
         fetch(this.QueryByUserId + `?pagenumber=${page + 1}&token=${token}`)
             .then(response => {
                     let errornum = response.headers.get('errornum');

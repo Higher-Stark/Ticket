@@ -214,6 +214,7 @@ class Specify extends Component {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
 
+        console.log(detail);
         return (
             detail === null ? (
                     <div className={classes.loading}>
@@ -278,6 +279,13 @@ class Specify extends Component {
                                             {detail.highprice}
                                         </Button>
                                     </div>
+                                    <Typography variant='subheading' component='h3' gutterBottom color='primary'>
+                                        {'库存: '}
+                                        <Typography variant='body1' component='p' color='textSecondary'
+                                                    className={classes.inline}>
+                                            { detail.stock}
+                                        </Typography>
+                                    </Typography>
                                     {
                                         date === null || price === 0 ? null : (
                                             <div>

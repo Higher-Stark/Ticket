@@ -25,13 +25,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 import PaymentIcon from '@material-ui/icons/Payment'
-import $ from 'jquery';
 
 const styles = ()=>({
     headline:{
         color: pink[300],
     }
-})
+});
 
 let id = 0;
 function createData(title, number, eachPrice) {
@@ -119,7 +118,9 @@ class PayConfirm extends Component{
         if(storage.getItem("orderid")==null||storage.getItem("orderid").length===0)
             return;
         let orderid = parseInt(storage.getItem("orderid"));
-
+        let cartProducts=storage.getItem("cartProducts");
+        let batchEntryId=[];
+        cartProducts.map(product=>{batchEntryId.push(product.id)});
         let s =`token=${token}&orderid=${orderid}`;
         console.log(token)
         fetch('http://pipipan.cn:30011/Order/Buy',{
@@ -140,6 +141,26 @@ class PayConfirm extends Component{
                 storage.setItem("message",text.message);
                 if(text.message === 'success')
                     storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
+
+                fetch(this.DeleteBatchInCart + `?token=${token}&batchentryid=${batchEntryId}`)
+                    .then(response => response.headers)
+                    .then(headers => {
+                        let errornum = headers.get('errornum');
+                        if (errornum === '0') {
+                            return;
+                        }
+                        else if (errornum === '1') {
+                            alert("尚未登录！");
+                        }
+                        else if (errornum === '2') {
+                            alert("身份不对应！");
+                        }
+                        else if (errornum === '3') {
+                            alert("账户被冻结！");
+                        }
+                        this.props.history.push('/signin');
+                    })
+                    .catch(e => console.log(e));
                 this.routeToAfterPay()
             })
     }

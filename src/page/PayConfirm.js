@@ -59,6 +59,8 @@ class PayConfirm extends Component{
     fetchOrder = ()=>{
         let storage = window.localStorage;
         let orderid = storage.getItem("orderid");
+        if(orderid == null || orderid.length ==0)
+            return;
         let token = JSON.parse(storage.getItem("user")).token;
         let s = `token=${token}&orderid=${orderid}`;
         fetch('http://pipipan.cn:30011/Order/QueryByOrderid',{
@@ -113,6 +115,9 @@ class PayConfirm extends Component{
     buy=()=>{
         let storage = window.localStorage;
         let token = JSON.parse(storage.getItem("user")).token;
+
+        if(storage.getItem("orderid")==null||storage.getItem("orderid").length===0)
+            return;
         let orderid = parseInt(storage.getItem("orderid"));
 
         let s =`token=${token}&orderid=${orderid}`;

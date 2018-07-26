@@ -195,18 +195,18 @@ class NavMenuList2 extends Component{
                     <ListItemIcon><HomeIcon style={listStyles.home}/></ListItemIcon>
                     <ListItemText inset primary='Home'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/vocal'>
+                <ListItem button component={NavLink} to='/category/vocal concert'>
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/show'>
-                    <ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Show'/>
-                </ListItem>
-                <ListItem button component={NavLink} to='/category/exhibition'>
-                    <ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>
-                    <ListItemText inset primary='Exhibition'/>
-                </ListItem>
+                {/*<ListItem button component={NavLink} to='/category/show'>*/}
+                    {/*<ListItemIcon><img src={Curtain} alt='show' style={listStyles.svg}/></ListItemIcon>*/}
+                    {/*<ListItemText inset primary='Show'/>*/}
+                {/*</ListItem>*/}
+                {/*<ListItem button component={NavLink} to='/category/exhibition'>*/}
+                    {/*<ListItemIcon><img src={Exhibition} alt='exhibition' style={listStyles.svg}/></ListItemIcon>*/}
+                    {/*<ListItemText inset primary='Exhibition'/>*/}
+                {/*</ListItem>*/}
                 <ListItem button component={NavLink} to='/category/opera'>
                     <ListItemIcon><img src={Mask} alt='opera' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Opera'/>
@@ -215,11 +215,11 @@ class NavMenuList2 extends Component{
                     <ListItemIcon><BasketballIcon style={listStyles.sports}/></ListItemIcon>
                     <ListItemText inset primary='Sports'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
+                <ListItem button component={NavLink} to='/category/dancing'>
                     <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
+                <ListItem button component={NavLink} to='/category/parenting'>
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
@@ -228,7 +228,7 @@ class NavMenuList2 extends Component{
                     <ListItemText inset primary='Acrobatics'/>
                 </ListItem>
                 <Divider/>
-                <ListItem button onClick={this.toggleLogout}>
+                <ListItem button onClick={this.props.toggleLogout}>
                     <ListItemIcon><LogoutVariant/></ListItemIcon>
                     <ListItemText inset primary='Logout'/>
                 </ListItem>
@@ -268,6 +268,7 @@ class ResponsiveDrawer extends React.Component {
     toggleLogout = () => {
         let storage = window.localStorage;
         let user = storage.getItem("user");
+        console.log(user);
         user = JSON.parse(user);
         let token = user.token;
         fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
@@ -352,7 +353,7 @@ class ResponsiveDrawer extends React.Component {
                         </IconButton>
                     </Avatar>
                 </div>
-                {this.state.user === null ? NavMenuList1 : <NavMenuList2/>}
+                {this.state.user === null ? NavMenuList1 : <NavMenuList2 toggleLogout = {this.toggleLogout}/>}
             </div>
         );
 

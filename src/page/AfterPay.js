@@ -263,7 +263,12 @@ class AfterPay extends Component{
                             </Grid>
                         </Grid>
                         {
-                            this.state.afterPayTitle == "支付成功" ? (this.state.success) : (<div><h1>cao</h1></div>)
+                            this.state.afterPayTitle == "支付成功" ? (this.state.success) : (function(){
+                                let storage = window.localStorage;
+                                storage.removeItem("orderid");
+                                storage.removeItem("message");
+                                return (<div></div>)
+                            }())
                         }
                     </CardContent>
                 </Card>

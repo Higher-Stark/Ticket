@@ -47,12 +47,6 @@ function createData(title, number, eachPrice) {
     id += 1;
     return { id, title, number, eachPrice};
 }
-  
-const data = [
-    createData('璀璨之境 克里姆特映像艺术大展—上海站', 5,500),
-    createData('莱安德罗 · 埃利希个展「虚.构」—上海站', 2, 1000),
-    createData('《印象莫奈：时光映迹艺术展》3.0— 苏州站', 10,880)
-];
 
 const styles = ()=>({
     headline:{
@@ -141,26 +135,24 @@ class Order extends Component{
     constructor(props){
         super(props)
         this.state={
-            data: [
-                createData('Cupcake', 305, 3.7)
-            ],
-            page: 0,
+            page: 0, // pagenumber actually
             rowsPerPage: 0,
             totalNumber: 0,
             pageOrder: [],
         };
-        this.routerToAfterPay = this.routerToAfterPay.bind(this)
+        this.routerToAfterPay = this.routerToAfterPay.bind(this);
+        this.buy = this.buy.bind(this)
     }
 
     componentWillMount(){
-        this.fetchUserOrders();
+        this.fetchUserOrders(1);
     }
 
-    fetchUserOrders=()=>{
+    fetchUserOrders=(pagenumber)=>{
+        console.log("in fetch user order")
         let storage = window.localStorage;
         let token = JSON.parse(storage.getItem("user")).token;
-        console.log(token);
-        let s = `token=${token}&pagenumber=1`;
+        let s = `token=${token}&pagenumber=${pagenumber}`;
         fetch('http://pipipan.cn:30011/Order/QueryByUserid',{
             method:"POST",
             body: s,
@@ -174,30 +166,60 @@ class Order extends Component{
                 return response.text();
             })
             .then(text=>{
-                console.log("hello from the outside");
+                console.log("fetched userorders");
                 text = JSON.parse(text);
-                console.log(text);
+
                 this.setState({
                     rowsPerPage : text.size,
                     totalNumber : text.totalElements,
                     pageOrder : text.content,
-                })
+                });
             })
     }
 
     handleChangePage = (event, page) => {
         this.setState({ page });
+        this.fetchUserOrders(page+1)/*从零开始计数，所以0其实是第一页*/
     };
 
     handleChangeRowsPerPage = event => {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    routerToAfterPay (e){
-        console.log("click")
-        console.log(e.target.get)
-        console.log(e.target.id)
+    routerToAfterPay(){
+        this.props.history.push({
+            pathname:'/afterpay'
+        })
     }
+
+    buy(e, order){
+
+        let storage = window.localStorage;
+        storage.setItem("orderid",order.id);
+        let token = JSON.parse(storage.getItem("user")).token;
+        let orderid = order.id;
+
+        let s =`token=${token}&orderid=${orderid}`;
+        fetch('http://pipipan.cn:30011/Order/Buy',{
+            method: 'POST',
+            body: s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include",
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text => {
+                text = JSON.parse(text);
+                storage.setItem("message",text.message);
+                if(text.message === 'success')
+                    storage.setItem("Inventory shortage",text["Inventory shortage"].toString());
+                    this.routerToAfterPay()
+            })
+    };
 
     buildOrderEntry=(order,classes)=>{
         const expanPanel = (<ExpansionPanel style={{marginTop:'2%',marginBottom:'4%'}}>
@@ -230,7 +252,6 @@ class Order extends Component{
                 {this.buildPanelDetails(order,classes)}
             </ExpansionPanelDetails>
         </ExpansionPanel>)
-
         return expanPanel;
     }
 
@@ -476,13 +497,16 @@ class Order extends Component{
                     <Grid item xs={3} style={{marginTop: "1.5%"}}>
                         <Button variant="contained"
                                 id = {"orderid"+order.id}
+                                onClick={(e) =>
+                                    this.buy(e, order)
+                                }
                                 style={{
                             marginRight: '3%',
                             color: "#FFFFFF",
                             borderBottom: '100%',
                             backgroundColor: "#FF6699"
                         }}
-                                onClick={this.routerToAfterPay}>
+                                >
                             支付
                         </Button>
                     </Grid>
@@ -498,16 +522,15 @@ class Order extends Component{
             </Card>)
     };
 
-    buildTable=(orders,classes,emptyRows)=>{
+    buildTable=(classes,emptyRows)=>{
         const { rowsPerPage, page } = this.state;
-
         const table = (
             <Card>
                 <CardContent>
                     <div className={classes.tableWrapper}>
                         <Table className={classes.table}>
                             <TableBody>
-                                {this.state.pageOrder.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(n => {
+                                {this.state.pageOrder.map(n => {
                                     return (
                                         <TableRow key={n.id}>
                                             {this.buildOrderEntry(n, classes)}
@@ -543,7 +566,6 @@ class Order extends Component{
 
     render(){
         const { classes } = this.props;
-        const orders = [{"订单编号":201807230000}]
         const { data, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.totalNumber - page * rowsPerPage);
 
@@ -558,8 +580,7 @@ class Order extends Component{
                                 </Typography>
                             </Grid>
                         </Grid>
-
-                        {this.buildTable(orders,classes,emptyRows)}
+                        {this.buildTable(classes,emptyRows)}
                     </CardContent>
                 </Card>
             </div>
@@ -573,55 +594,3 @@ Order.propTypes = {
 };
 
 export default withStyles(styles)(Order);
-
-//
-// <Typography variant="headline" color="textSecondary">
-//     详细信息
-// </Typography>
-//
-// <Divider style={{marginTop: "1%"}}/>
-// <Grid container spacing={24}>
-//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
-//         <Typography>
-//             订单编号
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
-//         <Typography>
-//             1232131
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
-//         <Typography>
-//             用户姓名
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
-//         <Typography>
-//             234234234
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "2%"}}>
-//         <Typography>
-//             手机号码
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={2} style={{textAlign: 'left', marginTop: "2%"}}>
-//         <Typography>
-//             234234234
-//         </Typography>
-//     </Grid>
-// </Grid>
-// <Divider style={{marginTop: "1.5%"}}/>
-// <Grid container spacing={24}>
-//     <Grid item xs={2} style={{textAlign: 'right', marginTop: "1.5%"}}>
-//         <Typography>
-//             收获地址
-//         </Typography>
-//     </Grid>
-//     <Grid item xs={10} style={{textAlign: 'left', marginTop: "1.5%"}}>
-//         <Typography>
-//             234234234
-//         </Typography>
-//     </Grid>
-// </Grid>

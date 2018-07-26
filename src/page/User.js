@@ -16,7 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from '@material-ui/icons/Save';
-import Cancel from '@material-ui/icons/Cancel';
+import ClearIcon from '@material-ui/icons/Clear';
 import Provinces from '../data/provinces';
 import {decomposeAddr, composeAddr, getDistricts, getCities, chinese, urlEncode} from "../util/utils";
 
@@ -579,33 +579,30 @@ class User extends Component {
         const info = (
             <div>
                 <Paper elevation={10} className={classes.paper}>
-                    <Grid container spacing={24}>
-                        <Grid item xs={2} className={classes.imgGrid}>
-                            <div className={classes.imageSec}>
-                                <img alt={user.name} src={user.avatar} className={classes.image}/>
-                            </div>
-                            <div>
-                                <input accept="image/*" className={classes.input} id="flat-button-file" type="file"
-                                       onChange={this.setImg}/>
-                                <label htmlFor="flat-button-file">
-                                    <Button component="span" variant="contained" className={classes.button}>
-                                        Upload Profile
+                <Grid container spacing={24}>
+                    <Grid item xs={2} className={classes.imgGrid}>
+                        <div className={classes.imageSec}>
+                            <img alt={user.name} src={user.avatar} className={classes.image}/>
+                        </div>
+                        <div className={classes.wrapper}>
+                            <input accept="image/*" className={classes.input} id="flat-button-file" type="file" onChange={this.setImg}/>
+                            <label htmlFor="flat-button-file">
+                                <Button component="span" variant="contained" className={classes.button}>
+                                    Upload Profile
+                                </Button>
+                            </label>
+                        </div>
+                    </Grid>
+                    <Grid item xs={8}>
+                        <div className={classes.actions}>
+                            {
+                                edit ?
+                                    <div>
+                                    <Button variant='fab' color='secondary' onClick={this.toggleSave} className={classNames(classes.action, classes.button)}>
+                                        <SaveIcon/>
                                     </Button>
-                                </label>
-                            </div>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <div className={classes.actions}>
-                                {
-                                    edit ?
-                                        <div>
-                                            <Button variant='fab' color='secondary' onClick={this.toggleSave}
-                                                    className={classNames(classes.action, classes.button)}>
-                                                <SaveIcon/>
-                                            </Button>
-                                            <Button variant='fab' color='primary' onClick={this.toggleCancel}
-                                                    className={classNames(classes.action, classes.button)}>
-                                                <Cancel/>
+                                        <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
+                                            <ClearIcon/>
                                             </Button>
                                         </div> :
                                         <Button variant='fab' color='primary' onClick={this.toggleEdit}
@@ -680,15 +677,17 @@ class User extends Component {
         return (
             <div className={classes.root}>
                 <AppBar position='static'>
-                    <Tabs value={tab} onChange={this.toggleTab}>
-                        <Tab label="User info"/>
-                        <Tab label="Modify Password"/>
-                        <Tab label="修改支付密码"/>
-                    </Tabs>
+                <Tabs value={tab} onChange={this.toggleTab}>
+                    <Tab label="User info"/>
+                    <Tab label="Modify Password"/>
+                    <Tab label="修改支付密码"/>
+                    <Tab label="注销账户"/>
+                </Tabs>
                 </AppBar>
-                {tab === 0 && info}
-                {tab === 1 && modify}
-                {tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography>}
+                { tab === 0 && info }
+                { tab === 1 && modify }
+                { tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography> }
+                { tab === 3 && <Typography variant='subheading' component='h3' gutterBottom>{'暂不支持注销账户，请谅解'}</Typography> }
             </div>
         )
     }

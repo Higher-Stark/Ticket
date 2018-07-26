@@ -6,8 +6,11 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
+import CommentPlusOutline from 'mdi-material-ui/CommentPlusOutline';
+import CommentTextOutline from 'mdi-material-ui/CommentTextOutline';
 import {urlEncode} from '../util/utils';
 import {locale} from '../util/utils';
 
@@ -17,8 +20,11 @@ const styles = theme => ({
         flexGrow: 1,
     },
     post: {
-        // maxWidth : '100%',
+        maxWidth : '100%',
         maxHeight: '100%',
+        width: 'auto',
+        height: 'auto',
+        margin: 'auto auto',
         overflow: 'hidden',
     },
     selectButton: {
@@ -71,6 +77,58 @@ const styles = theme => ({
         flexGrow: 1,
         width: 'inherit',
     },
+    commentRoot: {
+        display: 'block',
+        padding: 0,
+        'label + &': {
+            marginTop : theme.spacing.unit * 3,
+        },
+    },
+    commentInput : {
+        borderRadius: 4,
+        backgroundColor: theme.palette.common.white,
+        border: '1px solid #ced4da',
+        fontSize: 16,
+        padding: '10px 12px',
+        width: 'calc(100% - 48px),',
+        transition: theme.transitions.create(['border-color', 'box-shadow']),
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+        '&:focus': {
+            borderColor: '#80bdff',
+            boxShadow: '0 0 0 0.2rem rgba(0, 123,255, .25)',
+        },
+    },
+    commentFormLabel: {
+        fontSize: 18,
+    },
+    commentButtonWrapper: {
+        display: 'block',
+        width: 'inherit',
+        // justifyContent: 'right',
+        margin: `0 ${theme.spacing.unit}px`,
+    },
+    commentButton : {
+        display: 'block',
+        float: 'right',
+    },
+    wrapper: {
+        display: 'block',
+        flexGrow: 1,
+    },
+    bottomBorder: {
+        borderBottom: '1px solid rgba(225,225,225,0.36)',
+    },
 });
 
 class Specify extends Component {
@@ -88,6 +146,7 @@ class Specify extends Component {
             price: 0,
             date: null,
             quantity: 0,
+            edit: false,
         };
     }
 
@@ -226,9 +285,23 @@ class Specify extends Component {
         });
     };
 
+    openComment = () => {
+        const {edit} = this.state;
+        this.setState({
+            edit: !edit
+        });
+    };
+
     render() {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
+
+        const fakeComment = [
+            {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm'},
+            {id: 2, ownerId: 2030, ownername: 'July', content: 'Rhythm of The Rain'},
+            {id: 3, ownerId: 5032, ownername: 'August', content: 'My Love'},
+            {id: 4, ownerId: 10299, ownername: 'October', content: 'Wicked wonderland'},
+        ];
 
         console.log(detail);
         return (
@@ -245,21 +318,22 @@ class Specify extends Component {
                                     <img src={detail.image} alt={detail.title} className={classes.post}/>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={9} className={classes.content}>
+                        </Grid>
+                        <Grid item xs={6} className={classes.content}>
+                            <div>
+                                <Typography variant='title' component='h2' gutterBottom color='primary'>
+                                    {detail.title}
+                                </Typography>
+                                <Typography variant='subheading' component='h3' gutterBottom color='textSecondary'>
+                                    {detail.city}{' | '}{detail.venue}
+                                </Typography>
+                                <Typography variant='subheading' component='h3' gutterBottom color='secondary'>
+                                    {'日期 '}
+                                    <Typography variant='body1' component='p' color='textSecondary' className={classes.inline}>
+                                        {`${locale(detail.startDate)} - ${locale(detail.endDate)}  ${detail.time}`}
+                                    </Typography>
+                                </Typography>
                                 <div>
-                                    <Typography variant='title' component='h2' gutterBottom color='primary'>
-                                        {detail.title}
-                                    </Typography>
-                                    <Typography variant='subheading' component='h3' gutterBottom color='textSecondary'>
-                                        {detail.city}{' | '}{detail.venue}
-                                    </Typography>
-                                    <Typography variant='subheading' component='h3' gutterBottom color='secondary'>
-                                        {'日期 '}
-                                        <Typography variant='body1' component='p' color='textSecondary'
-                                                    className={classes.inline}>
-                                            {`${locale(detail.startDate)} - ${locale(detail.endDate)}  ${detail.time}`}
-                                        </Typography>
-                                    </Typography>
                                     <div>
                                         <Typography component='h3' variant='subheading' color='primary'
                                                     className={classes.inline}>{'演出时间: '}</Typography>
@@ -331,15 +405,67 @@ class Specify extends Component {
                                         </Button>
                                     </div>
                                 </div>
-                            </Grid>
+                            </div>
                         </Grid>
-                        <Grid item xs={12} className={classes.grid}>
-                            <Grid item xs={8} className={classes.content}>
-                                <Typography variant='title' component='h2' color='primary'>{'注意事项'}</Typography>
-                            </Grid>
+                        <Grid item xs={3} className={classes.grid}>
+                            <Typography variant='subheading' component='h3'>{'票务系统信息'}</Typography>
                         </Grid>
                     </Grid>
-                </div>
+                    <Grid item xs={12} className={classes.grid}>
+                        <Typography variant='title' component='h2'>{"详细介绍"}</Typography>
+                        <Typography variant='body1' component='p'>{detail.intro}</Typography>
+                    </Grid>
+                    {
+                        /*
+                         * Comment Section
+                         */
+                    }
+                    <Grid item xs={12} className={classes.grid}>
+                        <Typography variant='title' component='h2' color='primary' gutterBottom>{"评论区"}</Typography>
+                    </Grid>
+                    <Grid item xs={9} className={classes.grid}>
+                        <TextField label="发表评论" id="comment-input" fullWidth InputProps={{
+                            disableUnderline: true,
+                            classes: {
+                                root: classes.commentRoot,
+                                input: classes.commentInput,
+                            },
+                        }}
+                                   InputLabelProps={{ shrink: true, className: classes.commentFormLabel}}
+                                   multiline rowsMax={6} rows={3} placeholder={"说些什么吧..."}
+                        />
+                    </Grid>
+                    <Grid item xs={12} className={classes.grid}>
+                        <Grid item xs={8} className={classes.grid}>
+                        </Grid>
+                        <Grid item xs={1} className={classes.grid}>
+                            <div className={classes.commentButtonWrapper}>
+                                <Button className={classes.commentButton} variant='fab' color='secondary' onClick={this.openComment}>
+                                    <CommentPlusOutline/>
+                                </Button>
+                            </div>
+                        </Grid>
+                    </Grid>
+                    {fakeComment.map(s => (
+                        <Grid key={s.id} item xs={11} md={7} className={classes.grid}>
+                            <Grid item xs={1} md={1} className={classes.bottomBorder}>
+                                <Typography variant='body1' component='p' className={classes.inline}>{s.ownername}</Typography>
+                            </Grid>
+                            <Grid item xs={10} md={8} className={classes.bottomBorder}>
+                                <div>
+                                    <div>
+                                        <Typography variant='body1' component='p'>{s.content}</Typography>
+                                    </div>
+                                    <div className={classes.commentButtonWrapper}>
+                                        <IconButton aria-label="ViewCommentAndReply" className={classes.commentButton}>
+                                            <CommentTextOutline/>
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            </Grid>
+                        </Grid>
+                    ))}
+            </div>
         )
     }
 }

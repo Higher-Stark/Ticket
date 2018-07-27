@@ -167,7 +167,7 @@ class Wallet extends Component {
                         {"账户余额: "}
                     </Typography>
                     <Typography variant='subheading' component='h3' color='secondary' className={classes.inline}>
-                        {this.state.balance}
+                        ￥{this.state.balance}
                     </Typography>
                     </div>
                     <Button variant='contained' color='primary' onClick={this.toggleClick}>

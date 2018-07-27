@@ -651,12 +651,6 @@ class User extends Component {
                                     <Typography className={classes.inline} variant="subheading" component="h3"
                                                 color="default">{user.email}</Typography>
                                 </div>
-                                <div className={classes.block} key="account">
-                                    <Typography variant='title' className={classes.label}
-                                                color='primary'>{"账户余额: "}</Typography>
-                                    <Typography className={classes.inline} variant="subheading" component="h3"
-                                                color="default">￥{user.account}</Typography>
-                                </div>
                                 {
                                     keys.map(s => (
                                         infoItem(s, user[s])

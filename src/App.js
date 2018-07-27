@@ -10,8 +10,6 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
 import black from './pic/black.jpeg'
-import coverColor from './pic/coverColor.png'
-import coverBlack from './pic/coverBlack.png'
 
 const theme = createMuiTheme({
     typography: {
@@ -59,6 +57,7 @@ const theme = createMuiTheme({
         accent: lime.A100,
         accent2: lime.A200,
         optional: '#FFC107',
+
     },
     shadow: [
         '#f5f5f5',
@@ -135,8 +134,8 @@ class App extends Component {
         const Welcome = (
             <div id="background" className='background' onClick={this.cancelFlash}>
                 <img className="active" src={black} alt={''}/>
-                <img src={coverBlack}  alt={''}/>
-                <img src={coverColor}  alt={''}/>
+                <img src={"https://images.unsplash.com/photo-1532604681419-9be438708684?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8e0d2432f51467a4c6c402cb78d15265&auto=format&fit=crop&w=1466&q=80"}  alt={''}/>
+                <img src={"https://images.unsplash.com/photo-1532604681419-9be438708684?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8e0d2432f51467a4c6c402cb78d15265&auto=format&fit=crop&w=1466&q=80"}  alt={''}/>
 
                 <div className="content">
                     <h2 className="greeting-word">Fashion passes,</h2>

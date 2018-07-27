@@ -212,6 +212,7 @@ const styles = theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
     },
     table: {
         minWidth: 1020,
@@ -451,7 +452,7 @@ class Cart extends React.Component {
             if(this.state.dirties[k])
                 this.handleNumberEdit(token,this.state.data[k].id,k);
         }
-        window.location.href = "/orderconfirm";
+        this.props.history.push("/orderconfirm");
     };
 
     handleChangeRowsPerPage = event => {
@@ -576,20 +577,20 @@ class Cart extends React.Component {
                                             </TableCell>
                                             <TableCell className={classes.info} component="th" scope="row"
                                                        padding="none" onClick={() => this.detail(n.ticketId)}>
-                                                <Grid container spacing={8} className={classes.root} key={n.id}>
+                                                <Grid container spacing={8} key={n.id}>
                                                     <Grid item xs={6}>
                                                         <img src={n.image} className={classes.image}
                                                              alt={n.title}/>
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <Typography variant='title' component='h2' color='primary'
+                                                        <Typography variant='subheading' component='h3' color='primary'
                                                                     className={classes.title}>
                                                             {`[${n.title}]`}
                                                         </Typography>
-                                                        <Typography variant='subheading' color='secondary'>
+                                                        <Typography variant='caption' gutterBottom>
                                                             {n.city}{' '}{n.venue}
                                                         </Typography>
-                                                        <Typography variant='subheading' color='inherit'>
+                                                        <Typography variant='caption' color='inherit' gutterBottom>
                                                             {n.date}
                                                         </Typography>
                                                     </Grid>

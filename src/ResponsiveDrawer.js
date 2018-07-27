@@ -42,6 +42,7 @@ import Homepage from './Homepage';
 import Category from './page/Category';
 import Search from './page/Search';
 import Specify from './com/Specify';
+import Wallet from './page/Wallet';
 import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import Comments from './page/Comments';
@@ -109,7 +110,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundAttachment: 'fixed',
-        background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
+        background: 'url(https://images.unsplash.com/photo-1532528457466-cdf44fdc0312?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=b6d164661ebb899e537c052f4869fbe3&auto=format&fit=crop&w=2022&q=80)',
         padding: theme.spacing.unit,
     },
     avatar: {
@@ -294,11 +295,11 @@ class ResponsiveDrawer extends Component {
                     <ListItemIcon><img src={Vocal} alt='vocal' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Vocal Concert'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/dance'>
+                <ListItem button component={NavLink} to='/category/dancing'>
                     <ListItemIcon><img src={Ballet} alt='dance' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Dance'/>
                 </ListItem>
-                <ListItem button component={NavLink} to='/category/parent'>
+                <ListItem button component={NavLink} to='/category/parenting'>
                     <ListItemIcon><img src={Parent} alt='parent' style={listStyles.svg}/></ListItemIcon>
                     <ListItemText inset primary='Parent-child'/>
                 </ListItem>
@@ -410,9 +411,9 @@ class ResponsiveDrawer extends Component {
                     <Route path='/activated/:uuid' component={Activated}/>
                     <Route path='/signin' component={LoginWrapper}/>
                     <Route path='/user/account' component={this.state.user === null ? redirectTo : User }/>
+                    <Route path='/user/wallet' component={this.state.user === null ? redirectTo : Wallet }/>
                     {
                         /*
-                    <Route path='/user/wallet' component={this.state.user === null ? redirectTo : User }/>
                     <Route path='/user/orders' component={this.state.user === null ? redirectTo : User }/>
                          */
                     }

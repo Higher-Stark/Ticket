@@ -110,7 +110,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundAttachment: 'fixed',
-        background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
+        background: 'url(https://images.unsplash.com/photo-1532528457466-cdf44fdc0312?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=b6d164661ebb899e537c052f4869fbe3&auto=format&fit=crop&w=2022&q=80)',
         padding: theme.spacing.unit,
     },
     avatar: {

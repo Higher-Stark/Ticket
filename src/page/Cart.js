@@ -212,6 +212,7 @@ const styles = theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
     },
     table: {
         minWidth: 1020,

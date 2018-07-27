@@ -4,9 +4,6 @@ import classNames from 'classnames';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import CalendarToday from 'mdi-material-ui/CalendarToday';
@@ -123,6 +120,7 @@ const ActivityWithStyle = withStyles(itemStyles)(ActivityItem);
 const styles = theme => ({
     root: {
         display: 'flex',
+
     },
     category: {
         display: 'inline-block',
@@ -135,12 +133,14 @@ const styles = theme => ({
         '&:hover': {
             background: indigo[400],
         },
+
     },
     selected: {
         background: blue[500],
     },
     nonselected: {
         background: blue[100],
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
     },
     content: {
         display: 'flex',
@@ -189,7 +189,7 @@ class Search extends Component {
             .catch(e => console.log(e));
 
         this.setState({
-            search:this.props.match.params.search,
+            search: this.props.match.params.search,
             page: 1,
         });
     }
@@ -260,7 +260,7 @@ class Search extends Component {
 
     render() {
         const {classes} = this.props;
-        const {value, selected, page, data} = this.state;
+        const {selected, page, data} = this.state;
 
         return (
             <div>
@@ -306,13 +306,13 @@ class Search extends Component {
                     <Divider/>
                 </Grid>
                 <div>
-                    <AppBar position='static'>
+                    {/*<AppBar position='static'>
                         <Tabs value={value} onChange={this.handleChange}>
                             <Tab label={'By Relevance'}/>
                             <Tab label={'By heat'}/>
                             <Tab label={'By Date'}/>
                         </Tabs>
-                    </AppBar>
+                    </AppBar>*/}
                     <ActivityWithStyle data={data} history={this.props.history}/>
                 </div>
                 <div>

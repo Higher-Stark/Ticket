@@ -583,14 +583,14 @@ class Cart extends React.Component {
                                                              alt={n.title}/>
                                                     </Grid>
                                                     <Grid item xs={6}>
-                                                        <Typography variant='title' component='h2' color='primary'
+                                                        <Typography variant='subheading' component='h3' color='primary'
                                                                     className={classes.title}>
                                                             {`[${n.title}]`}
                                                         </Typography>
-                                                        <Typography variant='subheading' color='secondary'>
+                                                        <Typography variant='caption' gutterBottom>
                                                             {n.city}{' '}{n.venue}
                                                         </Typography>
-                                                        <Typography variant='subheading' color='inherit'>
+                                                        <Typography variant='caption' color='inherit' gutterBottom>
                                                             {n.date}
                                                         </Typography>
                                                     </Grid>

@@ -212,6 +212,7 @@ const styles = theme => ({
     root: {
         width: '100%',
         marginTop: theme.spacing.unit * 3,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
     },
     table: {
         minWidth: 1020,
@@ -576,7 +577,7 @@ class Cart extends React.Component {
                                             </TableCell>
                                             <TableCell className={classes.info} component="th" scope="row"
                                                        padding="none" onClick={() => this.detail(n.ticketId)}>
-                                                <Grid container spacing={8} className={classes.root} key={n.id}>
+                                                <Grid container spacing={8} key={n.id}>
                                                     <Grid item xs={6}>
                                                         <img src={n.image} className={classes.image}
                                                              alt={n.title}/>

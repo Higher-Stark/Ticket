@@ -446,7 +446,7 @@ class User extends Component {
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username",  "email", 'address'];
+        let filter = ["avatar", "id", "username", 'account', "email", 'address'];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);

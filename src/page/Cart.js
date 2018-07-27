@@ -451,7 +451,7 @@ class Cart extends React.Component {
             if(this.state.dirties[k])
                 this.handleNumberEdit(token,this.state.data[k].id,k);
         }
-        window.location.href = "/orderconfirm";
+        this.props.history.push("/orderconfirm");
     };
 
     handleChangeRowsPerPage = event => {

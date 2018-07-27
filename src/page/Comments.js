@@ -174,7 +174,7 @@ class Comments extends Component {
 
     componentWillReceiveProps=(nextProps, nextContext) =>{
         const {search} = nextProps.location;
-        const {id, type} = this.parseIdAndType(search);
+        //const {id, type} = this.parseIdAndType(search);
     }
 
     parseIdAndType=(search) =>{
@@ -199,7 +199,6 @@ class Comments extends Component {
         });
         console.log(id, type);
         this.setState({
-            content: "",
             replyid: id,
             replyType: type,
         })
@@ -251,6 +250,7 @@ class Comments extends Component {
         console.log("hhleo");
         console.log(replyType);
         console.log(pagenumber);
+        console.log(id)
         if(replyType == null){
             let s = `parentid=${id}&type=toComment&pagenumber=${pagenumber}`;
             fetch(`http://pipipan.cn:30010/Reply/QueryByParentId`,{
@@ -266,6 +266,8 @@ class Comments extends Component {
                     return response.json();
                 })
                 .then(data => {
+                    console.log("in fetch child")
+                    console.log(data)
                     this.setState({
                         replies : data.content
                     })
@@ -287,7 +289,7 @@ class Comments extends Component {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(this.replies)
+                    console.log(this.state.replies)
                     this.setState({
                         replies : data.content
                     })
@@ -318,6 +320,8 @@ class Comments extends Component {
         console.log(this.state.type)
         if(this.state.type === "Comment"){
             replyType = "toComment";
+            console.log("id "+this.state.replyid)
+            console.log("content "+this.state.content)
             let s = `token=${token}&commentid=${this.state.replyid}&content=${this.state.content}`;
             fetch('http://pipipan.cn:30010/Reply/AddToComment',{
                 method:'POST',
@@ -332,6 +336,8 @@ class Comments extends Component {
                     return response.text();
                 })
                 .then(text=>{
+                    console.log(text)
+                    console.log("23123123123")
                     alert("评论成功")
                 })
 

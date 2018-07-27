@@ -298,8 +298,12 @@ class Specify extends Component {
         });
     };
 
-    viewCommentAndReply = (id) => {
+    viewCommentAndReply = (id, type) => {
         console.log("View Comment and Replay of Comment/Reply id= " + id);
+        this.props.history.push({
+            pathname: '/comments',
+            search: `?id=${id}`,
+        })
     };
 
     render() {

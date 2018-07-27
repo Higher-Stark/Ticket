@@ -130,6 +130,10 @@ const styles = theme => ({
     },
 });
 
+function createCommentData(id, ownerId, ownername, content, createDate) {
+    return {id, ownerId, ownername, content, createDate};
+}
+
 class Specify extends Component {
     url = {
         detail: 'http://pipipan.cn:30005/Ticket/QueryById',
@@ -147,6 +151,7 @@ class Specify extends Component {
             quantity: 0,
             edit: false,
             content: null,
+            comments: []
         };
     }
 
@@ -163,8 +168,49 @@ class Specify extends Component {
                 }
                 else throw Error("Get detail failed");
             })
-            .then(data => this.setState({detail: data}))
+            .then(data => {
+                this.setState({detail: data});
+                /* 拿票的评论 */
+                this.fetchCommentToTicket(1)
+            })
             .catch(e => console.log(e));
+    }
+
+    fetchCommentToTicket = (pagenumber) =>{
+        console.log("in fetch comment "+this.state.detail.id)
+        let s = `ticketid=${this.state.detail.id}&pagenumber=${pagenumber}`;
+        fetch("http://pipipan.cn:30010/Comment/QueryByTicketid",{
+            method:'POST',
+            body:s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.json();
+            })
+            .then(data =>{
+                console.log(data);
+                if(data.totalElements === 0){
+                    this.setState({
+                        comments : []
+                    })
+                }
+                else{
+                    let content = data.content;
+                    let tmpArray = [];
+                    for(var i = 0 ; i < content.length ; i++){
+                        tmpArray.push(createCommentData(content[i].id,content[i].owenerId,content[i].ownername,content[i].content,content[i].createTime))
+                    }
+                    this.setState({
+                        comments : tmpArray
+                    })
+                    console.log(this.state.comments)
+                }
+            });
+
     }
 
     selectPrice = (selectedPrice) => {
@@ -286,10 +332,44 @@ class Specify extends Component {
     };
 
     openComment = () => {
+        console.log("in open comment");
+        console.log(this.state.content)
+        if(this.state.content==null||this.state.content.length === 0){
+            alert("评论为空，无法保存")
+            return;
+        }
         const {edit} = this.state;
         this.setState({
             edit: !edit
         });
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        if(user == null || user.length === 0){
+            alert("请先登录");
+            this.props.history.push({
+                pathname:'/signin'
+            })
+        }
+        console.log(this.state.detail)
+        let token = JSON.parse(user).token;
+        let s = `token=${token}&ticketid=${this.state.detail.id}&content=${this.state.content}`;
+
+        fetch('http://pipipan.cn:30010/Comment/Add',{
+            method:'POST',
+            body:s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text =>{
+                console.log(text);
+                alert("评论成功");
+            });
     };
 
     editComment = (e) => {
@@ -305,13 +385,6 @@ class Specify extends Component {
     render() {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
-
-        const fakeComment = [
-            {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm', createDate: '2017-08-04'},
-            {id: 2, ownerId: 2030, ownername: 'July', content: 'Rhythm of The Rain', createDate: '2016-05-09'},
-            {id: 3, ownerId: 5032, ownername: 'August', content: 'My Love', createDate: '2018-05-03'},
-            {id: 4, ownerId: 10299, ownername: 'October', content: 'Wicked wonderland', createDate: '2017-05-04'},
-        ];
 
         return (
             detail === null ? (
@@ -456,7 +529,7 @@ class Specify extends Component {
                             </div>
                         </Grid>
                     </Grid>
-                    {fakeComment.map(s => (
+                    {this.state.comments.length===0?(<div><h3>暂无评论</h3></div>):this.state.comments.map(s => (
                         <Grid key={s.id} item xs={12} md={8} className={classes.grid}>
                             <Grid item xs={2} md={2} className={classes.bottomBorder}>
                                 <Typography variant='subheading' component='h3' className={classes.inline}>{s.ownername}</Typography>

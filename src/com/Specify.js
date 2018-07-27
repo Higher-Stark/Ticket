@@ -502,8 +502,10 @@ class Specify extends Component {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>
-                        <Typography variant='title' component='h2'>{"详细介绍"}</Typography>
-                        <Typography variant='body1' component='p'>{detail.intro}</Typography>
+                            <Typography variant='title' component='h2'>{"详细介绍"}</Typography>
+                    </Grid>
+                    <Grid item xs={12} className={classes.grid}>
+                        <Typography variant='body1' component='p' gutterBottom>{detail.intro}</Typography>
                     </Grid>
                     {
                         /*

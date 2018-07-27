@@ -155,7 +155,7 @@ class User extends Component {
         const detailAddr = decomposeAddr(this.state.user.address);
         let cities = null;
         let districts = null;
-        console.log(detailAddr);
+        //console.log(detailAddr);
         if (detailAddr.province) cities = getCities(detailAddr.province);
         if (detailAddr.city) districts = getDistricts(detailAddr.province, detailAddr.city);
         this.setState({
@@ -193,7 +193,7 @@ class User extends Component {
             body: urlEncode(body),
         }).then(response => {
             let headers = response.headers;
-            console.log(headers.get("errornum"));
+            //console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
                 case '0' :
                     return response.json();
@@ -209,7 +209,16 @@ class User extends Component {
             }
         })
             .then(data => {
-                this.setState({user: data});
+                let newData=data;
+                if(newData.phone===null)
+                    newData.phone='';
+                if(newData.nickName===null)
+                    newData.nickName='';
+                if(newData.account===null)
+                    newData.account=0;
+                if(newData.address===null)
+                    newData.address='';
+                this.setState({user: newData});
             })
             .catch(e => {
                 alert(e.message);
@@ -276,7 +285,16 @@ class User extends Component {
             }
         })
             .then(data => {
-                that.setState({user: data});
+                let newData=data;
+                if(newData.phone===null)
+                    newData.phone='';
+                if(newData.nickName===null)
+                    newData.nickName='';
+                if(newData.account===null)
+                    newData.account=0;
+                if(newData.address===null)
+                    newData.address='';
+                that.setState({user: newData});
             })
             .catch(e => {
                 alert(e.message);
@@ -310,7 +328,16 @@ class User extends Component {
             }
         })
             .then(data => {
-                this.setState({user: data});
+                let newData=data;
+                if(newData.phone===null)
+                    newData.phone='';
+                if(newData.nickName===null)
+                    newData.nickName='';
+                if(newData.account===null)
+                    newData.account=0;
+                if(newData.address===null)
+                    newData.address='';
+                this.setState({user: newData});
             })
             .catch(e => {
                 if (e instanceof SyntaxError) {

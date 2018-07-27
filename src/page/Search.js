@@ -29,35 +29,25 @@ const itemStyles = theme => ({
         display: 'flex',
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: '4px',
+        overflow: 'fade',
     },
     title: {
         margin: theme.spacing.unit,
     },
     image: {
-        /*
-        [theme.breakpoints.down('sm')]:{
-            maxWidth: 60,
-        },
-        [theme.breakpoints.up('sm')]: {
-            maxWidth: 240,
-        },
-        [theme.breakpoints.down('sm')]: {
-            maxHeight: 120,
-        },
-        [theme.breakpoints.up('sm')]: {
-            maxHeight: 320,
-        },
-        */
         maxHeight: '100%',
         maxWidth: '100%',
-        padding: 'auto auto',
+        width: 'auto',
+        height: 'auto',
+        margin: 'auto auto',
+        // padding: 'auto auto',
     },
     pic: {
         display: 'flex',
+        overflow: 'fade',
         width: 'inherit',
         height: 'inherit',
         padding: theme.spacing.unit,
-        overflow: 'hidden',
         justifyContent: 'right',
         alignItems: 'center',
     }
@@ -133,7 +123,7 @@ const styles = theme => ({
         flexGrow: 1,
         margin: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
         '&:hover': {
-            background: indigo[400],
+            background: indigo[200],
         },
     },
     selected: {
@@ -145,8 +135,9 @@ const styles = theme => ({
     content: {
         display: 'flex',
     },
-    appBar: {
-        marginBottom: theme.spacing.unit,
+    pageBar: {
+        display: 'flex',
+        justifyContent: 'center',
     },
 });
 
@@ -267,8 +258,8 @@ class Search extends Component {
                 <Grid container spacing={8} className={classes.root}>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3' color='error'>
-                                {'City'}
+                            <Typography variant='headline' component='h3' color='textSecondary'>
+                                {'城市'}
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>
@@ -286,7 +277,7 @@ class Search extends Component {
                     <Divider/>
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
-                            <Typography variant='headline' component='h3' color='error'>
+                            <Typography variant='headline' component='h3' color='textSecondary'>
                                 {'类别'}
                             </Typography>
                         </Grid>
@@ -315,7 +306,7 @@ class Search extends Component {
                     </AppBar>
                     <ActivityWithStyle data={data} history={this.props.history}/>
                 </div>
-                <div>
+                <div className={classes.pageBar}>
                     <PageBar current={page} max={this.state.totalPages} goto={this.viewPage}/>
                 </div>
             </div>

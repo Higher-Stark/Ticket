@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Modal from '@material-ui/core/Modal';
+import Recharge from '../pic/recharge.jpg';
 
 const styles = theme => ({
     root: {
@@ -125,11 +126,11 @@ class Wallet extends Component {
                            >
                         <div style={{ top: '50%', left: '50%', transform: "translate(-50%, -50%)"}} className={classes.paper}>
                             <div className={classes.block}>
-                                <img src="http://hbimg.b0.upaiyun.com/c35adcb0a1d45e9d540945a5b340c9581162944f9a7e-S4MUlk_fw658" alt="收款码" className={classes.image}/>
+                                <img src={Recharge} alt="收款码" className={classes.image}/>
                             </div>
                             <TextField value={this.state.recharge} onChange={this.handleChange}
                                        label={"充值"} id="recharge" placeholder={"充值金额"}
-                                       type='number' fullWidth className={classes.block}
+                                       type='number' className={classes.block}
                                        />
                             <Button variant='contained' color='primary' disableRipple className={classes.button} onClick={this.recharge}>
                                 {"充值"}

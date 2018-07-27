@@ -42,6 +42,10 @@ const styles = theme => ({
     card: {
         flexGrow: 1,
     },
+    pageBar: {
+        display: 'flex',
+        justifyContent: 'center',
+    },
     loading: {
         display: 'block',
         position: 'relative',
@@ -57,79 +61,86 @@ const styles = theme => ({
 
 class Category extends Component {
     url = "http://pipipan.cn:30005/Ticket/QueryByTypePage";
+    totalPages = 0;
+    data = null;
 
     constructor(props) {
         super(props);
         this.state ={
-            totalPages : 0,
-            data: null,
-            category: null,
+            loading: true,
             page: 1,
         }
     }
 
     componentWillMount() {
         const {match} = this.props;
-        const category = match.params.category;
+        const {category} = match.params;
         const {page} = this.state;
         fetch(this.url + `?pagenumber=${page}&type=${category}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
-                if (data === null) throw Error("Response error!");
+                if (!data) throw Error("Response Error");
+                this.data = data.content;
+                this.totalPages = data.totalPages;
                 this.setState({
-                    data: data.content,
-                    totalPages:data.totalPages
-                });
-
+                    loading: false,
+                })
             })
             .catch(e => console.log(e));
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        const {match} = nextProps;
-        const category = match.params.category;
-        const {page} = this.state;
-        fetch(this.url + `?pagenumber=${page}&type=${category}`)
-            .then(response => response.status === 200 ? response.json() : null)
-            .then(data => {
-                if (data === null) throw Error("Response error!");
-                this.setState({
-                    data: data.content,
-                    totalPages:data.totalPages
-                });
-            })
-            .catch(e => console.log(e));
-        this.setState({
-            category: match.params.category,
-            page: 1,
-        });
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        const {match} = this.props;
+        let preCategory = match.params.category;
+        let nextCategory = nextProps.match.params.category;
+        if (nextCategory !== preCategory) {
+            return true;
+        }
+        return this.state !== nextState;
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.match.params.category !== this.props.match.params.category) {
+            const {category} = this.props.match.params;
+            const page = 1;
+            fetch(this.url + `?pagenumber=${page}&type=${category}`)
+                .then(response => response.status === 200 ? response.json() : null)
+                .then(data => {
+                    if (!data) throw Error("Response Error!");
+                    this.data = data.content;
+                    this.totalPages = data.totalPages;
+                    this.setState({
+                        loading: false,
+                        page: page,
+                    })
+                })
+                .catch(e => console.log(e));
+        }
     }
 
     viewPage = (idx) => {
         const category = this.props.match.params.category;
+        this.setState({loading: true});
         fetch(this.url + `?pagenumber=${idx}&type=${category}`)
             .then(response => response.status === 200 ? response.json() : null)
             .then(data => {
                 if( data === null ) throw Error("Response error");
+                this.data = data.content;
+                this.totalPages = data.totalPages;
                 this.setState({
-                    data : data.content,
                     page: idx,
-                    totalPages:data.totalPages
+                    loading: false,
                 });
             })
             .catch(e => console.log(e));
     };
 
-    detail = (id) => {
-        this.props.history.push("/detail/"+id)
-    };
-
     render() {
         const {classes} = this.props;
-        const {data, page} = this.state;
+        const {page, loading} = this.state;
 
         return (
-            data === null ? (
+            loading ? (
                 <div className={classes.loading}>
                     <CircularProgress size={58} className={classes.fabProgress} />
                 </div>
@@ -137,13 +148,13 @@ class Category extends Component {
                 <div className={classes.root}>
                     <div className={classes.content}>
                         <div className={classes.cards}>
-                            {data.map((x, i) => {
-                                return (<Activity card={x} key={i} className={classes.card} onClick={() => this.detail(i)}/>)
+                            {this.data.map((x, i) => {
+                                return (<Activity card={x} key={i} className={classes.card} />)
                             })}
                         </div>
                     </div>
-                    <div>
-                        <PageBar current={page} max={this.state.totalPages} goto={this.viewPage} />
+                    <div className={classes.content}>
+                        <PageBar current={page} max={this.totalPages} goto={this.viewPage} />
                     </div>
                 </div>
         );

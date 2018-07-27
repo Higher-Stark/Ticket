@@ -21,16 +21,16 @@ const styles = theme => ({
         display: 'inline-block',
         margin: theme.spacing.unit,
         '&:hover': {
-            background: '#9575CD',
+            background: 'rgba(240,240,240,0.4)',
         },
         '&:active': {
-            color: '#FF1744',
+            color: 'rgba(240,240,240,0.8)',
         },
     },
     active: {
         display: 'inline-block',
         margin: theme.spacing.unit,
-        background: '#FF1744',
+        background: 'rgba(240,240,240,0.8)',
     },
     numbers: {
         display: 'inline-block',
@@ -69,10 +69,11 @@ class PageBar extends Component {
         const {classes, max, current, goto} = this.props;
         const array = this.sequence(current, max);
 
+        if (max === 0) return null;
         return (
             <div className={classes.root}>
                 <div className={classes.icon}>
-                    <IconButton color='primary' onClick={() => goto(current - 1)} disabled={current === 1}>
+                    <IconButton color='primary' onClick={() => goto(current - 1)} disabled={current === 1} className={classes.digit}>
                         <ChevronLeft/>
                     </IconButton>
                 </div>
@@ -97,7 +98,7 @@ class PageBar extends Component {
                     }
                 </div>
                 <div className={classes.icon}>
-                    <IconButton color='primary' onClick={() => goto(current + 1)} disabled={current === max}>
+                    <IconButton color='primary' onClick={() => goto(current + 1)} disabled={current === max} className={classes.digit}>
                         <ChevronRight/>
                     </IconButton>
                 </div>

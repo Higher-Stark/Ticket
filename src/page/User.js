@@ -446,7 +446,7 @@ class User extends Component {
     };
 
     filterKeys = (keys) => {
-        let filter = ["avatar", "id", "username",  "email", 'address'];
+        let filter = ["avatar", "id", "username", 'account', "email", 'address'];
         filter.forEach(s => {
             let idx = keys.indexOf(s);
             keys.splice(idx, 1);
@@ -650,6 +650,12 @@ class User extends Component {
                                                 color='primary'>{"邮箱: "}</Typography>
                                     <Typography className={classes.inline} variant="subheading" component="h3"
                                                 color="default">{user.email}</Typography>
+                                </div>
+                                <div className={classes.block} key="account">
+                                    <Typography variant='title' className={classes.label}
+                                                color='primary'>{"账户余额: "}</Typography>
+                                    <Typography className={classes.inline} variant="subheading" component="h3"
+                                                color="default">￥{user.account}</Typography>
                                 </div>
                                 {
                                     keys.map(s => (

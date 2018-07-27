@@ -268,7 +268,7 @@ class Search extends Component {
                     <Grid item xs={12} className={classes.root}>
                         <Grid item xs={1} className={classes.category}>
                             <Typography variant='headline' component='h3' color='error'>
-                                {'City'}
+                                {'城市'}
                             </Typography>
                         </Grid>
                         <Grid item xs={11} className={classes.category}>

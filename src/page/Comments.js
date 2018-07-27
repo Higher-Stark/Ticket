@@ -118,66 +118,66 @@ class Comments extends Component {
         super(props);
         this.state = {
             replyid: null,
+            replyType: "",
+            type: "",
+            comment : {},
+            replies : [],
+            content : ""
         }
     }
 
     componentWillMount() {
+        this.setState({
+            content:""
+        });
         const {location} = this.props;
         const {search} = location;
-        console.log(search);
+        /* parse id */
         let id = null;
         let idx = search.indexOf('id');
         let idx2 = search.indexOf('&', idx);
         idx2 = idx2 === -1 ? search.length : idx2;
-        id = parseInt(search.substring(idx + 2, idx2), 10);
+        id = parseInt(search.substring(idx + 3, idx2), 10);
         this.setState({
             replyid: id
         });
-        idx = search.indexOf("type");
-        idx2 = search.indexOf("&", idx);
-        idx2 = idx2 === -1 ? search.length : idx2;
-        let type = search.substring(idx + 2, idx2) || null;
-        console.log(type);
-        this.comment = {
-            id: 1093,
-            owenerId: 109,
-            ownername: "Cefalexin",
-            targetTicketId: 1000,
-            content: "Sustained-release Capsules",
-            replys: "http://www.google.com/search?q=Shyndec",
-            createTime: '2017-08-34',
-        };
-        this.replies = [
-            {
-                id: 2000,
-                ownerId: 203,
-                ownername: "intel",
-                targetUserId: 109,
-                targetTicketId: 1093,
-                targetObjectId: 1777,
-                content: 'Kabylake Caffee',
-                createTime: '2009-04-11',
-            },
-            {
-                id: 3000,
-                ownerId: 404,
-                ownername: 'not found',
-                targetTicketId: 1093,
-                targetObjectId: 1843,
-                content: 'During the BRICS Xiamen Summit held in China in September, BRICS members agreed to deepen strategic partnerships, strengthen cooperation on issues related to the economy, trade, politics, security and people-to-people exchanges, and set up the BRICS Plus platform, Xi said.',
-                createTime: '2016-03-12',
-            }
-        ]
+
+        let tmpType = null;
+        let tmpReplyType = null;
+
+        if(idx2 === search.length) // no type
+        {
+            this.setState({
+                type : "Comment"
+            });
+            tmpType = "Comment";
+        }
+        else{
+            /* parse type */
+            idx = search.indexOf("type");
+            idx2 = search.indexOf("&", idx);
+            idx2 = idx2 === -1 ? search.length : idx2;
+            let type = search.substring(idx + 5, idx2) || null;
+            this.setState({
+                type : "Reply",
+                replyType : type,
+            })
+            tmpType = "Reply"
+            tmpReplyType = type;
+        }
+
+        this.fetchParent(id,tmpType);
+        this.fetchChild(id,tmpReplyType,1);
+
         // fetch comment/reply info from backend,
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
+    componentWillReceiveProps=(nextProps, nextContext) =>{
         const {search} = nextProps.location;
         const {id, type} = this.parseIdAndType(search);
-        console.log(id, type);
     }
 
-    parseIdAndType(search) {
+    parseIdAndType=(search) =>{
         let keyIdx = 0;
         keyIdx = search.indexOf("id");
         let andIdx = 0;
@@ -195,8 +195,172 @@ class Comments extends Component {
     toggleReply = (id, type) => {
         this.props.history.push({
             pathname: '/comments',
-            search: `?id=${id}type=${type}`,
+            search: `?id=${id}&type=${type}`,
+        });
+        console.log(id, type);
+        this.setState({
+            content: "",
+            replyid: id,
+            replyType: type,
         })
+        this.fetchParent(id, "Reply");
+        this.fetchChild(id, type, 1);
+    }
+
+    fetchParent = (id,type)=>{
+        if(type === "Comment"){
+            fetch(`http://pipipan.cn:30010/Comment/QueryByCommentid?commentid=${id}`,{
+                method: 'GET',
+                credentials: "include",
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    else throw Error("Get detail failed");
+                })
+                .then(data => {
+                    this.setState({
+                        comment:data,
+                    });
+                })
+                .catch(e => console.log(e));
+        }
+        else if(type === "Reply"){
+            fetch(`http://pipipan.cn:30010/Reply/QueryExactByReplyId?replyid=${id}`,{
+                method: 'GET',
+                    credentials: "include",
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else throw Error("Get detail failed");
+            })
+                .then(data => {
+                    this.setState({
+                        comment:data,
+                    });
+                })
+                .catch(e => console.log(e));
+        }
+
+    };
+
+    fetchChild=(id,replyType,pagenumber)=>{
+        console.log("hhleo");
+        console.log(replyType);
+        console.log(pagenumber);
+        if(replyType == null){
+            let s = `parentid=${id}&type=toComment&pagenumber=${pagenumber}`;
+            fetch(`http://pipipan.cn:30010/Reply/QueryByParentId`,{
+                method:'POST',
+                body:s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.json();
+                })
+                .then(data => {
+                    this.setState({
+                        replies : data.content
+                    })
+                })
+        }
+        else {
+            console.log("in id "+id);
+            let s = `parentid=${id}&type=toReply&pagenumber=${pagenumber}`;
+            fetch(`http://pipipan.cn:30010/Reply/QueryByParentId`,{
+                method:'POST',
+                body:s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(this.replies)
+                    this.setState({
+                        replies : data.content
+                    })
+                })
+        }
+    };
+
+    saveReply=()=>{
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        if(user == null || user.length == 0)
+        {
+            alert("若要评论 请先登录")
+            this.props.history.push({
+                pathname:'/signin'
+            })
+            return;
+        }
+        let token = JSON.parse(user).token;
+
+        if(this.state.content == null||this.state.content.length===0){
+            alert("不能回复空内容")
+            return;
+        }
+
+        let replyType = null;
+        console.log("in save ")
+        console.log(this.state.type)
+        if(this.state.type === "Comment"){
+            replyType = "toComment";
+            let s = `token=${token}&commentid=${this.state.replyid}&content=${this.state.content}`;
+            fetch('http://pipipan.cn:30010/Reply/AddToComment',{
+                method:'POST',
+                body:s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                })
+                .then(text=>{
+                    alert("评论成功")
+                })
+
+        }
+        else{
+            replyType = "toReply";
+            let s = `token=${token}&replyid=${this.state.replyid}&content=${this.state.content}`;
+            fetch('http://pipipan.cn:30010/Reply/AddToReply',{
+                method:'POST',
+                body:s,
+                headers: new Headers({
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }),
+                credentials: "include"
+            })
+                .then(response => {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                })
+                .then(text=>{
+                    alert("评论成功")
+                })
+        }
+    };
+
+    editComment = (e) => {
+        this.setState({
+            content: e.target.value,
+        });
     };
 
     render() {
@@ -211,17 +375,17 @@ class Comments extends Component {
                         >
                             <div className={classes.user}>
                                 <Typography variant='subheading' component='h3' gutterBottom color='primary'>
-                                    {this.comment.ownername}
+                                    {this.state.comment==null?"":this.state.comment.ownername}
                                 </Typography>
                                 <Typography variant='caption' color='textSecondary'>
-                                    {this.comment.createTime}
+                                    {this.state.comment==null?"":this.state.comment.createTime}
                                 </Typography>
                             </div>
                         </Grid>
                         <Grid item xs={9} md={6} className={classNames(classes.grid, classes.inline, classes.bottomBorder)}>
                             <Grid item xs={12} md={12} className={classes.block}>
                                 <Typography variant='body1' component='p' gutterBottom color='default' className={classes.content}>
-                                    {this.comment.content}
+                                    {this.state.comment==null?"":this.state.comment.content}
                                 </Typography>
                             </Grid>
                             <Grid item md={5}/>
@@ -230,7 +394,8 @@ class Comments extends Component {
                     <Grid item xs={12} md={12} className={classes.grid}>
                         <Grid item xs={12} md={6}>
                             <TextField multiline fullWidth rows={3} rowsMax={6}
-                                       placeholder={`回复${this.comment.ownername}`}
+                                       placeholder={`回复${this.state.comment==null?"":this.state.comment.ownername}`}
+                                       value={this.state.content} onChange={this.editComment}
                                        InputProps={{
                                            disableUnderline: true,
                                            classes: {
@@ -250,13 +415,13 @@ class Comments extends Component {
                             <div>{"  "}</div>
                         </Grid>
                         <Grid item xs={2} md={1} className={classes.grid}>
-                            <IconButton>
+                            <IconButton onClick = {this.saveReply}>
                                 <CommentText/>
                             </IconButton>
                         </Grid>
                     </Grid>
                     {
-                        this.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
+                        this.state.replies.length == 0 ? <div><h3>暂无回复</h3></div>:this.state.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
                     }
                 </Grid>
             </div>

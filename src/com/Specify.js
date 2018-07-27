@@ -349,6 +349,7 @@ class Specify extends Component {
             this.props.history.push({
                 pathname:'/signin'
             })
+            return;
         }
         console.log(this.state.detail)
         let token = JSON.parse(user).token;
@@ -368,6 +369,9 @@ class Specify extends Component {
             })
             .then(text =>{
                 console.log(text);
+                this.setState({
+                    content:""
+                })
                 alert("评论成功");
             });
     };
@@ -519,7 +523,7 @@ class Specify extends Component {
                         }}
                                    InputLabelProps={{ shrink: true, className: classes.commentFormLabel}}
                                    multiline rowsMax={6} rows={3} placeholder={"说些什么吧..."}
-                                   value={this.content} onChange={this.editComment}
+                                   value={this.state.content} onChange={this.editComment}
                         />
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>

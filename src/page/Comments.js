@@ -99,10 +99,7 @@ const item = props => (
                             </IconButton>
                         </GridListTile>
                         <GridListTile className={props.classes.gridListTile}>
-                            <IconButton onClick={() => props.history.push({
-                                pathname: '/comments',
-                                search: `?id=${props.comment.id}`,
-                            })}>
+                            <IconButton onClick={() => props.reply(props.comment.id, props.comment.type)}>
                                 <CommentText/>
                             </IconButton>
                         </GridListTile>
@@ -125,6 +122,22 @@ class Comments extends Component {
     }
 
     componentWillMount() {
+        const {location} = this.props;
+        const {search} = location;
+        console.log(search);
+        let id = null;
+        let idx = search.indexOf('id');
+        let idx2 = search.indexOf('&', idx);
+        idx2 = idx2 === -1 ? search.length : idx2;
+        id = parseInt(search.substring(idx + 2, idx2), 10);
+        this.setState({
+            replyid: id
+        });
+        idx = search.indexOf("type");
+        idx2 = search.indexOf("&", idx);
+        idx2 = idx2 === -1 ? search.length : idx2;
+        let type = search.substring(idx + 2, idx2) || null;
+        console.log(type);
         this.comment = {
             id: 1093,
             owenerId: 109,
@@ -158,10 +171,32 @@ class Comments extends Component {
         // fetch comment/reply info from backend,
     }
 
-    toggleReply = (id) => {
-        this.setState({
-            replyid: id,
-        });
+    componentWillReceiveProps(nextProps, nextContext) {
+        const {search} = nextProps.location;
+        const {id, type} = this.parseIdAndType(search);
+        console.log(id, type);
+    }
+
+    parseIdAndType(search) {
+        let keyIdx = 0;
+        keyIdx = search.indexOf("id");
+        let andIdx = 0;
+        andIdx = search.indexOf("&", keyIdx);
+        andIdx = andIdx === -1 ? search.length : andIdx;
+        const id = parseInt(search.substring(keyIdx + 2, andIdx), 10);
+        keyIdx = search.indexOf("type");
+        andIdx = search.indexOf("&", keyIdx);
+        const type = search.substring(keyIdx + 2, andIdx);
+        return{
+            id: id, type: type
+        };
+    }
+
+    toggleReply = (id, type) => {
+        this.props.history.push({
+            pathname: '/comments',
+            search: `?id=${id}type=${type}`,
+        })
     };
 
     render() {
@@ -204,7 +239,7 @@ class Comments extends Component {
                                            }
                                        }}
                                        label="回复" id="reply" InputLabelProps={{
-                                           shrink: true, classes: classes.commentFormLabel,
+                                           shrink: true, className: classes.commentFormLabel,
                             }}
 
                                        />

@@ -525,7 +525,7 @@ class Specify extends Component {
                         }}
                                    InputLabelProps={{ shrink: true, className: classes.commentFormLabel}}
                                    multiline rowsMax={6} rows={3} placeholder={"说些什么吧..."}
-                                   value={this.state.content} onChange={this.editComment}
+                                   value={this.state.content||""} onChange={this.editComment}
                         />
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>

@@ -121,7 +121,7 @@ class Homepage extends Component {
 
     componentDidMount() {
         const {page} = this.state;
-        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch(url, {
             method: 'GET',
         })
@@ -143,7 +143,7 @@ class Homepage extends Component {
     load = () => {
         this.setState({loading: true});
         const {page} = this.state;
-        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch(url, {
             method: 'GET',
         })

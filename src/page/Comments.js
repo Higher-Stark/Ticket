@@ -173,7 +173,7 @@ class Comments extends Component {
     }
 
     componentWillReceiveProps=(nextProps, nextContext) =>{
-        const {search} = nextProps.location;
+        //const {search} = nextProps.location;
         //const {id, type} = this.parseIdAndType(search);
     }
 
@@ -300,7 +300,7 @@ class Comments extends Component {
     saveReply=()=>{
         let storage = window.localStorage;
         let user = storage.getItem("user");
-        if(user == null || user.length == 0)
+        if(user == null || user.length === 0)
         {
             alert("若要评论 请先登录")
             this.props.history.push({
@@ -315,11 +315,11 @@ class Comments extends Component {
             return;
         }
 
-        let replyType = null;
+        //let replyType = null;
         console.log("in save ")
         console.log(this.state.type)
         if(this.state.type === "Comment"){
-            replyType = "toComment";
+            //replyType = "toComment";
             console.log("id "+this.state.replyid)
             console.log("content "+this.state.content)
             let s = `token=${token}&commentid=${this.state.replyid}&content=${this.state.content}`;
@@ -343,7 +343,7 @@ class Comments extends Component {
 
         }
         else{
-            replyType = "toReply";
+            //replyType = "toReply";
             let s = `token=${token}&replyid=${this.state.replyid}&content=${this.state.content}`;
             fetch('http://pipipan.cn:30010/Reply/AddToReply',{
                 method:'POST',
@@ -425,9 +425,9 @@ class Comments extends Component {
                                 <CommentText/>
                             </IconButton>
                         </Grid>
-                    </Grid>
+                    </Grid>d
                     {
-                        this.state.replies.length == 0 ? <div><h3>暂无回复</h3></div>:this.state.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
+                        this.state.replies.length === 0 ? <div><h3>暂无回复</h3></div>:this.state.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
                     }
                 </Grid>
             </div>

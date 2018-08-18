@@ -705,8 +705,8 @@ class User extends Component {
             <div className={classes.root}>
                 <AppBar position='static'>
                 <Tabs value={tab} onChange={this.toggleTab}>
-                    <Tab label="User info"/>
-                    <Tab label="Modify Password"/>
+                    <Tab label="用户信息"/>
+                    <Tab label="修改登录密码"/>
                     <Tab label="修改支付密码"/>
                     <Tab label="注销账户"/>
                 </Tabs>

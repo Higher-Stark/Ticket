@@ -425,7 +425,7 @@ class Comments extends Component {
                                 <CommentText/>
                             </IconButton>
                         </Grid>
-                    </Grid>d
+                    </Grid>
                     {
                         this.state.replies.length === 0 ? <div><h3>暂无回复</h3></div>:this.state.replies.map(s => (item({classes: classes, comment: s, reply: this.toggleReply})))
                     }

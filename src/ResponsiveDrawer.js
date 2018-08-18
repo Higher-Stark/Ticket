@@ -56,6 +56,8 @@ import Vocal from './svg/ic-vocal.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parent-child.svg';
 import Acrobatics from './svg/acrobatics.svg';
+import CommentPlusOutline from "mdi-material-ui/CommentPlusOutline";
+import UserComment from './page/UserComment'
 
 const listStyles = {
     home: {
@@ -272,6 +274,12 @@ class ResponsiveDrawer extends Component {
                             </ListItemIcon>
                             <ListItemText inset primary="Orders"/>
                         </ListItem>
+                        <ListItem button component={NavLink} className={classes.nested} to='/user/comments'>
+                            <ListItemIcon>
+                                <CommentPlusOutline/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Comments"/>
+                        </ListItem>
                     </List>
                 </Collapse>
                 <ListItem button component={NavLink} to='/cart'>
@@ -426,6 +434,7 @@ class ResponsiveDrawer extends Component {
                     <Route path="/orderconfirm" component={OrderConfirm}/>
                     <Route path="/payconfirm" component={PayConfirm}/>
                     <Route path="/user/orders" component={Order}/>
+                    <Route path="/user/comments" component={UserComment}/>
                     <Route path="/afterpay" component={AfterPay}/>
                 </main>
             </div>

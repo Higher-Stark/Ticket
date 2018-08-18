@@ -310,11 +310,16 @@ class OrderConfirm extends Component {
 
     routerToPayConfirm() {
         const {address,username,phone}=this.state;
-        if((address.length===0)
-            ||(username.length===0)
-            ||(phone.length===0))
+        if((address===null)
+            ||(username===null)
+            ||(phone===null))
         {
             alert("请输入完整的收货人信息");
+            return ;
+        }
+        if(phone.length!==11||phone.match(/\D/))
+        {
+            alert("请输入正确的手机号码");
             return ;
         }
         this.addOrderToBackend();

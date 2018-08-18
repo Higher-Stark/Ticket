@@ -402,6 +402,7 @@ class Cart extends React.Component {
                 fetch(this.QueryByUserId + `?pagenumber=${Math.floor(page/2)  + 1}&token=${token}`)
                     .then(response => {
                             let errornum = response.headers.get('errornum');
+                            console.log(errornum);
                             if (errornum === '0') {
                                 return response.status === 200 ? response.json() : null;
                             }

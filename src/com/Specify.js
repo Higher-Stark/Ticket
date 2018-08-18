@@ -211,7 +211,7 @@ class Specify extends Component {
                 }
             });
 
-    }
+    };
 
     selectPrice = (selectedPrice) => {
         const {price} = this.state;
@@ -333,9 +333,9 @@ class Specify extends Component {
 
     openComment = () => {
         console.log("in open comment");
-        console.log(this.state.content)
+        console.log(this.state.content);
         if(this.state.content==null||this.state.content.length === 0){
-            alert("评论为空，无法保存")
+            alert("评论为空，无法保存");
             return;
         }
         const {edit} = this.state;
@@ -348,13 +348,14 @@ class Specify extends Component {
             alert("请先登录");
             this.props.history.push({
                 pathname:'/signin'
-            })
+            });
             return;
         }
         console.log(this.state.detail)
         let token = JSON.parse(user).token;
+        console.log(token);
         let s = `token=${token}&ticketid=${this.state.detail.id}&content=${this.state.content}`;
-
+        console.log('http://pipipan.cn:30010/Comment/Add?'+s);
         fetch('http://pipipan.cn:30010/Comment/Add',{
             method:'POST',
             body:s,
@@ -364,16 +365,30 @@ class Specify extends Component {
             credentials: "include"
         })
             .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
+                let errornum = response.headers.get('errornum');
+                console.log(errornum);
+                if (errornum === '0') {
+                    return response.status === 200 ? response.json() : null;
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
             })
             .then(text =>{
                 console.log(text);
                 this.setState({
                     content:""
-                })
+                });
                 alert("评论成功");
-            });
+                this.fetchCommentToTicket(1);
+            })
     };
 
     editComment = (e) => {
@@ -382,7 +397,7 @@ class Specify extends Component {
         });
     };
 
-    viewCommentAndReply = (id, type) => {
+    viewCommentAndReply = (id) => {
         console.log("View Comment and Replay of Comment/Reply id= " + id);
         this.props.history.push({
             pathname: '/comments',

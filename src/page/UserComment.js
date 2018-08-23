@@ -176,8 +176,23 @@ class UserComment extends Component {
             credentials: "include"
         })
             .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.json();
+                let errornum = response.headers.get('errornum');
+                console.log(errornum);
+                //console.log(response.text());
+                if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                else {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.json();
+                }
+                this.props.history.push('/signin');
             })
             .then(data =>{
                 console.log(data);

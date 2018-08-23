@@ -367,10 +367,8 @@ class Specify extends Component {
             .then(response => {
                 let errornum = response.headers.get('errornum');
                 console.log(errornum);
-                if (errornum === '0') {
-                    return response.status === 200 ? response.json() : null;
-                }
-                else if (errornum === '1') {
+                //console.log(response.text());
+                if (errornum === '1') {
                     alert("尚未登录！");
                 }
                 else if (errornum === '2') {
@@ -378,6 +376,9 @@ class Specify extends Component {
                 }
                 else if (errornum === '3') {
                     alert("账户被冻结！");
+                }
+                else {
+                    return response.status === 200 ? response.text() : null;
                 }
                 this.props.history.push('/signin');
             })

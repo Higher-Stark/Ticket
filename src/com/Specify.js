@@ -11,6 +11,7 @@ import CartPlusIcon from 'mdi-material-ui/CartPlus';
 import ShoppingIcon from 'mdi-material-ui/Shopping';
 import CommentPlusOutline from 'mdi-material-ui/CommentPlusOutline';
 import CommentTextOutline from 'mdi-material-ui/CommentTextOutline';
+import Script from 'react-load-script';
 import {urlEncode} from '../util/utils';
 import {locale} from '../util/utils';
 
@@ -128,18 +129,30 @@ const styles = theme => ({
     bottomBorder: {
         borderBottom: '1px solid rgba(225,225,225,0.36)',
     },
+    bmap: {
+        height: '100%',
+        width: '100%',
+    },
 });
 
 class Specify extends Component {
     url = {
         detail: 'http://pipipan.cn:30005/Ticket/QueryById',
+        baidumap: 'http://api.map.baidu.com/getscript?v=2.0&ak=xF9ChIHl1fSlGl42dSDpTbNckrWQIkQP&services=&t=20180229',
     };
+
+    map = null;
 
     constructor(props) {
         super(props);
         this.state = {
             id: null,
             detail: null,
+            location: {
+                lng: 116.08,
+                lat: 40.05,
+            },
+            scriptLoaded: false,
             dates: [],
             prices: [],
             price: 0,
@@ -163,7 +176,9 @@ class Specify extends Component {
                 }
                 else throw Error("Get detail failed");
             })
-            .then(data => this.setState({detail: data}))
+            .then(data => {
+                this.setState({detail: data});
+            })
             .catch(e => console.log(e));
     }
 
@@ -306,9 +321,31 @@ class Specify extends Component {
         })
     };
 
+    handleScriptCreate() {
+        this.setState({scriptLoaded: false})
+    };
+
+    handleScriptLoad() {
+        const {detail} = this.state;
+        this.setState({
+            scriptLoaded: true,
+        });
+        if (!window.BMap) alert("BMap unknown");
+        let myGeo = new window.BMap.Geocoder();
+        let map = new window.BMap.Map("bmap");
+        myGeo.getPoint(detail.venue, function (point) {
+            console.log(detail.venue, point);
+            if (!point) point={lng: 116.4074, lat: 39.9042};
+            map.centerAndZoom(point, 16);
+            map.addOverlay(new window.BMap.Marker(point));
+            let opts = {anchor: window.BMAP_ANCHOR_TOP_RIGHT};
+            map.addControl(new window.BMap.NavigationControl(opts));
+        }, detail.city)
+    }
+
     render() {
         const {classes} = this.props;
-        const {detail, price, date, quantity} = this.state;
+        const {detail, price, date, quantity, location} = this.state;
 
         const fakeComment = [
             {id: 1, ownerId: 1093, ownername: 'June', content: 'Old Donald has a farm', createDate: '2017-08-04'},
@@ -420,7 +457,16 @@ class Specify extends Component {
                                 </div>
                             </Grid>
                             <Grid item xs={3} className={classes.grid}>
+                                {
+                                    /*
                                 <Typography variant='subheading' component='h3'>{'票务系统信息'}</Typography>
+                                     */
+                                }
+                                <Script url={this.url.baidumap} onCreate={this.handleScriptCreate.bind(this)}
+                                        onLoad={this.handleScriptLoad.bind(this)}
+                                        />
+                                <div id='bmap' className={classes.bmap}>
+                                </div>
                             </Grid>
                         </Grid>
                     </Grid>

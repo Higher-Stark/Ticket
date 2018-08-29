@@ -11,12 +11,14 @@
     "mdi-material-ui": "^5.1.1",
     "prop-types": "^15.6.2",
     "react": "^16.3.0",
+    "react-bmap": "^1.0.80",
     "react-dom": "^16.4.1",
     "react-infinite-slide": "^0.1.2",
+    "react-load-script": "0.0.6",
     "react-loading": "^2.0.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^1.1.5",
     "recompose": "^0.27.1"
   },
   "scripts": {

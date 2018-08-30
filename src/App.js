@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import ResponsiveDrawer from './ResponsiveDrawer';
+// import ResponsiveDrawer from './ResponsiveDrawer';
 import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import lime from '@material-ui/core/colors/lime';
@@ -10,6 +10,7 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import 'animate.css/animate.css';
 import './css/index.css';
 import black from './pic/black.jpeg'
+import PageRouter from './page/PageRouter';
 
 const theme = createMuiTheme({
     typography: {
@@ -146,7 +147,10 @@ class App extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router>
-                    {this.state.flash ?  <ResponsiveDrawer/>:Welcome}
+                    {
+                        //this.state.flash ?  <ResponsiveDrawer/>:Welcome
+                        this.state.flash ? <PageRouter/> : Welcome
+                    }
                 </Router>
             </MuiThemeProvider>
         );

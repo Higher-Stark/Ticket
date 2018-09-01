@@ -1,0 +1,19 @@
+pipeline:
+  publish:
+    image: plugins/docker
+    repo: frontendmicroservice
+    secrets: [docker_username, docker_password]
+    tags: latest
+    when:
+      branch: build
+  deploy:
+    image: appleboy/drone-ssh
+    host: 47.106.8.47
+    username: root
+    secrets: [ ssh_password ]
+    port: 22
+    script:
+    - cd /root/shell
+    - ./deployFrontEnd.sh frontend
+    when:
+      branch: build

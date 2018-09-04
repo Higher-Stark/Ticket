@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Modal from '@material-ui/core/Modal';
+import {urlEncode} from "../util/utils";
 import Recharge from '../pic/recharge.jpg';
 
 const styles = theme => ({
@@ -47,7 +48,7 @@ class Wallet extends Component {
         super(props);
         this.state = {
             balance: 0,
-            recharge: 0,
+            recharge: 1,
             open: false,
         }
     }
@@ -104,6 +105,58 @@ class Wallet extends Component {
         })
     };
 
+    recharge=()=>{
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        this.setState({
+            open: false,
+        });
+        const {balance,recharge} = this.state;
+
+        let body = {
+            token: token,
+            account: parseInt(balance,0)+parseInt(recharge,0),
+        };
+
+        fetch(`${this.serviceUrl}/UserDetail/UpdateByUserid`, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let headers = response.headers;
+            //console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '0' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '2' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(data => {
+                let newData=data;
+                if(newData.account===null)
+                    newData.account=0;
+                this.setState({balance: newData.account});
+            })
+            .catch(e => {
+                alert(e.message);
+                window.location.href = "/signin";
+            })
+    };
+
+
     render() {
         const {classes} = this.props;
 
@@ -115,7 +168,7 @@ class Wallet extends Component {
                         {"账户余额: "}
                     </Typography>
                     <Typography variant='subheading' component='h3' color='secondary' className={classes.inline}>
-                        {this.state.balance}
+                        ￥{this.state.balance}
                     </Typography>
                     </div>
                     <Button variant='contained' color='primary' onClick={this.toggleClick}>

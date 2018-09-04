@@ -58,6 +58,7 @@ const theme = createMuiTheme({
         accent: lime.A100,
         accent2: lime.A200,
         optional: '#FFC107',
+
     },
     shadow: [
         '#f5f5f5',

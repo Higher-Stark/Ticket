@@ -119,6 +119,9 @@ class App extends Component {
         const {classes} = this.props;
         const {admin, open, page, id, pwd} = this.state;
 
+        /*
+         * Drawer List Item
+         */
         const sideList = (
             <div className={classes.toolbar}>
                 <List component="nav">
@@ -172,6 +175,9 @@ class App extends Component {
             </div>
         );
         
+        /*
+         * control page with content
+         */
         let content = signin;
         switch (page) {
             case 0: 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Divider from '@material-ui/core/Divider';
 import CardActions from '@material-ui/core/CardActions';
@@ -21,11 +21,11 @@ import Curtain from '../svg/curtain-grey.svg';
 import Mask from '../svg/mask-grey.svg';
 import Parent from '../svg/parent-child-grey.svg';
 import Acrobatics from '../svg/acrobatics-grey.svg';
-import StarIcon from 'mdi-material-ui/Star';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import StarOutlineIcon from 'mdi-material-ui/StarOutline';
 import PlaceIcon from '@material-ui/icons/Place';
 import DetailModal from './DetailModal';
+import {urlEncode} from "../util/utils";
 
 const styles = theme => ({
     root: {
@@ -94,12 +94,54 @@ class Activity extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            like: this.props.like,
             open: false,
         };
     };
 
-    toggleLike = () => this.setState({like: !this.state.like});
+    toggleLike = (id) =>{
+        let storage = window.localStorage;
+        let user = JSON.parse(storage.getItem("user"));
+        if (user === null) {
+            alert("请登录");
+            this.props.history.push({
+                pathname: '/signin',
+            });
+            return;
+        }
+        let body = {
+            token: user.token,
+            ticketid: id,
+        };
+        const url = "http://pipipan.cn:30012/Collection/Save";
+
+        fetch(url, {
+            method: 'POST',
+            mode: "cors",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+            credentials: "include",
+        })
+            .then(response => response.headers)
+            .then(headers => {
+                let errornum = headers.get('errornum');
+                if (errornum === '0') {
+                    alert("成功！");
+                    return;
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+    };
 
     handleOpen = () => this.setState({open: true});
 
@@ -117,10 +159,13 @@ class Activity extends Component {
             if (type.indexOf('sports') !== -1) return <Basketball/>;
             else if (type.indexOf("show") !== -1) return <img src={Curtain} alt="Show" className={classes.svg}/>;
             else if (type.indexOf('dancing') !== -1) return <img src={Ballet} alt='dance' className={classes.svg}/>;
-            else if (type.indexOf('vocal concert') !== -1) return <img src={Vocal} alt='vocal' className={classes.svg}/>;
+            else if (type.indexOf('vocal concert') !== -1) return <img src={Vocal} alt='vocal'
+                                                                       className={classes.svg}/>;
             else if (type.indexOf("concert") !== -1) return <MusicCircle/>;
-            else if (type.indexOf("acrobatics") !== -1) return <img src={Acrobatics} alt="Acrobatics" className={classes.svg}/>;
-            else if (type.indexOf("parenting") !== -1) return <img src={Parent} alt='parenting' className={classes.svg}/>;
+            else if (type.indexOf("acrobatics") !== -1) return <img src={Acrobatics} alt="Acrobatics"
+                                                                    className={classes.svg}/>;
+            else if (type.indexOf("parenting") !== -1) return <img src={Parent} alt='parenting'
+                                                                   className={classes.svg}/>;
             else if (type.indexOf("opera") !== -1) return <img src={Mask} alt='Opera' className={classes.svg}/>;
             else return (<MoreHoriz/>);
         };
@@ -129,9 +174,9 @@ class Activity extends Component {
             <div>
                 <GridListTile component={Link} className={classes.imageSec} to={`/detail/${card.id}`}>
                     <div className={classes.imageWrapper}>
-                    <img className={classes.image}
-                         src={card.image}
-                         alt={card.title}/>
+                        <img className={classes.image}
+                             src={card.image}
+                             alt={card.title}/>
                     </div>
                     <GridListTileBar title={card.title}
                                      subtitle={<span>{card.city}</span>}
@@ -143,7 +188,7 @@ class Activity extends Component {
 
         return (
             <div className={classes.root}>
-                <Card className={classes.card} >
+                <Card className={classes.card}>
                     <CardMedia className={classes.media} component={() => titledImage}
                                image='file-image.svg'
                                title='Card Image'
@@ -158,11 +203,13 @@ class Activity extends Component {
                     </CardContent>
                     <Divider/>
                     <CardActions className={classes.cardAction}>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.toggleLike}>
-                            {this.state.like ? <StarIcon/> : <StarOutlineIcon/>}
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon}
+                                onClick={()=>{this.toggleLike(card.id)}}>
+                            <StarOutlineIcon/>
                             Like
                         </Button>
-                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon} onClick={this.handleOpen}>
+                        <Button variant='extendedFab' color='secondary' className={classes.buttonIcon}
+                                onClick={this.handleOpen}>
                             <MoreHoriz/>
                         </Button>
                     </CardActions>

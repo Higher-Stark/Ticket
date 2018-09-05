@@ -76,6 +76,8 @@ const styles = theme => ({
         position: 'relative',
         display: 'flex',
         width: '100%',
+        minHeight: '100%',
+        background: 'rgba(230, 230, 100, 0.3)',
     },
     appBar: {
         position: 'absolute',
@@ -83,12 +85,17 @@ const styles = theme => ({
     },
     navText: {
         padding: `0 ${theme.spacing.unit}px`,
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'underline',
+        },
     },
     viceAppBar: {
         position: 'absolute',
         marginTop: '64px',
         display: 'flex',
         flexGrow: 1,
+        justifyContent: 'flex-start',
     },
     toolbar: theme.mixins.toolbar,
     classifyBar: {
@@ -101,6 +108,13 @@ const styles = theme => ({
         padding: theme.spacing.unit,
         width: 50,
         height: 50,
+        textDecoration: 'none',
+    },
+    classifyText: {
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'underline',
+        },
     },
     avatar: {
         margin: theme.spacing.unit,
@@ -274,18 +288,21 @@ class PageRouter extends Component {
                     </Toolbar>
                 </AppBar>
                 <Collapse in={classifyOpen} timeout='auto' unmountOnExit>
+                    <div className={classes.toolbar}/>
                     <AppBar color={"default"} className={classes.viceAppBar}>
                         <div className={classes.classifyBar}>
                         {
                             classify.map((s, i) => {
                                 return (
                                     <div key={i} className={classes.classify}>
-                                        <NavLink to={s.to}>
+                                        <Typography variant='body1' color='primary' 
+                                            className={classes.classifyText}
+                                            component={NavLink} to={s.to}
+                                        >
                                             {s.icon}
-                                            <Typography variant='body1' color='primary'>
-                                                {s.label}
-                                            </Typography>
-                                        </NavLink>
+                                            <br/>
+                                            {s.label}
+                                        </Typography>
                                     </div>
                                 )
                             })

@@ -119,7 +119,7 @@ const styles = theme => ({
     avatar: {
         margin: theme.spacing.unit,
         background: 'rgba(255, 255, 240, 0.2)',
-        color: '#ff9320',
+        color: 'inherit',
         position: 'absolute',
         right: theme.spacing.unit,
     },

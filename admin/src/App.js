@@ -53,6 +53,11 @@ const styles = theme => ({
         padding: theme.spacing.unit,
         borderRadius: theme.spacing.unit,
     },
+    buttonSec: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        display: 'flex',
+    },
 });
 
 class App extends Component {
@@ -60,7 +65,6 @@ class App extends Component {
         super(props);
         this.state = {
             admin: null,
-            login: null,
             open: false,
             page: 0,
             id: null,
@@ -71,7 +75,8 @@ class App extends Component {
     componentWillMount() {
         let storage = window.sessionStorage;
         let admin = storage.getItem("admin");
-        if (!admin) {
+        if (admin) {
+            console.log(admin);
             this.setState({
                 admin: admin,
                 page: 1,
@@ -90,20 +95,30 @@ class App extends Component {
     };
 
     login = e => {
-        const {login} = this.state;
+        const {id, pwd} = this.state;
+
+        if (!id) {
+            alert("管理员ID不能为空");
+            return -1;
+        }
+        if (!pwd) {
+            alert("密码不能为空");
+            return -1;
+        }
+        
         let admin = {
-            id: login.id,
+            id: id,
             token: "1010101010",
+            pwd: escape(pwd),
         };
         let storage = window.sessionStorage;
-        storage.setItem("admin", JSON.stringfy(admin));
+        storage.setItem("admin", JSON.stringify(admin));
         this.setState({
             admin: admin,
-            login: null,
             page: 1,
         });
         let date = (new Date()).toUTCString();
-        console.log(`Administrator ${login.id} login on ${date}`);
+        console.log(`Administrator ${id} login on ${date}`);
     }
 
     logout = e => {
@@ -142,18 +157,20 @@ class App extends Component {
         const signin = (
             <div className={classes.signin}>
                 <div className={classes.form}>
-                    <Typography variant="title" color="primary" gutterBottom>
+                    <Typography variant="title" color="primary" align='center' gutterBottom>
                         管理员登录
                     </Typography>
                     <TextField id='admin-id' label="管理员ID" className={classes.textField} margin="normal"
-                        required value={id || ''} onChange={this.handleChange('id')}
+                        required value={id || ''} onChange={this.handleChange('id')} fullWidth
                     />
                     <TextField id='pwd' label="密码" className={classes.textField} margin="normal" required
-                        value={pwd || ''} onChange={this.handleChange('pwd')}
+                        value={pwd || ''} onChange={this.handleChange('pwd')} fullWidth type="password"
                     />
-                    <Button onClick={this.login} variant="compact" color="primary">
+                    <div className={classes.buttonSec}>
+                    <Button onClick={this.login} variant="raised" color="primary">
                         登录
                     </Button>
+                    </div>
                 </div>
             </div>
         );
@@ -167,7 +184,7 @@ class App extends Component {
                     {"Page : "}{page}
                 </Typography>
                 <Typography variant="caption" color="default" gutterBottom>
-                    { admin || 'Haven\'t login' }
+                    { admin.toString() || 'Haven\'t login' }
                 </Typography>
                 <Button color="secondary" variant="outlined">
                     Check

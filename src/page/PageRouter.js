@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -61,7 +61,7 @@ const listStyles = {
     },
     svg: {
         width: 24,
-        height : 24,
+        height: 24,
     },
     parenting: {
         color: '#547491',
@@ -150,10 +150,45 @@ class PageRouter extends Component {
         })
     };
 
+    toggleLogin = (user) => {
+        this.setState({
+            user: user,
+        });
+
+    };
+
+    toggleLogout = () => {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        console.log(user);
+        user = JSON.parse(user);
+        let token = user.token;
+        fetch(`http://pipipan.cn:30004/Sign/Out?token=${token}`, {
+            method: 'POST',
+            credentials: "include",
+        })
+            .then(response => response.status)
+            .then(status => {
+                console.log(status);
+                if (status === 200) {
+                    storage.removeItem("user");
+                    this.setState({user: null});
+                }
+                else throw Error("Connection failed");
+            })
+            .catch(e => console.log(e));
+    };
+
     toggleClassify = () => {
         this.setState({
             classifyOpen: !this.state.classifyOpen,
         })
+    };
+
+    toggleSearch = () => {
+        this.props.history.push({
+            pathname: '/search/' + (this.state.search === null ? 'all' : this.state.search),
+        });
     };
 
     mouseOverUser() {
@@ -167,80 +202,86 @@ class PageRouter extends Component {
     };
 
     render() {
-       const {theme, classes} = this.props;
-       const {user, search, classifyOpen, userOpen} = this.state;
+        //const {theme} = this.props;
+        const {classes} = this.props;
+        const {user, classifyOpen, userOpen} = this.state;
+        //const {search} = this.state;
 
-       const classify = [
-           {label: '音乐会', icon: <MusicCircle style={listStyles.music}/>, to: '/category/concert'},
-           {label: '演唱会', icon: <img src={Vocal} alt='vocal' style={listStyles.svg}/>, to: '/category/vocal concert'},
-           {label: '舞蹈', icon: <img src={Ballet} alt='dance' style={listStyles.svg}/>, to: '/category/dancing'},
-           {label: '亲子', icon: <img src={Parent} alt='parent' style={listStyles.svg}/>, to: '/category/parenting'},
-           {label: '戏剧', icon: <img src={Mask} alt='opera' style={listStyles.svg}/>, to: '/category/opera'},
-           {label: '体育赛事', icon: <BasketballIcon style={listStyles.sports}/>, to: '/category/sports'},
-           {label: '杂技', icon: <img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/>, to: '/category/acrobatics'},
-       ];
+        const classify = [
+            {label: '音乐会', icon: <MusicCircle style={listStyles.music}/>, to: '/category/concert'},
+            {label: '演唱会', icon: <img src={Vocal} alt='vocal' style={listStyles.svg}/>, to: '/category/vocal concert'},
+            {label: '舞蹈', icon: <img src={Ballet} alt='dance' style={listStyles.svg}/>, to: '/category/dancing'},
+            {label: '亲子', icon: <img src={Parent} alt='parent' style={listStyles.svg}/>, to: '/category/parenting'},
+            {label: '戏剧', icon: <img src={Mask} alt='opera' style={listStyles.svg}/>, to: '/category/opera'},
+            {label: '体育赛事', icon: <BasketballIcon style={listStyles.sports}/>, to: '/category/sports'},
+            {
+                label: '杂技',
+                icon: <img src={Acrobatics} alt='Acrobatics' style={listStyles.svg}/>,
+                to: '/category/acrobatics'
+            },
+        ];
 
-       const userIcon = (user) => {
-           if (user) {
-               return (
-                   <div>
-                       <Avatar alt={user.username} src={user.avatar} className={classes.avatar}
-                               onClick={this.toggleUser} onMouseOver={this.mouseOverUser}
-                       />
-                           <Menu open={userOpen} onClose={this.handleClose}
-                                 anchorEl={null}
-                                 anchorOrigin={{
-                                     vertical: 'top',
-                                     horizontal: 'right',
-                                 }}
-                                 transformOrigin={{
-                                     vertical: 'top',
-                                     horizontal: 'right',
-                                 }}
-                           >
-                               <MenuItem button component={NavLink} to='/user/account'>
-                                   <ListItemIcon>
-                                       <AccountBox/>
-                                   </ListItemIcon>
-                                   <ListItemText inset primary="个人信息"/>
-                               </MenuItem>
-                               <MenuItem button component={NavLink} to='/user/wallet'>
-                                   <ListItemIcon>
-                                       <AccountBalanceWallet/>
-                                   </ListItemIcon>
-                                   <ListItemText inset primary="钱包"/>
-                               </MenuItem>
-                               <MenuItem button component={NavLink} to='/user/orders'>
-                                   <ListItemIcon>
-                                       <ListIcon/>
-                                   </ListItemIcon>
-                                   <ListItemText inset primary="订单管理"/>
-                               </MenuItem>
-                               <Divider/>
-                               <MenuItem button component={NavLink} to='/cart'>
-                                   <ListItemIcon><ShoppingCart/></ListItemIcon>
-                                   <ListItemText inset primary='购物车'/>
-                               </MenuItem>
-                               <MenuItem button component={NavLink} to='/collection'>
-                                   <ListItemIcon><Collections/></ListItemIcon>
-                                   <ListItemText inset primary='我的收藏'/>
-                               </MenuItem>
-                               <Divider/>
-                               <MenuItem button onClick={this.toggleLogout}>
-                                   <ListItemIcon><LogoutVariant/></ListItemIcon>
-                                   <ListItemText inset primary='Logout'/>
-                               </MenuItem>
-                           </Menu>
-                   </div>
-               )
-           }
-           else
-               return (
-                   <Avatar className={classes.avatar} component={NavLink} to='/signin'>
-                       <AccountCircle/>
-                   </Avatar>
-               )
-       }
+        const userIcon = (user) => {
+            if (user) {
+                return (
+                    <div>
+                        <Avatar alt={user.username} src={user.avatar} className={classes.avatar}
+                                onClick={this.toggleUser} onMouseOver={this.mouseOverUser}
+                        />
+                        <Menu open={userOpen} onClose={this.handleClose}
+                              anchorEl={null}
+                              anchorOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'right',
+                              }}
+                              transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'right',
+                              }}
+                        >
+                            <MenuItem button component={NavLink} to='/user/account'>
+                                <ListItemIcon>
+                                    <AccountBox/>
+                                </ListItemIcon>
+                                <ListItemText inset primary="个人信息"/>
+                            </MenuItem>
+                            <MenuItem button component={NavLink} to='/user/wallet'>
+                                <ListItemIcon>
+                                    <AccountBalanceWallet/>
+                                </ListItemIcon>
+                                <ListItemText inset primary="钱包"/>
+                            </MenuItem>
+                            <MenuItem button component={NavLink} to='/user/orders'>
+                                <ListItemIcon>
+                                    <ListIcon/>
+                                </ListItemIcon>
+                                <ListItemText inset primary="订单管理"/>
+                            </MenuItem>
+                            <Divider/>
+                            <MenuItem button component={NavLink} to='/cart'>
+                                <ListItemIcon><ShoppingCart/></ListItemIcon>
+                                <ListItemText inset primary='购物车'/>
+                            </MenuItem>
+                            <MenuItem button component={NavLink} to='/collection'>
+                                <ListItemIcon><Collections/></ListItemIcon>
+                                <ListItemText inset primary='我的收藏'/>
+                            </MenuItem>
+                            <Divider/>
+                            <MenuItem button onClick={this.toggleLogout}>
+                                <ListItemIcon><LogoutVariant/></ListItemIcon>
+                                <ListItemText inset primary='Logout'/>
+                            </MenuItem>
+                        </Menu>
+                    </div>
+                )
+            }
+            else
+                return (
+                    <Avatar className={classes.avatar} component={NavLink} to='/signin'>
+                        <AccountCircle/>
+                    </Avatar>
+                )
+        }
 
         const LoginWrapper = (props) => (
             <Login {...props} toggleLogin={user => this.toggleLogin(user)}/>
@@ -249,14 +290,16 @@ class PageRouter extends Component {
         const redirectTo = () => (
             <Redirect to='/signin'/>
         );
-       return(
+        return (
             <div>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
-                        <Typography variant="title" color='inherit' noWrap component={NavLink} to='/' className={classes.navText}>
+                        <Typography variant="title" color='inherit' noWrap component={NavLink} to='/'
+                                    className={classes.navText}>
                             首页
                         </Typography>
-                        <Typography variant="title" color='inherit' noWrap onClick={this.toggleClassify} className={classes.navText}>
+                        <Typography variant="title" color='inherit' noWrap onClick={this.toggleClassify}
+                                    className={classes.navText}>
                             分类
                         </Typography>
                         <TextField className={classes.search} id='search_input'
@@ -276,20 +319,20 @@ class PageRouter extends Component {
                 <Collapse in={classifyOpen} timeout='auto' unmountOnExit>
                     <AppBar color={"default"} className={classes.viceAppBar}>
                         <div className={classes.classifyBar}>
-                        {
-                            classify.map((s, i) => {
-                                return (
-                                    <div key={i} className={classes.classify}>
-                                        <NavLink to={s.to}>
-                                            {s.icon}
-                                            <Typography variant='body1' color='primary'>
-                                                {s.label}
-                                            </Typography>
-                                        </NavLink>
-                                    </div>
-                                )
-                            })
-                        }
+                            {
+                                classify.map((s, i) => {
+                                    return (
+                                        <div key={i} className={classes.classify}>
+                                            <NavLink to={s.to}>
+                                                {s.icon}
+                                                <Typography variant='body1' color='primary'>
+                                                    {s.label}
+                                                </Typography>
+                                            </NavLink>
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
                     </AppBar>
                 </Collapse>
@@ -300,8 +343,8 @@ class PageRouter extends Component {
                     <Route path='/activating' component={Activating}/>
                     <Route path='/activated/:uuid' component={Activated}/>
                     <Route path='/signin' component={LoginWrapper}/>
-                    <Route path='/user/account' component={this.state.user === null ? redirectTo : User }/>
-                    <Route path='/user/wallet' component={this.state.user === null ? redirectTo : Wallet }/>
+                    <Route path='/user/account' component={this.state.user === null ? redirectTo : User}/>
+                    <Route path='/user/wallet' component={this.state.user === null ? redirectTo : Wallet}/>
                     {
                         /*
                     <Route path='/user/orders' component={this.state.user === null ? redirectTo : User }/>
@@ -324,7 +367,7 @@ class PageRouter extends Component {
                     </div>
                 </main>
             </div>
-       )
+        )
     }
 }
 

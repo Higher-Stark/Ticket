@@ -27,6 +27,22 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <script>
+        window._bd_share_config = {
+            common: {
+                bdText: '分享票品',                                //来自http://share.baidu.com/code?qq-pf-to=pcqq.c2c
+                //bdUrl: 'http://pipipan.cn:30020/detail/1',      //不会出问题 但是是写死的
+                bdUrl: window.location.href,                      //localhost时出问题，项目部署以后再行测试
+            },
+            share: [{
+                "bdSize": 16
+            }],
+            selectShare: [{
+                "bdselectMiniList": ['qzone', 'tqq', 'kaixin001', 'bdxc', 'tqf']
+            }]
+        };
+        with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion=' + ~(-new Date() / 36e5)];
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

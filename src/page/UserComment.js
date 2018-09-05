@@ -7,20 +7,20 @@ import Typography from "@material-ui/core/Typography";
 import pink from "@material-ui/core/colors/pink";
 import IconButton from "@material-ui/core/IconButton";
 import CommentTextOutline from "mdi-material-ui/CommentTextOutline";
-import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import TableFooter from "@material-ui/core/TableFooter";
+import EditIcon from '@material-ui/icons/Edit';
 import TablePagination from "@material-ui/core/TablePagination";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import {urlEncode} from "../util/utils";
+import classNames from "classnames";
+import SaveIcon from "@material-ui/icons/Save";
+import ClearIcon from "@material-ui/icons/Clear";
 
 const actionsStyles = theme => ({
     root: {
@@ -236,6 +236,7 @@ class UserComment extends Component {
         this.state = {
             rowsPerPage: 9,
             page: 0,
+            edit: -1,
             comments: [],
             totalElements: 0,
         };
@@ -249,10 +250,14 @@ class UserComment extends Component {
         user = JSON.parse(user);
         let token = user === null ? '' : user.token;
         clearTimeout(this.timer);
-        fetch("http://pipipan.cn:30010/Comment/QueryByUserid" + `?pagenumber=${page + 1}&token=${token}`)
+        fetch(`http://pipipan.cn:30010/Comment/QueryByUserid?pagenumber=${page + 1}&token=${token}`)
             .then(response => {
                     let errornum = response.headers.get('errornum');
-                    if (errornum === '1') {
+                    if (errornum === '0') {
+                        if (response.status !== 200) throw Error("Error !" + response);
+                        return response.json();
+                    }
+                    else if (errornum === '1') {
                         alert("尚未登录！");
                     }
                     else if (errornum === '2') {
@@ -260,10 +265,6 @@ class UserComment extends Component {
                     }
                     else if (errornum === '3') {
                         alert("账户被冻结！");
-                    }
-                    else {
-                        if (response.status !== 200) throw Error("Error !" + response);
-                        return response.json();
                     }
                     this.props.history.push('/signin');
                 }
@@ -313,7 +314,11 @@ class UserComment extends Component {
                 let errornum = response.headers.get('errornum');
                 console.log(errornum);
                 //console.log(response.text());
-                if (errornum === '1') {
+                if (errornum === '0') {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.json();
+                }
+                else if (errornum === '1') {
                     alert("尚未登录！");
                 }
                 else if (errornum === '2') {
@@ -321,10 +326,6 @@ class UserComment extends Component {
                 }
                 else if (errornum === '3') {
                     alert("账户被冻结！");
-                }
-                else {
-                    if (response.status !== 200) throw Error("Error !" + response);
-                    return response.json();
                 }
                 this.props.history.push('/signin');
             })
@@ -358,9 +359,164 @@ class UserComment extends Component {
         })
     };
 
+    toggleEdit = (i) => {
+        this.oldInfo = Object.assign({}, this.state.comments[i]);
+        this.setState({
+            edit: i,
+        });
+    };
+
+    toggleSave = (i) => {
+        const {id, content} = this.state.comments[i];
+        if (content.length === 0) {
+            alert("评论不能为空！");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        this.setState({
+            edit: -1,
+        });
+
+
+        let body = {
+            token: token,
+            commentid: id,
+            content: content,
+        };
+        console.log(urlEncode(body));
+        fetch(`http://pipipan.cn:30010/Comment/UpdateContentByCommentid`, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let errornum = response.headers.get('errornum');
+            console.log(errornum);
+            //console.log(response.text());
+            if (errornum === '0') {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.json();
+            }
+            else if (errornum === '1') {
+                alert("尚未登录！");
+            }
+            else if (errornum === '2') {
+                alert("身份不对应！");
+            }
+            else if (errornum === '3') {
+                alert("账户被冻结！");
+            }
+            this.props.history.push('/signin');
+        })
+            .then(data => {
+                console.log(data);
+                let newComments = this.state.comments.slice();
+                newComments[i] = createCommentData(data.id, data.owenerId, data.ownername, data.content, this.state.comments[i].createDate);
+                this.setState({comments: newComments});
+            })
+            .catch(e => {
+                alert(e.message);
+            })
+    };
+
+    toggleCancel = (i) => {
+        let newComments = this.state.comments.slice();
+        newComments[i] = this.oldInfo;
+        this.setState({
+            comments: newComments,
+            edit: -1,
+        });
+    };
+
+    updateComments = i => event => {
+        const {comments} = this.state;
+        comments[i].content = event.target.value;
+        this.setState({comments});
+    };
+
+    handleDelete = (i) => {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        let commentid = this.state.comments[i].id;
+        fetch(`http://pipipan.cn:30010/Comment/DeleteByCommentid?token=${token}&commentid=${commentid}`)
+            .then(response => {
+                let errornum = response.headers.get('errornum');
+                console.log(errornum);
+                //console.log(response.text());
+                if (errornum === '0') {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+            .then(() => {
+                const {page} = this.state;
+                fetch(`http://pipipan.cn:30010/Comment/QueryByUserid?pagenumber=${page + 1}&token=${token}`)
+                    .then(response => {
+                            let errornum = response.headers.get('errornum');
+                            console.log(errornum);
+                            //console.log(response.text());
+                            if (errornum === '0') {
+                                if (response.status !== 200) throw Error("Error !" + response);
+                                return response.json();
+                            }
+                            else if (errornum === '1') {
+                                alert("尚未登录！");
+                            }
+                            else if (errornum === '2') {
+                                alert("身份不对应！");
+                            }
+                            else if (errornum === '3') {
+                                alert("账户被冻结！");
+                            }
+                            this.props.history.push('/signin');
+                        }
+                    )
+                    .then(data => {
+                        if (data === null) throw Error("Response error!");
+                        console.log(data);
+                        if (data.totalElements === 0) {
+                            this.setState({
+                                comments: []
+                            })
+                        }
+                        else {
+                            let content = data.content;
+                            let tmpArray = [];
+                            for (let i = 0; i < content.length; i++) {
+                                tmpArray.push(createCommentData(content[i].id, content[i].owenerId, content[i].ownername, content[i].content, content[i].createTime))
+                            }
+                            this.setState({
+                                comments: tmpArray,
+                                totalElements: data.totalElements
+                            });
+                            console.log(this.state.comments)
+                        }
+                    })
+                    .catch(e => console.log(e));
+            })
+            .catch(e => console.log(e));
+    };
+
     render() {
         const {classes} = this.props;
-        const {comments, rowsPerPage, page, totalElements} = this.state;
+        const {comments, rowsPerPage, page, totalElements, edit} = this.state;
 
         const Comment = (
             <div>
@@ -375,8 +531,7 @@ class UserComment extends Component {
                 {comments.length === 0 ? (<div><h3>暂无评论</h3></div>) :
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <TableBody>
-                            {this.state.comments.map
-                            (s => (
+                            {this.state.comments.map((s, i) => (
                                 <Grid key={s.id} item xs={12} md={8} className={classes.grid}>
                                     <Grid item xs={2} md={2} className={classes.bottomBorder}>
                                         <Typography variant='subheading' component='h3'
@@ -388,14 +543,47 @@ class UserComment extends Component {
                                     <Grid item xs={10} md={10} className={classes.bottomBorder}>
                                         <div>
                                             <div>
-                                                <Typography variant='body1' component='p'>{s.content}</Typography>
+                                                {
+                                                    edit === i ?
+                                                        <TextField key={s.id} value={s.content}
+                                                                   onChange={this.updateComments(i)}
+                                                                   className={classes.textField}
+                                                                   id={s.id} name={s.id} margin="normal" type="text"
+                                                                   required
+                                                        />
+                                                        :
+                                                        (<Typography variant='body1'
+                                                                     component='p'>{s.content}</Typography>)
+                                                }
                                             </div>
                                             <div className={classes.commentButtonWrapper}>
+                                                {
+                                                    edit === i ?
+                                                        <div>
+                                                            <Button variant='fab' color='secondary'
+                                                                    onClick={() => this.toggleSave(i)}
+                                                                    className={classNames(classes.action, classes.button)}>
+                                                                <SaveIcon/>
+                                                            </Button>
+                                                            <Button variant='fab' color='primary'
+                                                                    onClick={() => this.toggleCancel(i)}
+                                                                    className={classNames(classes.action, classes.button)}>
+                                                                <ClearIcon/>
+                                                            </Button>
+                                                        </div> :
+                                                        <Button variant='fab' color='primary'
+                                                                onClick={() => this.toggleEdit(i)}
+                                                                className={classNames(classes.action, classes.button)}>
+                                                            <EditIcon/>
+                                                        </Button>
+                                                }
                                                 <IconButton aria-label="ViewCommentAndReply"
                                                             className={classes.commentButton}
                                                             onClick={() => this.viewCommentAndReply(s.id)}>
                                                     <CommentTextOutline/>
                                                 </IconButton>
+                                                <Button
+                                                    onClick={() => this.handleDelete(i)}>删除</Button>
                                             </div>
                                         </div>
                                     </Grid>

@@ -20,6 +20,10 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import classNames from "classnames";
+import SaveIcon from "@material-ui/icons/Save";
+import ClearIcon from "@material-ui/icons/Clear";
+import EditIcon from "@material-ui/icons/Edit";
 
 const actionsStyles = theme => ({
     root: {
@@ -235,7 +239,7 @@ class Specify extends Component {
             price: 0,
             date: null,
             quantity: 0,
-            edit: false,
+            edit: -1,
             content: null,
             comments: [],
             totalElements: 0,
@@ -260,7 +264,7 @@ class Specify extends Component {
             .then(data => {
                 this.setState({detail: data});
                 /* 拿票的评论 */
-                this.fetchCommentToTicket(1)
+                this.fetchCommentToTicket(1);
             })
             .catch(e => console.log(e));
     }
@@ -290,13 +294,13 @@ class Specify extends Component {
                 else {
                     let content = data.content;
                     let tmpArray = [];
-                    for (var i = 0; i < content.length; i++) {
+                    for (let i = 0; i < content.length; i++) {
                         tmpArray.push(createCommentData(content[i].id, content[i].owenerId, content[i].ownername, content[i].content, content[i].createTime))
                     }
                     this.setState({
                         comments: tmpArray,
                         totalElements: data.totalElements
-                    })
+                    });
                     console.log(this.state.comments)
                 }
             });
@@ -306,7 +310,7 @@ class Specify extends Component {
     handleChangePage = (event, page) => {
         console.log("我要changepage辣");
         this.setState({page});
-        let s = `ticketid=${this.state.detail.id}&pagenumber=${page+1}`;
+        let s = `ticketid=${this.state.detail.id}&pagenumber=${page + 1}`;
         fetch("http://pipipan.cn:30010/Comment/QueryByTicketid", {
             method: 'POST',
             body: s,
@@ -316,21 +320,8 @@ class Specify extends Component {
             credentials: "include"
         })
             .then(response => {
-                    let errornum = response.headers.get('errornum');
-                    if (errornum === '1') {
-                        alert("尚未登录！");
-                    }
-                    else if (errornum === '2') {
-                        alert("身份不对应！");
-                    }
-                    else if (errornum === '3') {
-                        alert("账户被冻结！");
-                    }
-                    else {
-                        if (response.status !== 200) throw Error("Error !" + response);
-                        return response.json();
-                    }
-                    this.props.history.push('/signin');
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.json();
                 }
             )
             .then(data => {
@@ -468,10 +459,6 @@ class Specify extends Component {
             alert("评论为空，无法保存");
             return;
         }
-        const {edit} = this.state;
-        this.setState({
-            edit: !edit
-        });
         let storage = window.localStorage;
         let user = storage.getItem("user");
         if (user == null || user.length === 0) {
@@ -481,7 +468,7 @@ class Specify extends Component {
             });
             return;
         }
-        console.log(this.state.detail)
+        console.log(this.state.detail);
         let token = JSON.parse(user).token;
         console.log(token);
         let s = `token=${token}&ticketid=${this.state.detail.id}&content=${this.state.content}`;
@@ -498,7 +485,10 @@ class Specify extends Component {
                 let errornum = response.headers.get('errornum');
                 console.log(errornum);
                 //console.log(response.text());
-                if (errornum === '1') {
+                if (errornum === '0') {
+                    return response.status === 200 ? response.text() : null;
+                }
+                else if (errornum === '1') {
                     alert("尚未登录！");
                 }
                 else if (errornum === '2') {
@@ -506,9 +496,6 @@ class Specify extends Component {
                 }
                 else if (errornum === '3') {
                     alert("账户被冻结！");
-                }
-                else {
-                    return response.status === 200 ? response.text() : null;
                 }
                 this.props.history.push('/signin');
             })
@@ -536,10 +523,153 @@ class Specify extends Component {
         })
     };
 
+    toggleEdit = (i) => {
+        this.oldInfo = Object.assign({}, this.state.comments[i]);
+        this.setState({
+            edit: i,
+        });
+    };
+
+    toggleSave = (i) => {
+        const {id, content} = this.state.comments[i];
+        if (content.length === 0) {
+            alert("评论不能为空！");
+            return;
+        }
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        this.setState({
+            edit: -1,
+        });
+
+        let body = {
+            token: token,
+            commentid: id,
+            content: content,
+        };
+        console.log(urlEncode(body));
+        fetch(`http://pipipan.cn:30010/Comment/UpdateContentByCommentid`, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let errornum = response.headers.get('errornum');
+            console.log(errornum);
+            //console.log(response.text());
+            if (errornum === '0') {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.json();
+            }
+            else if (errornum === '1') {
+                alert("尚未登录！");
+            }
+            else if (errornum === '2') {
+                alert("身份不对应！");
+            }
+            else if (errornum === '3') {
+                alert("账户被冻结！");
+            }
+            this.props.history.push('/signin');
+        })
+            .then(data => {
+                console.log(data);
+                let newComments = this.state.comments.slice();
+                newComments[i] = createCommentData(data.id, data.owenerId, data.ownername, data.content, this.state.comments[i].createDate);
+                this.setState({comments: newComments});
+            })
+            .catch(e => {
+                alert(e.message);
+            })
+    };
+
+    toggleCancel = (i) => {
+        let newComments = this.state.comments.slice();
+        newComments[i] = this.oldInfo;
+        this.setState({
+            comments: newComments,
+            edit: -1,
+        });
+    };
+
+    updateComments = i => event => {
+        const {comments} = this.state;
+        comments[i].content = event.target.value;
+        this.setState({comments});
+    };
+
+    handleDelete = (i) => {
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        let commentid = this.state.comments[i].id;
+        fetch(`http://pipipan.cn:30010/Comment/DeleteByCommentid?token=${token}&commentid=${commentid}`)
+            .then(response => {
+                let errornum = response.headers.get('errornum');
+                console.log(errornum);
+                //console.log(response.text());
+                if (errornum === '0') {
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    return response.text();
+                }
+                else if (errornum === '1') {
+                    alert("尚未登录！");
+                }
+                else if (errornum === '2') {
+                    alert("身份不对应！");
+                }
+                else if (errornum === '3') {
+                    alert("账户被冻结！");
+                }
+                this.props.history.push('/signin');
+            })
+            .then(() => {
+                const {page} = this.state;
+                fetch(`http://pipipan.cn:30010/Comment/QueryByTicketid?pagenumber=${page + 1}&ticketid=${this.state.detail.id}`)
+                    .then(response => {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.json();
+                        }
+                    )
+                    .then(data => {
+                        if (data === null) throw Error("Response error!");
+                        console.log(data);
+                        if (data.totalElements === 0) {
+                            this.setState({
+                                comments: []
+                            })
+                        }
+                        else {
+                            let content = data.content;
+                            let tmpArray = [];
+                            for (let i = 0; i < content.length; i++) {
+                                tmpArray.push(createCommentData(content[i].id, content[i].owenerId, content[i].ownername, content[i].content, content[i].createTime))
+                            }
+                            this.setState({
+                                comments: tmpArray,
+                                totalElements: data.totalElements
+                            });
+                            console.log(this.state.comments)
+                        }
+                    })
+                    .catch(e => console.log(e));
+            })
+            .catch(e => console.log(e));
+    };
+
     render() {
         const {classes} = this.props;
         const {detail, price, date, quantity} = this.state;
-        const {comments, rowsPerPage, page, totalElements} = this.state;
+        const {comments, rowsPerPage, page, totalElements, edit} = this.state;
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let name = user === null ? '' : user.name;
 
         return (
             detail === null ? (
@@ -655,6 +785,17 @@ class Specify extends Component {
                     <Grid item xs={12} className={classes.grid}>
                         <Typography variant='body1' component='p' gutterBottom>{detail.intro}</Typography>
                     </Grid>
+                    <Grid item xs={12} className={classes.grid}>
+                        <Typography variant='title' component='h2'>{"分享到"}</Typography>
+                    </Grid>
+                    <Grid item xs={12} className={classes.grid}>
+                        <div className="bdsharebuttonbox" data-tag="share_1"> { /* eslint-disable-next-line to the line before.*/}
+                            <a className="bds_qzone" data-cmd="qzone"/>
+                            <a className="bds_tsina" data-cmd="tsina"/>
+                            <a className="bds_sqq" data-cmd="sqq"/>
+                        </div>
+
+                    </Grid>
                     {
                         /*
                          * Comment Section
@@ -691,7 +832,7 @@ class Specify extends Component {
                     {comments.length === 0 ? (<div><h3>暂无评论</h3></div>) :
                         <Table className={classes.table} aria-labelledby="tableTitle">
                             <TableBody>
-                                {this.state.comments.map(s => (
+                                {this.state.comments.map((s, i) => (
                                     <Grid key={s.id} item xs={12} md={8} className={classes.grid}>
                                         <Grid item xs={2} md={2} className={classes.bottomBorder}>
                                             <Typography variant='subheading' component='h3'
@@ -703,14 +844,49 @@ class Specify extends Component {
                                         <Grid item xs={10} md={10} className={classes.bottomBorder}>
                                             <div>
                                                 <div>
-                                                    <Typography variant='body1' component='p'>{s.content}</Typography>
+                                                    {
+                                                        edit === i ?
+                                                            <TextField key={s.id} value={s.content}
+                                                                       onChange={this.updateComments(i)}
+                                                                       className={classes.textField}
+                                                                       id={s.id} name={s.id} margin="normal" type="text"
+                                                                       required
+                                                            />
+                                                            :
+                                                            (<Typography variant='body1'
+                                                                         component='p'>{s.content}</Typography>)
+                                                    }
                                                 </div>
                                                 <div className={classes.commentButtonWrapper}>
+                                                    {
+                                                        s.ownername !== name ? null : (edit === i ?
+                                                            <div>
+                                                                <Button variant='fab' color='secondary'
+                                                                        onClick={() => this.toggleSave(i)}
+                                                                        className={classNames(classes.action, classes.button)}>
+                                                                    <SaveIcon/>
+                                                                </Button>
+                                                                <Button variant='fab' color='primary'
+                                                                        onClick={() => this.toggleCancel(i)}
+                                                                        className={classNames(classes.action, classes.button)}>
+                                                                    <ClearIcon/>
+                                                                </Button>
+                                                            </div> :
+                                                            <Button variant='fab' color='primary'
+                                                                    onClick={() => this.toggleEdit(i)}
+                                                                    className={classNames(classes.action, classes.button)}>
+                                                                <EditIcon/>
+                                                            </Button>)
+                                                    }
                                                     <IconButton aria-label="ViewCommentAndReply"
                                                                 className={classes.commentButton}
                                                                 onClick={() => this.viewCommentAndReply(s.id)}>
                                                         <CommentTextOutline/>
                                                     </IconButton>
+                                                    {
+                                                        s.ownername !== name ? null : <Button
+                                                            onClick={() => this.handleDelete(i)}>删除</Button>
+                                                    }
                                                 </div>
                                             </div>
                                         </Grid>

@@ -47,6 +47,7 @@ import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import Comments from './page/Comments';
 import Cart from "./page/Cart";
+import Collection from "./page/Collection";
 import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';
 import Order from './page/Order'
@@ -429,6 +430,7 @@ class ResponsiveDrawer extends Component {
                     <Route path='/search/:search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
+                    <Route path='/collection' component={Collection}/>
                     <Route path='/comments' component={Comments}/>
                     <Route path="empty" component={null} key="empty"/>
                     <Route path="/orderconfirm" component={OrderConfirm}/>

@@ -427,7 +427,8 @@ class Specify extends Component {
 
     render() {
         const {classes} = this.props;
-        const {detail, price, date, quantity, location} = this.state;
+        const {detail, price, date, quantity} = this.state;
+        //const {location} = this.state;
 
         return (
             detail === null ? (

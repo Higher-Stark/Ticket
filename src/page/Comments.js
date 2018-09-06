@@ -544,6 +544,7 @@ class Comments extends Component {
                     //console.log(response.text());
                     if (errornum === '0') {
                         if (response.status !== 200) throw Error("Error !" + response);
+                        alert("评论成功");
                         return response.text();
                     }
                     else if (errornum === '1') {
@@ -560,7 +561,6 @@ class Comments extends Component {
                 .then(text => {
                     console.log(text);
                     console.log("23123123123");
-                    alert("评论成功");
                 })
                 .then(() => {
                     this.setState({content: ''});
@@ -620,6 +620,7 @@ class Comments extends Component {
                     //console.log(response.text());
                     if (errornum === '0') {
                         if (response.status !== 200) throw Error("Error !" + response);
+                        alert("评论成功");
                         return response.text();
                     }
                     else if (errornum === '1') {
@@ -636,7 +637,6 @@ class Comments extends Component {
                 .then((text) => {
                     console.log(text);
                     console.log("123");
-                    alert("评论成功");
                 })
                 .then(() => {
                     this.setState({content: ''});

@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
+import EnhancedTable from './statistics.js';
 
 const styles = theme => ({
     root: {
@@ -140,14 +141,14 @@ class App extends Component {
         const sideList = (
             <div className={classes.toolbar}>
                 <List component="nav">
-                    <ListItem button>
+                    <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="用户管理" />
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="销量统计" />
                     </ListItem>
                     <Divider/>
-                    <ListItem button>
+                    <ListItem button onClick={this.logout}>
                         <ListItemText primary="退出" />
                     </ListItem>
                 </List>
@@ -184,7 +185,7 @@ class App extends Component {
                     {"Page : "}{page}
                 </Typography>
                 <Typography variant="caption" color="default" gutterBottom>
-                    { admin.toString() || 'Haven\'t login' }
+                    { JSON.stringify(admin) || 'Haven\'t login' }
                 </Typography>
                 <Button color="secondary" variant="outlined">
                     Check
@@ -202,6 +203,9 @@ class App extends Component {
                 break;
             case 1: 
                 content = meaningless;
+                break;
+            case 2:
+                content = <EnhancedTable/>;
                 break;
             default: 
                 content = signin;

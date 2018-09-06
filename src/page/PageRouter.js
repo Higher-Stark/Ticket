@@ -47,6 +47,9 @@ import Vocal from '../svg/ic-vocal.svg';
 import Mask from '../svg/mask.svg';
 import Parent from '../svg/parent-child.svg';
 import Acrobatics from '../svg/acrobatics.svg';
+import CommentPlusOutline from "mdi-material-ui/CommentPlusOutline";
+import UserComment from "./UserComment";
+import Collection from "./Collection";
 
 const listStyles = {
     home: {
@@ -178,6 +181,10 @@ class PageRouter extends Component {
             .catch(e => console.log(e));
     };
 
+    handleChange = (e) => {
+        this.setState({search: e.target.value});
+    };
+
     toggleClassify = () => {
         this.setState({
             classifyOpen: !this.state.classifyOpen,
@@ -255,6 +262,12 @@ class PageRouter extends Component {
                                     <ListIcon/>
                                 </ListItemIcon>
                                 <ListItemText inset primary="订单管理"/>
+                            </MenuItem>
+                            <MenuItem button component={NavLink} to='/user/comments'>
+                                <ListItemIcon>
+                                    <CommentPlusOutline/>
+                                </ListItemIcon>
+                                <ListItemText inset primary="评论管理"/>
                             </MenuItem>
                             <Divider/>
                             <MenuItem button component={NavLink} to='/cart'>
@@ -353,11 +366,13 @@ class PageRouter extends Component {
                     <Route path='/search/:search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
+                    <Route path='/collection' component={Collection}/>
                     <Route path='/comments' component={Comments}/>
                     <Route path="empty" component={null} key="empty"/>
                     <Route path="/orderconfirm" component={OrderConfirm}/>
                     <Route path="/payconfirm" component={PayConfirm}/>
                     <Route path="/user/orders" component={Order}/>
+                    <Route path="/user/comments" component={UserComment}/>
                     <Route path="/afterpay" component={AfterPay}/>
                     <div id='footer' className={classes.footer}>
                         <Typography variant='subheading' color={"primary"} noWrap>

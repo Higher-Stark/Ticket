@@ -568,11 +568,10 @@ class Comments extends Component {
                     console.log(this.props);
                     const {search} = location;
                     /* parse id */
-                    let id = null;
                     let idx = search.indexOf('id');
                     let idx2 = search.indexOf('&', idx);
                     idx2 = idx2 === -1 ? search.length : idx2;
-                    id = parseInt(search.substring(idx + 3, idx2), 10);
+                    let id = parseInt(search.substring(idx + 3, idx2), 10);
                     this.setState({
                         replyid: id
                     });
@@ -643,12 +642,11 @@ class Comments extends Component {
                     const {location} = this.props;
                     console.log(this.props);
                     const {search} = location;
-                    /* parse id */
-                    let id = null;
+                    // parse id
                     let idx = search.indexOf('id');
                     let idx2 = search.indexOf('&', idx);
                     idx2 = idx2 === -1 ? search.length : idx2;
-                    id = parseInt(search.substring(idx + 3, idx2), 10);
+                    let id = parseInt(search.substring(idx + 3, idx2), 10);
                     this.setState({
                         replyid: id
                     });
@@ -662,7 +660,7 @@ class Comments extends Component {
                         });
                     }
                     else {
-                        /* parse type */
+                        // parse type
                         idx = search.indexOf("type");
                         idx2 = search.indexOf("&", idx);
                         idx2 = idx2 === -1 ? search.length : idx2;

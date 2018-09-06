@@ -499,7 +499,9 @@ class Specify extends Component {
                 console.log(errornum);
                 //console.log(response.text());
                 if (errornum === '0') {
-                    return response.status === 200 ? response.text() : null;
+                    if (response.status !== 200) throw Error("Error !" + response);
+                    alert("评论成功");
+                    return response.text();
                 }
                 else if (errornum === '1') {
                     alert("尚未登录！");
@@ -517,7 +519,6 @@ class Specify extends Component {
                 this.setState({
                     content: ""
                 });
-                alert("评论成功");
                 this.fetchCommentToTicket(1);
             })
     };

@@ -8,6 +8,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
@@ -117,11 +118,12 @@ const toolbarStyles = theme => ({
     },
     title: {
         flex: '0 0 auto',
+        padding: `0 ${theme.spacing.unit}px`,
     },
 });
 
 let EnhancedTableToolbar = props => {
-    const { classes } = props;
+    const { classes, toggleFilter } = props;
 
     return (
         <Toolbar className={classes.root}>
@@ -130,10 +132,15 @@ let EnhancedTableToolbar = props => {
                     销量统计
                 </Typography>
             </div>
+            <div className={classes.title}>
+                <Typography variant="subheading" id="report_date" color="textSecondary">
+                    {(new Date()).toLocaleString()}
+                </Typography>
+            </div>
             <div className={classes.spacer} />
             <div className={classes.actions}>
                 <Tooltip title="Filter list">
-                    <IconButton aria-label="Filter list">
+                    <IconButton aria-label="Filter list" onClick={toggleFilter}>
                         <FilterListIcon/>
                     </IconButton>
                 </Tooltip>
@@ -144,6 +151,7 @@ let EnhancedTableToolbar = props => {
 
 EnhancedTableToolbar.propTypes = {
     classes: PropTypes.object.isRequired,
+    toggleFilter: PropTypes.func.isRequired,
 };
 
 EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
@@ -159,9 +167,26 @@ const styles = theme => ({
     tableWrapper: {
         overflowX: 'auto',
     },
+    name: {
+        textOverflow: 'ellipsis',
+    },
+    textField: {
+        flex: '0 0 auto',
+        margin: `0 ${theme.spacing.unit}px`,
+        width: 240,
+    },
+    spacer: {
+        flex: '1 1 100%',
+    },
+    filter: {
+        display: 'flex',
+        padding: `0 ${theme.spacing.unit * 2}px`,
+    },
 });
 
 class EnhancedTable extends Component {
+    originData = null;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -170,7 +195,12 @@ class EnhancedTable extends Component {
             data: fakeData,
             page: 0, 
             rowsPerPage: 5,
+            filterOpen: false,
+            nameFilter: null,
+            cityFilter: null,
         };
+        this.toggleFilter = this.toggleFilter.bind(this);
+        this.filter = this.filter.bind(this);
     }
 
     handleRequestSort = (event, property) => {
@@ -192,14 +222,56 @@ class EnhancedTable extends Component {
         this.setState({rowsPerPage: event.target.value});
     };
 
+    handleFilterChange = field => event => {
+        this.setState({[field] : event.target.value});
+    };
+
+    toggleFilter() {
+        const {filterOpen} = this.state;
+        if (filterOpen) {
+            this.setState({
+                filterOpen: false,
+                nameFilter: null,
+                cityFilter: null,
+                data: this.originData,
+            });
+            this.originData = null;
+        }
+        else {
+            this.setState({ filterOpen: true});
+        }
+    }
+
+    filter() {
+        const {nameFilter, cityFilter, data} = this.state;
+        this.originData = data;
+        let filtered = data.filter(el => el.name.indexOf(nameFilter || "") !== -1 && el.city.indexOf(cityFilter) !== -1);
+        this.setState({ data: filtered });
+    }
+
+
     render() {
         const {classes } = this.props;
-        const { data, order, orderBy, rowsPerPage, page } = this.state;
+        const { data, order, orderBy, rowsPerPage, page, nameFilter, cityFilter, filterOpen } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
         
         return (
             <Paper className={classes.root}>
-                <EnhancedTableToolbar/>
+                <EnhancedTableToolbar toggleFilter={this.toggleFilter}/>
+                { filterOpen && (
+                    <div className={classes.filter}>
+                        <div className={classes.spacer}/>
+                        <TextField id="name-filter" label="名称关键词"  className={classes.textField} margin="normal"
+                            value={nameFilter || ""} onChange={this.handleFilterChange('nameFilter')}
+                        />
+                        <TextField id="city-filter" label="城市关键词" className={classes.textField} margin="normal"
+                            value={cityFilter || ""} onChange={this.handleFilterChange('cityFilter')}
+                        />
+                        <Button variant="contained" color="primary" onClick={this.filter}>
+                            筛选
+                        </Button>
+                    </div>
+                )}
                 <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                         <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={this.handleRequestSort}
@@ -211,7 +283,7 @@ class EnhancedTable extends Component {
                                 .map(n => (
                                     <TableRow hover tabIndex={-1} key={n.id}>
                                         <TableCell numeric>{n.id}</TableCell>
-                                        <TableCell component="th" scope="row" padding="none">
+                                        <TableCell component="th" scope="row" padding="none" className={classes.name}>
                                             {n.name}
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">

@@ -26,24 +26,34 @@ const styles = theme => ({
         justifyContent: 'center',
         marginBottom: theme.spacing.unit * 2,
     },
+    contentWrapper: {
+        justifyContent: 'center',
+        width: 'inherit',
+    },
     content: {
         display: 'flex',
-        // flexGrow: 1,
         flexWrap: 'wrap',
-        justifyContent: 'center',
-        [theme.breakpoints.up('lg')]: {
-            width: '1080',
+        justifyContent: 'start',
+        [theme.breakpoints.up('xl')]: {
+            width: 1760,
         },
-        [theme.breakpoints.up('md')]: {
-            width: '720',
+        [theme.breakpoints.up('lg')]: {
+            width: 1056,
         },
         [theme.breakpoints.down('md')]: {
-            width: '360',
+            width: 704,
         },
-        padding: '0 auto',
+        [theme.breakpoints.down('sm')]: {
+            width: '100%',
+        },
+        margin: '0 auto',
+    },
+    cards: {
+        margin: `${theme.spacing.unit}px 0`,
+        flexWrap: 'wrap',
+        display: 'flex',
     },
     card: {
-        display: 'inline-block',
         flexGrow: 1,
     },
     pageBar: {
@@ -193,7 +203,9 @@ class Homepage extends Component {
                     </Typography>
                 </div>
                 {items === 0 ? loadingCircle : null}
+                    <div className={classes.contentWrapper}>
                     <div id='content' className={classes.content}>
+                        <div className={classes.cards}>
                         {
                             this.content.slice(0, items).map((s, i) => {
                                 return (
@@ -203,6 +215,8 @@ class Homepage extends Component {
                                 );
                             })
                         }
+                        </div>
+                    </div>
                     </div>
                 {firstLoad &&
                 (<div className={classes.wrapper}>

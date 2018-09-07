@@ -184,7 +184,7 @@ class App extends Component {
                     {"Page : "}{page}
                 </Typography>
                 <Typography variant="caption" color="default" gutterBottom>
-                    { admin.toString() || 'Haven\'t login' }
+                    { JSON.stringify(admin) || 'Haven\'t login' }
                 </Typography>
                 <Button color="secondary" variant="outlined">
                     Check

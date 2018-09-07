@@ -27,11 +27,20 @@ const styles = theme => ({
         marginBottom: theme.spacing.unit * 2,
     },
     content: {
-        display: 'inline-block',
-        flexGrow: 1,
+        display: 'flex',
+        // flexGrow: 1,
         flexWrap: 'wrap',
-        justifyContent: 'start',
-        width: 'auto',
+        justifyContent: 'center',
+        [theme.breakpoints.up('lg')]: {
+            width: '1080',
+        },
+        [theme.breakpoints.up('md')]: {
+            width: '720',
+        },
+        [theme.breakpoints.down('md')]: {
+            width: '360',
+        },
+        padding: '0 auto',
     },
     card: {
         display: 'inline-block',
@@ -44,8 +53,9 @@ const styles = theme => ({
     },
     wrapper: {
         display: 'flex',
+        flexWrap: 'wrap',
         justifyContent: 'center',
-        margin: theme.spacing.unit,
+        // margin: theme.spacing.unit,
         position: 'relative',
     },
     block: {
@@ -111,12 +121,14 @@ class Homepage extends Component {
 
     componentDidMount() {
         const {page} = this.state;
-        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        console.log(url);
         fetch(url, {
             method: 'GET',
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 this.content = this.content.concat(data.content);
                 const quantity = data.numberOfElements;
                 const {items} = this.state;
@@ -133,7 +145,7 @@ class Homepage extends Component {
     load = () => {
         this.setState({loading: true});
         const {page} = this.state;
-        const url = `http://47.106.23.224:30005/Ticket/QueryShowPage?pagenumber=${page}`;
+        const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${page}`;
         fetch(url, {
             method: 'GET',
         })
@@ -181,7 +193,6 @@ class Homepage extends Component {
                     </Typography>
                 </div>
                 {items === 0 ? loadingCircle : null}
-                <div className={classes.wrapper}>
                     <div id='content' className={classes.content}>
                         {
                             this.content.slice(0, items).map((s, i) => {
@@ -193,7 +204,6 @@ class Homepage extends Component {
                             })
                         }
                     </div>
-                </div>
                 {firstLoad &&
                 (<div className={classes.wrapper}>
                     <div className={classes.block}>

@@ -9,15 +9,20 @@
     "animate.css": "^3.6.1",
     "classnames": "^2.2.6",
     "mdi-material-ui": "^5.1.1",
+    "node-sass": "^4.9.3",
     "prop-types": "^15.6.2",
     "react": "^16.3.0",
+    "react-bmap": "^1.0.80",
     "react-dom": "^16.4.1",
     "react-infinite-slide": "^0.1.2",
+    "react-load-script": "0.0.6",
     "react-loading": "^2.0.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
-    "recompose": "^0.27.1"
+    "react-share-button": "0.0.2",
+    "recompose": "^0.27.1",
+    "social-share-react": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -47,6 +47,7 @@ import Activating from "./page/Activating";
 import Activated from "./page/Activated";
 import Comments from './page/Comments';
 import Cart from "./page/Cart";
+import Collection from "./page/Collection";
 import OrderConfirm from './page/OrderConfirm';
 import PayConfirm from './page/PayConfirm';
 import Order from './page/Order'
@@ -56,6 +57,8 @@ import Vocal from './svg/ic-vocal.svg';
 import Mask from './svg/mask.svg';
 import Parent from './svg/parent-child.svg';
 import Acrobatics from './svg/acrobatics.svg';
+import CommentPlusOutline from "mdi-material-ui/CommentPlusOutline";
+import UserComment from './page/UserComment'
 
 const listStyles = {
     home: {
@@ -110,7 +113,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         backgroundAttachment: 'fixed',
-        background: 'url(https://images.unsplash.com/photo-1510792047925-c55a452bbad7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=7eac342268ea9f12545a354d683d009d&auto=format&fit=crop&w=2052&q=80)',
+        background: 'url(https://images.unsplash.com/photo-1532528457466-cdf44fdc0312?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=b6d164661ebb899e537c052f4869fbe3&auto=format&fit=crop&w=2022&q=80)',
         padding: theme.spacing.unit,
     },
     avatar: {
@@ -272,6 +275,12 @@ class ResponsiveDrawer extends Component {
                             </ListItemIcon>
                             <ListItemText inset primary="Orders"/>
                         </ListItem>
+                        <ListItem button component={NavLink} className={classes.nested} to='/user/comments'>
+                            <ListItemIcon>
+                                <CommentPlusOutline/>
+                            </ListItemIcon>
+                            <ListItemText inset primary="Comments"/>
+                        </ListItem>
                     </List>
                 </Collapse>
                 <ListItem button component={NavLink} to='/cart'>
@@ -421,11 +430,13 @@ class ResponsiveDrawer extends Component {
                     <Route path='/search/:search' component={Search}/>
                     <Route path='/detail/:id' component={Specify}/>
                     <Route path='/cart' component={Cart}/>
+                    <Route path='/collection' component={Collection}/>
                     <Route path='/comments' component={Comments}/>
                     <Route path="empty" component={null} key="empty"/>
                     <Route path="/orderconfirm" component={OrderConfirm}/>
                     <Route path="/payconfirm" component={PayConfirm}/>
                     <Route path="/user/orders" component={Order}/>
+                    <Route path="/user/comments" component={UserComment}/>
                     <Route path="/afterpay" component={AfterPay}/>
                 </main>
             </div>

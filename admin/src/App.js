@@ -59,9 +59,18 @@ const styles = theme => ({
         justifyContent: 'center',
         display: 'flex',
     },
+    textField: {
+        padding: theme.spacing.unit,
+    },
+    verifyImg: {
+        maxWidth: '22%',
+        height: '14%',
+    },
 });
 
 class App extends Component {
+    verifyUrl='http://120.79.58.85:30001/Code/Generate';
+
     constructor(props) {
         super(props);
         this.state = {
@@ -70,6 +79,8 @@ class App extends Component {
             page: 0,
             id: null,
             pwd: null,
+            verify: null,
+            verifyUrl: this.verifyUrl,
         };
     }
 
@@ -96,7 +107,7 @@ class App extends Component {
     };
 
     login = e => {
-        const {id, pwd} = this.state;
+        const {id, pwd, verify} = this.state;
 
         if (!id) {
             alert("管理员ID不能为空");
@@ -106,34 +117,91 @@ class App extends Component {
             alert("密码不能为空");
             return -1;
         }
+        if (!verify) {
+            alert("验证码不能为空");
+            return -1;
+        }
         
-        let admin = {
-            id: id,
-            token: "1010101010",
-            pwd: escape(pwd),
-        };
-        let storage = window.sessionStorage;
-        storage.setItem("admin", JSON.stringify(admin));
-        this.setState({
-            admin: admin,
-            page: 1,
-        });
-        let date = (new Date()).toUTCString();
-        console.log(`Administrator ${id} login on ${date}`);
+        let form = {
+            answer: verify,
+            username: id,
+            password: pwd,
+        }
+        let params = "";
+        let attr = null;
+        for (attr in form) {
+            params += attr + "=" + form[attr] + "&";
+        }
+        console.log(params);
+        params = params.substring(0, params.length - 1);
+
+        const url = "http://pipipan.cn:30004/Sign/In";
+        console.log(url + "?" + params);
+        fetch (url + "?" + params, {
+            method: 'POST',
+            "content-type": "application/x-www-form-urlencoded",
+        })
+            .then(response => response.text())
+            .then(text => {
+                console.log(text);
+                switch(text) {
+                    case "code" :
+                        alert("验证码错误");
+                        break;
+                    case "fail":
+                        alert("用户名或密码错误");
+                        break;
+                    case "UnActive":
+                        alert("用户未激活，无需重新发送邮件");
+                        break;
+                    default:
+                        let admin = {
+                            id: id,
+                            token: text,
+                        };
+                        let storage = window.sessionStorage;
+                        storage.setItem("admin", JSON.stringify(admin));
+                        this.setState({
+                            admin: admin,
+                            page: 1,
+                        });
+                }
+                this.setState({
+                    id: null,
+                    pwd: null,
+                    verify: null,
+                    verifyUrl: this.verifyUrl + "?d=" + (new Date()).getTime(),
+                });
+            })
+            .catch(e => console.log(e))
     }
 
     logout = e => {
+        const {admin} = this.state;
+        fetch (`http://pipipan.cn:30004/Sign/Out?token=${admin.token}`)
+            .then(response => console.log(response))
+            .catch(e => console.log(e));
+
         this.setState({
             admin: null,
             page: 0,
         });
+        let storage = window.sessionStorage;
+        storage.removeItem("admin");
         let date = (new Date()).toUTCString();
         console.log("Administrator logout on ", date);
     };
 
+    changeVerifyImg = () => {
+        let date = new Date();
+        this.setState({
+            verifyUrl: this.verifyUrl + `?d=${date.toUTCString()}`,
+        });
+    }
+
     render() {
         const {classes} = this.props;
-        const {admin, open, page, id, pwd} = this.state;
+        const {admin, open, page, id, pwd, verify} = this.state;
 
         /*
          * Drawer List Item
@@ -167,10 +235,16 @@ class App extends Component {
                     <TextField id='pwd' label="密码" className={classes.textField} margin="normal" required
                         value={pwd || ''} onChange={this.handleChange('pwd')} fullWidth type="password"
                     />
+                    <TextField id='verify' label="验证码" className={classes.textField} margin="normal" required
+                        value={verify || ''} onChange={this.handleChange('verify')}
+                    />
+                    <img src={this.state.verifyUrl} alt="验证码" onClick={this.changeVerifyImg} 
+                        className={classes.verifyImg}
+                    />
                     <div className={classes.buttonSec}>
-                    <Button onClick={this.login} variant="raised" color="primary">
-                        登录
-                    </Button>
+                        <Button onClick={this.login} variant="raised" color="primary">
+                            登录
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -210,6 +284,7 @@ class App extends Component {
             default: 
                 content = signin;
         };
+        if (!admin) content = signin;
 
         return (
             <div>

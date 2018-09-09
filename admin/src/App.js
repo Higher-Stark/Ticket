@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
+import ManagerUser from './ManageUser';
 
 const styles = theme => ({
     root: {
@@ -61,6 +62,33 @@ const styles = theme => ({
 });
 
 class App extends Component {
+    verification = {
+        verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
+        uuid: ''
+    };
+    changeVerifyImg = () => {
+        let date = new Date();
+        this.setState({
+            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
+        });
+    };
+    /*
+ * check username
+ */
+    check_name = () => {
+        let pattern = /^[\w-]{5,25}$/;
+        return pattern.test(this.state.id);
+    };
+    /*
+     * Password must contains digits and characters
+     */
+    check_pwd = () => {
+        let pattern = /^[\w-$%#]{6,25}$/;
+        let test = pattern.test(this.state.pwd);
+        test = test && (this.state.pwd.match(/\d/) !== null);
+        test = test && (this.state.pwd.match(/\D/) !== null);
+        return test;
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -69,10 +97,13 @@ class App extends Component {
             page: 0,
             id: null,
             pwd: null,
+            email: '',
+            authCode: '',
         };
     }
 
     componentWillMount() {
+        this.changeVerifyImg();
         let storage = window.sessionStorage;
         let admin = storage.getItem("admin");
         if (admin) {
@@ -94,32 +125,76 @@ class App extends Component {
         });
     };
 
-    login = e => {
-        const {id, pwd} = this.state;
-
-        if (!id) {
-            alert("管理员ID不能为空");
-            return -1;
+    login = () => {
+        const {id, pwd, authCode} = this.state;
+        if (id.length === 0) {
+            alert("管理员id不能为空");
+            return;
         }
-        if (!pwd) {
+        if (pwd.length === 0) {
             alert("密码不能为空");
-            return -1;
+            return;
         }
-        
-        let admin = {
-            id: id,
-            token: "1010101010",
-            pwd: escape(pwd),
-        };
-        let storage = window.sessionStorage;
-        storage.setItem("admin", JSON.stringify(admin));
-        this.setState({
-            admin: admin,
-            page: 1,
-        });
-        let date = (new Date()).toUTCString();
-        console.log(`Administrator ${id} login on ${date}`);
-    }
+        if (authCode.length === 0) {
+            alert("验证码不能为空");
+            return;
+        }
+        if(!this.check_name()){
+            alert("Wrong username format");
+            return;
+        }
+        if(!this.check_pwd()){
+            alert("Wrong password format");
+            return;
+        }
+        let s = `username=${id}&password=${pwd}&answer=${authCode}`;
+        fetch('http://120.79.58.85:30004/Sign/In', {
+            method: 'POST',
+            body: s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include",
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.text();
+            })
+            .then(text => {
+                if (text === "code"){
+                    alert("验证码错误");
+                    this.changeVerifyImg();
+                    return;
+                }
+                else if (text === "fail") {
+                    alert("用户名或密码错误");
+                    this.changeVerifyImg();
+                    return;
+                }
+                else if (text === "UnActive") {
+                    alert("邮箱未激活");
+                    this.changeVerifyImg();
+                    return;
+                }
+                else
+                {
+                    alert("登录成功");
+                }
+                let date = new Date();
+                let utcTime = date.toUTCString();
+                let admin = {
+                    name: id,
+                    time: utcTime,
+                    token: text,
+                };
+                let storage = window.localStorage;
+                storage.setItem("admin", JSON.stringify(admin));
+                this.setState({
+                    admin: admin,
+                    page: 1,
+                });
+            })
+    };
 
     logout = e => {
         this.setState({
@@ -129,6 +204,13 @@ class App extends Component {
         let date = (new Date()).toUTCString();
         console.log("Administrator logout on ", date);
     };
+
+    manageUser = () => {
+        console.log("hello from the out side")
+        this.setState({
+            page: 1
+        })
+    }
 
     render() {
         const {classes} = this.props;
@@ -140,8 +222,11 @@ class App extends Component {
         const sideList = (
             <div className={classes.toolbar}>
                 <List component="nav">
-                    <ListItem button>
+                    <ListItem button onClick = {this.manageUser}>
                         <ListItemText primary="用户管理" />
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="票品管理" />
                     </ListItem>
                     <ListItem button>
                         <ListItemText primary="销量统计" />
@@ -166,6 +251,15 @@ class App extends Component {
                     <TextField id='pwd' label="密码" className={classes.textField} margin="normal" required
                         value={pwd || ''} onChange={this.handleChange('pwd')} fullWidth type="password"
                     />
+                    <TextField id='AuthCode' name='authCode'
+                               value={this.state.authCode} label='Verification Code'
+                               className={classes.authInput}
+                               margin='normal'
+                               onChange={this.handleChange('authCode')} />
+                    <img src={this.state.verifyUrl}
+                         alt=""
+                         onClick={this.changeVerifyImg}
+                         className={classes.verifyImg} />
                     <div className={classes.buttonSec}>
                     <Button onClick={this.login} variant="raised" color="primary">
                         登录
@@ -191,7 +285,11 @@ class App extends Component {
                 </Button>
             </div>
         );
-        
+
+        const manageUserPage = (
+            <ManagerUser/>
+        )
+
         /*
          * control page with content
          */
@@ -201,7 +299,7 @@ class App extends Component {
                 content = signin;
                 break;
             case 1: 
-                content = meaningless;
+                content = manageUserPage;
                 break;
             default: 
                 content = signin;

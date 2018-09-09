@@ -13,8 +13,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
+import Report from './statistics.js';
 import ManagerUser from './ManageUser';
-import EnhancedTable from './statistics.js';
+import Report from './statistics.js';
 import ManageTicket from './ManageTicket.js';
 
 const styles = theme => ({
@@ -292,7 +293,7 @@ class App extends Component {
                 content = manageUserPage;
                 break;
             case 2:
-                content = <EnhancedTable/>;
+                content = <Report/>;
                 break;
             case 3:
                 content = <ManageTicket/>;

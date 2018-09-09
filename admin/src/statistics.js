@@ -371,6 +371,8 @@ const tabStyles = theme => ({
 });
 
 class Report extends Component {
+    url = "http://pipipan.cn:30014/Manager/";
+
     constructor(props) {
         super(props);
         this.state = {
@@ -381,6 +383,7 @@ class Report extends Component {
             year: "",
             month: "",
             week: 1,
+            data: null,
         };
     }
 
@@ -394,27 +397,537 @@ class Report extends Component {
 
     toggleQueryDaily = event => {
         const {date, id, city} = this.state;
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+
         console.log(date, id, city);
+        if (!date) {
+            alert("date is empty");
+            return -1;
+        }
+        if (id === "" && city === "") {
+            fetch(this.url + `DailyQueryAll?token=${admin.token}&pagenumber=1`,
+                {method: 'GET'})
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                let el = null;
+                for (el in data) {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                }
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id === "" && city !== "") {
+            fetch(this.url + 
+                `DailyQueryByCityAndDate?token=${admin.token}&city=${city}&date=${date}&pagenumber=1`,
+                {method: 'GET',}
+            )
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id !== "") {
+            fetch(this.url + `DailyQueryByTicketidAndDate?token=${admin.token}&ticketid=${id}&date=${date}`)
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
     };
 
     toggleQueryWeekly = event => {
         const {year, month, week, id, city} = this.state;
         console.log(year, month, week, id, city);
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+
+        if (!year || !month || !week) {
+            alert("信息不全");
+            return -1;
+        }
+        if (id === "" && city === "") {
+            fetch(this.url + `WeeklyQueryAll?token=${admin.token}&pagenumber=1`,
+                {method: 'GET'})
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                let el = null;
+                for (el in data) {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                }
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id === "" && city !== "") {
+            fetch(this.url + 
+                `WeeklyQueryByTicketidAndWeek?token=${admin.token}&ticketid=${id}&year=${year}&month=${month}&week=${week}`,
+                {method: 'GET',}
+            )
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id !== "") {
+            fetch(this.url + `WeeklyQueryByCityAndWeek?token=${admin.token}&year=${year}&month=${month}&week=${week}&city=${city}&pagenumber=1`)
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
     };
 
     toggleQueryMonthly = event => {
         const {year, month, id, city} = this.state;
         console.log(year, month, id, city);
+
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+
+        if (!year || !month ) {
+            alert("信息不全");
+            return -1;
+        }
+        if (id === "" && city === "") {
+            fetch(this.url + `MonthlyQueryAll?token=${admin.token}&pagenumber=1`,
+                {method: 'GET'})
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                let el = null;
+                for (el in data) {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                }
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id === "" && city !== "") {
+            fetch(this.url + 
+                `MonthlyQueryByTicketidAndMonth?token=${admin.token}&year=${year}&month=${month}&ticketid=${id}`,
+                {method: 'GET',}
+            )
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id !== "") {
+            fetch(this.url + `MonthlyQueryByCityAndMonth?token=${admin.token}&year=${year}&month=${month}&city=${city}&pagenumber=1`)
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
     };
 
     toggleQueryYearly = event => {
         const {year, id, city} = this.state;
         console.log(year, id, city);
+
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+
+        if (!year ) {
+            alert("信息不全");
+            return -1;
+        }
+        if (id === "" && city === "") {
+            fetch(this.url + `AnnuallyQueryAll?token=${admin.token}&pagenumber=1`,
+                {method: 'GET'})
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                let el = null;
+                for (el in data) {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                }
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id === "" && city !== "") {
+            fetch(this.url + 
+                `AnuuallyQueryByTicketidAndYear?token=${admin.token}&year=${year}&ticketid=${id}`,
+                {method: 'GET',}
+            )
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
+        else if (id !== "") {
+            fetch(this.url + `AnuuallyQueryByCityAndYear?token=${admin.token}&year=${year}&city=${city}&pagenumber=1`)
+            .then(response => {
+                let headers = response.headers;
+                if (headers.get("errorNum") !== 0) {
+                    switch(headers.get("errorNum")) {
+                        case 1: 
+                            alert("尚未登录");
+                            break;
+                        case 2:
+                            alert("身份不对应");
+                            break;
+                        case 3:
+                            alert("账户被冻结");
+                            break;
+                        default:
+                    }
+                    throw Error("Error");
+                }
+                return response.json();
+            })
+            .then(data => {
+                let tmp = [];
+                data.map(el => {
+                    let item = {
+                        id: el.ticketId,
+                        total: el.totalPrice,
+                        sales: el.priceAndAmount,
+                        rate: el.rate,
+                        city: el.city,
+                        name: el.title,
+                    };
+                    tmp.append(item);
+                })
+                this.setState({data: tmp});
+            })
+            .catch(e => console.log(e));
+        }
     };
 
     render() {
         const {classes } = this.props;
-        const { tab, date, id, city, year, month, week } = this.state;
+        const { tab, date, id, city, year, month, week, data } = this.state;
 
         const daily = (
             <div className={classes.form}>
@@ -515,6 +1028,9 @@ class Report extends Component {
                 </Button>
             </div>
         );
+        
+        let hasData = true;
+        if (!data) hasData = false;
 
         return (
             <div className={classes.root}>
@@ -529,18 +1045,18 @@ class Report extends Component {
                 { tab === 0 && (
                     <div> 
                         {daily}
-                        <EnhancedTable data={fakeData}/>
+                        { hasData && <EnhancedTable data={data}/> }
                     </div>
                 )
                 }
                 { tab === 1 && (
                     <div>
                         {weekly}
-                        <EnhancedTable data={fakeData}/>
+                        { hasData && <EnhancedTable data={data}/> }
                     </div>
                 )}
-                { tab === 2 && (<div>{monthly}<EnhancedTable data={fakeData }/></div>) }
-                { tab === 3 && (<div>{yearly}<EnhancedTable data={fakeData}/></div>) }
+                { tab === 2 && (<div>{monthly}{ hasData && <EnhancedTable data={data }/> }</div>) }
+                { tab === 3 && (<div>{yearly}{ hasData && <EnhancedTable data={data}/> }</div>) }
             </div>
         );
     }

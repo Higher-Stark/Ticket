@@ -13,7 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import EnhancedTable from './statistics.js';
+import Report from './statistics.js';
 
 const styles = theme => ({
     root: {
@@ -279,7 +279,7 @@ class App extends Component {
                 content = meaningless;
                 break;
             case 2:
-                content = <EnhancedTable/>;
+                content = <Report/>;
                 break;
             default: 
                 content = signin;

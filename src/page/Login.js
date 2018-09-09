@@ -153,7 +153,6 @@ class Login extends Component{
                 let storage = window.localStorage;
                 storage.setItem("user", JSON.stringify(currentUser));
                 this.props.history.push('/');
-                return;
             })
     };
 

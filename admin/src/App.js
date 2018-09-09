@@ -14,6 +14,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import Report from './statistics.js';
+import ManagerUser from './ManageUser';
 
 const styles = theme => ({
     root: {
@@ -85,6 +86,7 @@ class App extends Component {
     }
 
     componentWillMount() {
+        this.changeVerifyImg();
         let storage = window.sessionStorage;
         let admin = storage.getItem("admin");
         if (admin) {
@@ -113,9 +115,9 @@ class App extends Component {
             alert("管理员ID不能为空");
             return -1;
         }
-        if (!pwd) {
+        if (pwd.length === 0) {
             alert("密码不能为空");
-            return -1;
+            return;
         }
         if (!verify) {
             alert("验证码不能为空");
@@ -209,8 +211,11 @@ class App extends Component {
         const sideList = (
             <div className={classes.toolbar}>
                 <List component="nav">
-                    <ListItem button onClick={() => this.setState({page: 2})}>
+                    <ListItem button onClick = {() => this.setState({page: 1})}>
                         <ListItemText primary="用户管理" />
+                    </ListItem>
+                    <ListItem button onClick={() => this.setState({page: 3})}>
+                        <ListItemText primary="票品管理"/>
                     </ListItem>
                     <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="销量统计" />
@@ -266,7 +271,11 @@ class App extends Component {
                 </Button>
             </div>
         );
-        
+
+        const manageUserPage = (
+            <ManagerUser/>
+        )
+
         /*
          * control page with content
          */
@@ -276,7 +285,7 @@ class App extends Component {
                 content = signin;
                 break;
             case 1: 
-                content = meaningless;
+                content = manageUserPage;
                 break;
             case 2:
                 content = <Report/>;

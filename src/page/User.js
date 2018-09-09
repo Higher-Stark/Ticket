@@ -209,15 +209,15 @@ class User extends Component {
             }
         })
             .then(data => {
-                let newData=data;
-                if(newData.phone===null)
-                    newData.phone='';
-                if(newData.nickName===null)
-                    newData.nickName='';
-                if(newData.account===null)
-                    newData.account=0;
-                if(newData.address===null)
-                    newData.address='';
+                let newData = data;
+                if (newData.phone === null)
+                    newData.phone = '';
+                if (newData.nickName === null)
+                    newData.nickName = '';
+                if (newData.account === null)
+                    newData.account = 0;
+                if (newData.address === null)
+                    newData.address = '';
                 this.setState({user: newData});
             })
             .catch(e => {
@@ -285,15 +285,15 @@ class User extends Component {
             }
         })
             .then(data => {
-                let newData=data;
-                if(newData.phone===null)
-                    newData.phone='';
-                if(newData.nickName===null)
-                    newData.nickName='';
-                if(newData.account===null)
-                    newData.account=0;
-                if(newData.address===null)
-                    newData.address='';
+                let newData = data;
+                if (newData.phone === null)
+                    newData.phone = '';
+                if (newData.nickName === null)
+                    newData.nickName = '';
+                if (newData.account === null)
+                    newData.account = 0;
+                if (newData.address === null)
+                    newData.address = '';
                 that.setState({user: newData});
             })
             .catch(e => {
@@ -328,20 +328,22 @@ class User extends Component {
             }
         })
             .then(data => {
-                let newData=data;
-                if(newData.phone===null)
-                    newData.phone='';
-                if(newData.nickName===null)
-                    newData.nickName='';
-                if(newData.account===null)
-                    newData.account=0;
-                if(newData.address===null)
-                    newData.address='';
+                let newData = data;
+                if (newData.phone === null)
+                    newData.phone = '';
+                if (newData.nickName === null)
+                    newData.nickName = '';
+                if (newData.account === null)
+                    newData.account = 0;
+                if (newData.address === null)
+                    newData.address = '';
                 this.setState({user: newData});
             })
             .catch(e => {
                 if (e instanceof SyntaxError) {
-                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(()=>{this.fetchInfo()});
+                    fetch(`${this.serviceUrl}/UserDetail/InitialSave?token=${token}`).then(() => {
+                        this.fetchInfo()
+                    });
                 }
                 else {
                     alert(e.message);
@@ -373,11 +375,11 @@ class User extends Component {
             alert("请再次输入新密码");
             return;
         }
-        if(!this.check_pwd(oldPwd)){
+        if (!this.check_pwd(oldPwd)) {
             alert("旧密码格式错误");
             return;
         }
-        if(!this.check_pwd(newPwd)){
+        if (!this.check_pwd(newPwd)) {
             alert("新密码格式错误");
             return;
         }
@@ -422,7 +424,8 @@ class User extends Component {
                             .then(status => {
                                 if (status === 200) {
                                     storage.removeItem("user");
-                                    this.setState({user: {
+                                    this.setState({
+                                        user: {
                                             username: '',
                                             avatar: '',
                                             nickName: '',
@@ -430,11 +433,14 @@ class User extends Component {
                                             phone: 0,
                                             account: 0,
                                             address: "",
-                                        }});
+                                        }
+                                    });
                                 }
                                 else throw Error("Connection failed");
                             })
-                            .then(()=>{window.location.href = "/signin";})
+                            .then(() => {
+                                window.location.href = "/signin";
+                            })
                             .catch(e => console.log(e));
                     }
                 }
@@ -606,30 +612,33 @@ class User extends Component {
         const info = (
             <div>
                 <Paper elevation={10} className={classes.paper}>
-                <Grid container spacing={24}>
-                    <Grid item xs={2} className={classes.imgGrid}>
-                        <div className={classes.imageSec}>
-                            <img alt={user.name} src={user.avatar} className={classes.image}/>
-                        </div>
-                        <div className={classes.wrapper}>
-                            <input accept="image/*" className={classes.input} id="flat-button-file" type="file" onChange={this.setImg}/>
-                            <label htmlFor="flat-button-file">
-                                <Button component="span" variant="contained" className={classes.button}>
-                                    Upload Profile
-                                </Button>
-                            </label>
-                        </div>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <div className={classes.actions}>
-                            {
-                                edit ?
-                                    <div>
-                                    <Button variant='fab' color='secondary' onClick={this.toggleSave} className={classNames(classes.action, classes.button)}>
-                                        <SaveIcon/>
+                    <Grid container spacing={24}>
+                        <Grid item xs={2} className={classes.imgGrid}>
+                            <div className={classes.imageSec}>
+                                <img alt={user.name} src={user.avatar} className={classes.image}/>
+                            </div>
+                            <div className={classes.wrapper}>
+                                <input accept="image/*" className={classes.input} id="flat-button-file" type="file"
+                                       onChange={this.setImg}/>
+                                <label htmlFor="flat-button-file">
+                                    <Button component="span" variant="contained" className={classes.button}>
+                                        Upload Profile
                                     </Button>
-                                        <Button variant='fab' color='primary' onClick={this.toggleCancel} className={classNames(classes.action, classes.button)}>
-                                            <ClearIcon/>
+                                </label>
+                            </div>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <div className={classes.actions}>
+                                {
+                                    edit ?
+                                        <div>
+                                            <Button variant='fab' color='secondary' onClick={this.toggleSave}
+                                                    className={classNames(classes.action, classes.button)}>
+                                                <SaveIcon/>
+                                            </Button>
+                                            <Button variant='fab' color='primary' onClick={this.toggleCancel}
+                                                    className={classNames(classes.action, classes.button)}>
+                                                <ClearIcon/>
                                             </Button>
                                         </div> :
                                         <Button variant='fab' color='primary' onClick={this.toggleEdit}
@@ -704,17 +713,18 @@ class User extends Component {
         return (
             <div className={classes.root}>
                 <AppBar position='static'>
-                <Tabs value={tab} onChange={this.toggleTab}>
-                    <Tab label="User info"/>
-                    <Tab label="Modify Password"/>
-                    <Tab label="修改支付密码"/>
-                    <Tab label="注销账户"/>
-                </Tabs>
+                    <Tabs value={tab} onChange={this.toggleTab}>
+                        <Tab label="用户信息"/>
+                        <Tab label="修改登录密码"/>
+                        <Tab label="修改支付密码"/>
+                        <Tab label="注销账户"/>
+                    </Tabs>
                 </AppBar>
-                { tab === 0 && info }
-                { tab === 1 && modify }
-                { tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography> }
-                { tab === 3 && <Typography variant='subheading' component='h3' gutterBottom>{'暂不支持注销账户，请谅解'}</Typography> }
+                {tab === 0 && info}
+                {tab === 1 && modify}
+                {tab === 2 && <Typography variant='body1' component='p' gutterBottom>{"此功能尚未开放"}</Typography>}
+                {tab === 3 &&
+                <Typography variant='subheading' component='h3' gutterBottom>{'暂不支持注销账户，请谅解'}</Typography>}
             </div>
         )
     }

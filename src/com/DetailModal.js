@@ -212,6 +212,26 @@ class DetailModal extends Component {
 
     toggleMore = () => this.setState({open: ! this.state.open});
 
+    checkTime(stime) {
+        let date = new Date(stime);
+        let now = new Date();
+        let month = date.getMonth();
+        let year = date.getFullYear();
+        let day = date.getDate();
+        let nmonth = now.getMonth();
+        let nyear = now.getFullYear();
+        let nday = now.getDate();
+        if (year > nyear) {
+            return false;
+        } else if (year === nyear && month > nmonth) {
+            return false;
+        } else if (month === nmonth && day > nday) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     render() {
         const {classes, card} = this.props;
         const {selectedDate, selectedPrice, quantity} = this.state;
@@ -258,6 +278,7 @@ class DetailModal extends Component {
                                                     }}
                                                     color='primary'
                                                     className={classes.date}
+                                                    disabled={this.checkTime(s)}
                                                     key={i}
                                                     disableRipple
                                             >

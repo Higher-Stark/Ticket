@@ -14,6 +14,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import ManagerUser from './ManageUser';
+import EnhancedTable from './statistics.js';
 
 const styles = theme => ({
     root: {
@@ -59,36 +60,18 @@ const styles = theme => ({
         justifyContent: 'center',
         display: 'flex',
     },
+    textField: {
+        padding: theme.spacing.unit,
+    },
+    verifyImg: {
+        maxWidth: '22%',
+        height: '14%',
+    },
 });
 
 class App extends Component {
-    verification = {
-        verifyUrl: 'http://120.79.58.85:30001/Code/Generate',
-        uuid: ''
-    };
-    changeVerifyImg = () => {
-        let date = new Date();
-        this.setState({
-            verifyUrl : this.verification.verifyUrl + `?timestamp=${date.toUTCString()}`,
-        });
-    };
-    /*
- * check username
- */
-    check_name = () => {
-        let pattern = /^[\w-]{5,25}$/;
-        return pattern.test(this.state.id);
-    };
-    /*
-     * Password must contains digits and characters
-     */
-    check_pwd = () => {
-        let pattern = /^[\w-$%#]{6,25}$/;
-        let test = pattern.test(this.state.pwd);
-        test = test && (this.state.pwd.match(/\d/) !== null);
-        test = test && (this.state.pwd.match(/\D/) !== null);
-        return test;
-    };
+    verifyUrl='http://120.79.58.85:30001/Code/Generate';
+
     constructor(props) {
         super(props);
         this.state = {
@@ -97,8 +80,8 @@ class App extends Component {
             page: 0,
             id: null,
             pwd: null,
-            email: '',
-            authCode: '',
+            verify: null,
+            verifyUrl: this.verifyUrl,
         };
     }
 
@@ -125,96 +108,102 @@ class App extends Component {
         });
     };
 
-    login = () => {
-        const {id, pwd, authCode} = this.state;
-        if (id.length === 0) {
-            alert("管理员id不能为空");
-            return;
+    login = e => {
+        const {id, pwd, verify} = this.state;
+
+        if (!id) {
+            alert("管理员ID不能为空");
+            return -1;
         }
         if (pwd.length === 0) {
             alert("密码不能为空");
             return;
         }
-        if (authCode.length === 0) {
+        if (!verify) {
             alert("验证码不能为空");
-            return;
+            return -1;
         }
-        if(!this.check_name()){
-            alert("Wrong username format");
-            return;
+        
+        let form = {
+            answer: verify,
+            username: id,
+            password: pwd,
         }
-        if(!this.check_pwd()){
-            alert("Wrong password format");
-            return;
+        let params = "";
+        let attr = null;
+        for (attr in form) {
+            params += attr + "=" + form[attr] + "&";
         }
-        let s = `username=${id}&password=${pwd}&answer=${authCode}`;
-        fetch('http://120.79.58.85:30004/Sign/In', {
+        console.log(params);
+        params = params.substring(0, params.length - 1);
+
+        const url = "http://pipipan.cn:30004/Sign/In";
+        console.log(url + "?" + params);
+        fetch (url + "?" + params, {
             method: 'POST',
-            body: s,
-            headers: new Headers({
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }),
-            credentials: "include",
+            "content-type": "application/x-www-form-urlencoded",
         })
-            .then(response => {
-                if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
-            })
+            .then(response => response.text())
             .then(text => {
-                if (text === "code"){
-                    alert("验证码错误");
-                    this.changeVerifyImg();
-                    return;
+                console.log(text);
+                switch(text) {
+                    case "code" :
+                        alert("验证码错误");
+                        break;
+                    case "fail":
+                        alert("用户名或密码错误");
+                        break;
+                    case "UnActive":
+                        alert("用户未激活，无需重新发送邮件");
+                        break;
+                    default:
+                        let admin = {
+                            id: id,
+                            token: text,
+                        };
+                        let storage = window.sessionStorage;
+                        storage.setItem("admin", JSON.stringify(admin));
+                        this.setState({
+                            admin: admin,
+                            page: 1,
+                        });
                 }
-                else if (text === "fail") {
-                    alert("用户名或密码错误");
-                    this.changeVerifyImg();
-                    return;
-                }
-                else if (text === "UnActive") {
-                    alert("邮箱未激活");
-                    this.changeVerifyImg();
-                    return;
-                }
-                else
-                {
-                    alert("登录成功");
-                }
-                let date = new Date();
-                let utcTime = date.toUTCString();
-                let admin = {
-                    name: id,
-                    time: utcTime,
-                    token: text,
-                };
-                let storage = window.localStorage;
-                storage.setItem("admin", JSON.stringify(admin));
                 this.setState({
-                    admin: admin,
-                    page: 1,
+                    id: null,
+                    pwd: null,
+                    verify: null,
+                    verifyUrl: this.verifyUrl + "?d=" + (new Date()).getTime(),
                 });
             })
-    };
+            .catch(e => console.log(e))
+    }
 
     logout = e => {
+        const {admin} = this.state;
+        fetch (`http://pipipan.cn:30004/Sign/Out?token=${admin.token}`)
+            .then(response => console.log(response))
+            .catch(e => console.log(e));
+
         this.setState({
             admin: null,
             page: 0,
         });
+        let storage = window.sessionStorage;
+        storage.removeItem("admin");
         let date = (new Date()).toUTCString();
         console.log("Administrator logout on ", date);
     };
 
-    manageUser = () => {
-        console.log("hello from the out side")
+    changeVerifyImg = () => {
+        let date = new Date();
         this.setState({
-            page: 1
-        })
+            verifyUrl: this.verifyUrl + `?d=${date.toUTCString()}`,
+        });
     }
 
     render() {
         const {classes} = this.props;
-        const {admin, open, page, id, pwd} = this.state;
+        const {admin, open, page, id, pwd, verify} = this.state;
 
         /*
          * Drawer List Item
@@ -222,17 +211,17 @@ class App extends Component {
         const sideList = (
             <div className={classes.toolbar}>
                 <List component="nav">
-                    <ListItem button onClick = {this.manageUser}>
+                    <ListItem button onClick = {() => this.setState({page: 1})}>
                         <ListItemText primary="用户管理" />
                     </ListItem>
-                    <ListItem button>
-                        <ListItemText primary="票品管理" />
+                    <ListItem button onClick={() => this.setState({page: 3})}>
+                        <ListItemText primary="票品管理"/>
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="销量统计" />
                     </ListItem>
                     <Divider/>
-                    <ListItem button>
+                    <ListItem button onClick={this.logout}>
                         <ListItemText primary="退出" />
                     </ListItem>
                 </List>
@@ -251,19 +240,16 @@ class App extends Component {
                     <TextField id='pwd' label="密码" className={classes.textField} margin="normal" required
                         value={pwd || ''} onChange={this.handleChange('pwd')} fullWidth type="password"
                     />
-                    <TextField id='AuthCode' name='authCode'
-                               value={this.state.authCode} label='Verification Code'
-                               className={classes.authInput}
-                               margin='normal'
-                               onChange={this.handleChange('authCode')} />
-                    <img src={this.state.verifyUrl}
-                         alt=""
-                         onClick={this.changeVerifyImg}
-                         className={classes.verifyImg} />
+                    <TextField id='verify' label="验证码" className={classes.textField} margin="normal" required
+                        value={verify || ''} onChange={this.handleChange('verify')}
+                    />
+                    <img src={this.state.verifyUrl} alt="验证码" onClick={this.changeVerifyImg} 
+                        className={classes.verifyImg}
+                    />
                     <div className={classes.buttonSec}>
-                    <Button onClick={this.login} variant="raised" color="primary">
-                        登录
-                    </Button>
+                        <Button onClick={this.login} variant="raised" color="primary">
+                            登录
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -301,9 +287,13 @@ class App extends Component {
             case 1: 
                 content = manageUserPage;
                 break;
+            case 2:
+                content = <EnhancedTable/>;
+                break;
             default: 
                 content = signin;
         };
+        if (!admin) content = signin;
 
         return (
             <div>

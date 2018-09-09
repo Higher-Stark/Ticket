@@ -306,7 +306,8 @@ class Search extends Component {
                             <Tab label={'By heat'}/>
                             <Tab label={'By Date'}/>
                         </Tabs>
-                    <ActivityWithStyle data={data} history={this.props.history}/>
+                    {data.length === 0 ? (<div><h3>暂无票品</h3></div>) :
+                    <ActivityWithStyle data={data} history={this.props.history}/>}
                 </div>
                 <div className={classes.pageBar}>
                     <PageBar current={page} max={this.state.totalPages} goto={this.viewPage}/>

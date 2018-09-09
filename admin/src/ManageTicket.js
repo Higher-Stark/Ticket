@@ -24,6 +24,8 @@ import TableFooter from '@material-ui/core/TableFooter';
 import EditIcon from '@material-ui/icons/Edit';
 import SaveIcon from "@material-ui/icons/Save";
 import ClearIcon from "@material-ui/icons/Clear";
+import TextField from "@material-ui/core/TextField";
+
 
 const actionsStyles = theme => ({
     root: {
@@ -106,10 +108,8 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {withTheme: true
 
 
 const columnData = [
-    {numeric: false, disablePadding: true, label: '票品信息'},
-    {numeric: false, disablePadding: false, label: '类型简介'},
-    {numeric: true, disablePadding: false, label: '价格范围'},
-    {numeric: true, disablePadding: false, label: '库存'},
+    {numeric: false, disablePadding: true, label: '票品封面'},
+    {numeric: false, disablePadding: false, label: '具体信息'},
     {numeric: false, disablePadding: false, label: '操作'},
 ];
 
@@ -228,24 +228,100 @@ const styles = theme => ({
     },
     info: {
         width: '20%',
-    }
+    },
+    wrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    input: {
+        display: 'none',
+    },
+    button: {
+        margin: theme.spacing.unit,
+    },
 
 });
 
+let engChi = new Map([]);
+engChi.set("nickName", "昵称");
+engChi.set("nickname", "昵称");
+engChi.set("phone", "手机");
+engChi.set("address", "地址");
+engChi.set("account", "账户余额");
+engChi.set("type", "类型");
+engChi.set("startDate", "开始日期");
+engChi.set("endDate", "结束日期");
+engChi.set("time", "时间");
+engChi.set("city", "城市");
+engChi.set("venue", "地址");
+engChi.set("title", "票名");
+engChi.set("intro", "简介");
+engChi.set("stock", "库存");
+engChi.set("lowprice", "最低价");
+engChi.set("highprice", "最高价");
+
+const chinese = function (key) {
+    return engChi.get(key) || key;
+};
+
+const urlEncode = function (obj) {
+    const pairs = Object.entries(obj);
+    let res = [];
+    pairs.forEach(p => res.push(`${p[0]}=${p[1]}`));
+    return res.join('&');
+};
+
+
 class ManageTicket extends React.Component {
     Delete = "http://pipipan.cn:30005/Manager/Delete";
+    Update = "http://pipipan.cn:30005/Manager/Update";
+    Add = "http://pipipan.cn:30005/Manager/Add";
 
     constructor(props) {
         super(props);
 
         this.state = {
-            edit:-1,
+            idx:-1,
+            edit: -1,
             selected: [],
-            data: [],
+            data: [
+                {
+                    id: 0,
+                    type: '',
+                    startDate: '',
+                    endDate: '',
+                    time: '',
+                    city: '',
+                    venue: "",
+                    title: '',
+                    image: '',
+                    intro: '',
+                    stock: 0,
+                    lowprice: 0,
+                    highprice: 0,
+                }
+            ],
+            addData: [
+                {
+                    id: 0,
+                    type: '',
+                    startDate: '',
+                    endDate: '',
+                    time: '',
+                    city: '',
+                    venue: "",
+                    title: '',
+                    image: '',
+                    intro: '',
+                    stock: 0,
+                    lowprice: 0,
+                    highprice: 0,
+                }
+            ],
             page: 0,
-            rowsPerPage: 9,
+            rowsPerPage: 8,
             totalElements: 0,
-            add:false,
+            add: false,
         };
     }
 
@@ -278,6 +354,18 @@ class ManageTicket extends React.Component {
         this.setState({selected: newSelected});
     };
 
+    updateTicketInfo = (i, name) => event => {
+        const {data} = this.state;
+        data[i][name] = event.target.value;
+        this.setState({data});
+    };
+
+    AddTicketInfo = (name) => event => {
+        const {addData} = this.state;
+        addData[0][name] = event.target.value;
+        this.setState({addData});
+    };
+
     toggleEdit = (i) => {
         this.oldInfo = Object.assign({}, this.state.data[i]);
         this.setState({
@@ -286,12 +374,6 @@ class ManageTicket extends React.Component {
     };
 
     toggleSave = (i) => {
-        const {id,type,startDate,endDate,time,city,venue,title,image,intro,stock,lowprice,highprice} = this.state.data[i];
-        //检验信息齐全
-        if (type.length === 0) {
-            alert("信息不齐！");
-            return;
-        }
         let storage = window.sessionStorage;
         let admin = storage.getItem("admin");
         admin = JSON.parse(admin);
@@ -299,6 +381,342 @@ class ManageTicket extends React.Component {
         this.setState({
             edit: -1,
         });
+
+        const {id, type, startDate, endDate, time, city, venue, title, intro, stock, lowprice, highprice} = this.state.data[i];
+
+        let body = {
+            token: token,
+            ticketid: id,
+            type: type,
+            startDate: startDate,
+            endDate: endDate,
+            time: time,
+            city: city,
+            venue: venue,
+            title: title,
+            intro: intro,
+            stock: stock,
+            lowprice: lowprice,
+            highprice: highprice
+        };
+        console.log(this.Update + '?' + urlEncode(body));
+        fetch(this.Update, {
+            method: 'POST',
+            credentials: "include",
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            body: urlEncode(body),
+        }).then(response => {
+            let headers = response.headers;
+            //console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '2' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '0' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(ticket => {
+                console.log(ticket);
+                /*let newData = ticket;
+                if (newData.type === null)
+                    newData.type = '';
+                if (newData.startDate === null)
+                    newData.startDate = '';
+                if (newData.endDate === null)
+                    newData.endDate = '';
+                if (newData.time === null)
+                    newData.time = '';
+                if (newData.city === null)
+                    newData.city = '';
+                if (newData.venue === null)
+                    newData.venue = '';
+                if (newData.title === null)
+                    newData.title = '';
+                if (newData.intro === null)
+                    newData.intro = '';
+                if (newData.stock === null)
+                    newData.stock = 0;
+                if (newData.lowprice === null)
+                    newData.lowprice = 0;
+                if (newData.highprice === null)
+                    newData.highprice = 0;
+                const {data} = this.state;
+                data[i] = newData;
+                this.setState({data});*/
+                alert('修改成功！');
+            })
+            .catch(e => {
+                alert(e.message);
+            })
+    };
+
+    dateCheck= (date) =>{
+        let a = /^(\d{4})-(\d{2})-(\d{2})$/
+        if (!a.test(date)) {
+           return 1;
+        }
+        return 0;
+    };
+
+    toggleSaveAdd = () => {
+        const{rowsPerPage}=this.state;
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+        let token = admin === null ? '' : admin.token;
+        const { type, startDate, endDate, time, city, venue, title, intro, stock, lowprice, highprice, file} = this.state.addData[0];
+        if (type === '' ||
+            startDate === '' ||
+            endDate === '' ||
+            time === '' ||
+            city === '' ||
+            venue === "" ||
+            title === '' ||
+            file === '' ||
+            intro === '' ||
+            stock === '' ||
+            lowprice === '' ||
+            highprice === '') {
+            alert("信息不全！");
+            return;
+        }
+        switch(this.dateCheck(startDate))
+        {
+            case 0:
+                break;
+            case 1:
+                alert("开始日期格式不正确，格式应为yyyy-mm-dd");
+                return;
+            default:
+                alert("未知错误！");
+                return;
+        }
+        switch(this.dateCheck(endDate))
+        {
+            case 0:
+                break;
+            case 1:
+                alert("结束日期格式不正确，格式应为yyyy-mm-dd");
+                return;
+            default:
+                alert("未知错误！");
+                return;
+        }
+        let formData = new FormData();
+        console.log(token);
+        console.log(type);
+        console.log(startDate);
+        console.log(endDate);
+        console.log(time);
+        console.log(city);
+        console.log(venue);
+        console.log(title);
+        console.log(intro);
+        console.log(stock);
+        console.log(lowprice);
+        console.log(highprice);
+        formData.append("token", token);
+        formData.append("type", type);
+        formData.append("startDate", startDate);
+        formData.append("endDate", endDate);
+        formData.append("time", time);
+        formData.append("city", city);
+        formData.append("venue", venue);
+        formData.append("title", title);
+        formData.append("image", file);
+        formData.append("intro", intro);
+        formData.append("stock", stock);
+        formData.append("lowprice", lowprice);
+        formData.append("highprice", highprice);
+
+        fetch(this.Add, {
+            method: 'POST',
+            credentials: "include",
+            body: formData,
+        }).then(response => {
+            let headers = response.headers;
+            //console.log(headers.get("errornum"));
+            switch (headers.get("errornum")) {
+                case '2' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '0' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(ticket => {
+                console.log(ticket);
+                /*let newData = ticket;
+                if (newData.type === null)
+                    newData.type = '';
+                if (newData.startDate === null)
+                    newData.startDate = '';
+                if (newData.endDate === null)
+                    newData.endDate = '';
+                if (newData.time === null)
+                    newData.time = '';
+                if (newData.city === null)
+                    newData.city = '';
+                if (newData.venue === null)
+                    newData.venue = '';
+                if (newData.title === null)
+                    newData.title = '';
+                if (newData.intro === null)
+                    newData.intro = '';
+                if (newData.stock === null)
+                    newData.stock = 0;
+                if (newData.lowprice === null)
+                    newData.lowprice = 0;
+                if (newData.highprice === null)
+                    newData.highprice = 0;
+                const {data} = this.state;
+                data[i] = newData;
+                this.setState({data});*/
+                alert('添加成功！');
+                this.setState({add: false});
+                const {page} = this.state;
+                const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${Math.floor(page / 2) + 1}`;
+                console.log(url);
+                fetch(url, {
+                    method: 'GET',
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data === null) throw Error("Response error!");
+                        this.setState({
+                            data: page % 2 ? data.content.slice(rowsPerPage) : data.content.slice(0, rowsPerPage),
+                            totalElements: data.totalElements
+                        });
+                    })
+                    .catch(e => console.log(e));
+            })
+            .catch(e => {
+                alert(e.message);
+            })
+    };
+
+    setImg  = event => {
+        console.log('setImg');
+        let i = this.state.idx;
+        let newImg = event.target.files[0]; //File
+        event.target.value = null;
+        if (newImg.name.indexOf('.svg') > -1) {
+            alert('Sorry, we do not accept images in svg format');
+            return;
+        }
+        if (typeof FileReader === "undefined") {
+            alert("Your Browser doesn't support FileReader, Please upgrade your browser. Latest Google Chrome is recommended.");
+            return;
+        }
+        let reader = new FileReader();
+        reader.readAsDataURL(newImg);
+        let that = this;
+        let storage = window.sessionStorage;
+        let admin = storage.getItem("admin");
+        admin = JSON.parse(admin);
+        let token = admin === null ? '' : admin.token;
+        reader.onload = function () {
+            const {data} = that.state;
+            data[i].image = this.result;  //base 64 string
+            that.setState({data});
+        };
+        let formData = new FormData();
+        const {data} = that.state;
+        console.log(token);
+        console.log(data[i].id);
+        formData.append("token", token);
+        formData.append("ticketid", data[i].id);
+        formData.append("image", newImg);
+        fetch(this.Update, {
+            method: 'POST',
+            credentials: "include",
+            body: formData,
+        }).then(response => {
+            let headers = response.headers;
+            switch (headers.get("errornum")) {
+                case '2' :
+                    return response.json();
+                case '1' : {
+                    throw Error("You haven't signed in yet.");
+                }
+                case '0' :
+                    throw Error("You identity match!");
+                case '3' :
+                    throw Error("Your account is frozen!");
+                default:
+                    throw Error("Unexpected response received from server! Please try again later.");
+            }
+        })
+            .then(ticket => {
+                console.log(ticket);
+                /*let newData = ticket;
+                if (newData.type === null)
+                    newData.type = '';
+                if (newData.startDate === null)
+                    newData.startDate = '';
+                if (newData.endDate === null)
+                    newData.endDate = '';
+                if (newData.time === null)
+                    newData.time = '';
+                if (newData.city === null)
+                    newData.city = '';
+                if (newData.venue === null)
+                    newData.venue = '';
+                if (newData.title === null)
+                    newData.title = '';
+                if (newData.intro === null)
+                    newData.intro = '';
+                if (newData.stock === null)
+                    newData.stock = 0;
+                if (newData.lowprice === null)
+                    newData.lowprice = 0;
+                if (newData.highprice === null)
+                    newData.highprice = 0;
+                const {data} = this.state;
+                data[i] = newData;
+                this.setState({data});*/
+                alert('修改成功！');
+            })
+            .catch(e => {
+                alert(e.message);
+            })
+    };
+
+    setImgAdd = () => event => {
+        let newImg = event.target.files[0]; //File
+        if (newImg.name.indexOf('.svg') > -1) {
+            alert('Sorry, we do not accept images in svg format');
+            return;
+        }
+        if (typeof FileReader === "undefined") {
+            alert("Your Browser doesn't support FileReader, Please upgrade your browser. Latest Google Chrome is recommended.");
+            return;
+        }
+        let reader = new FileReader();
+        reader.readAsDataURL(newImg);
+        let that = this;
+        reader.onload = function (e) {
+            const {addData} = that.state;
+            addData[0].image = this.result;  //base 64 string
+            addData[0].file = newImg;
+            that.setState({addData});
+        };
     };
 
     toggleCancel = (i) => {
@@ -338,7 +756,6 @@ class ManageTicket extends React.Component {
                         else if (errornum === '3') {
                             alert("账户被冻结！");
                         }
-                        this.props.history.push('/signin');
                     })
                     .then(() => {
                         const {page} = this.state;
@@ -357,6 +774,7 @@ class ManageTicket extends React.Component {
                                 });
                             })
                             .catch(e => console.log(e));
+                        alert('删除成功！');
                     })
                     .catch(e => console.log(e));
                 break;
@@ -388,7 +806,6 @@ class ManageTicket extends React.Component {
                 else if (errornum === '3') {
                     alert("账户被冻结！");
                 }
-                this.props.history.push('/signin');
             })
             .then(() => {
                 const {page} = this.state;
@@ -407,13 +824,18 @@ class ManageTicket extends React.Component {
                         });
                     })
                     .catch(e => console.log(e));
+                alert('删除成功！');
             })
             .catch(e => console.log(e));
         this.setState({selected: []});
     };
 
     handleAdd = () => {
-        this.setState({add:true});
+        this.setState({add: true});
+    };
+
+    handleBack = () => {
+        this.setState({add: false});
     };
 
     handleChangeRowsPerPage = event => {
@@ -459,10 +881,50 @@ class ManageTicket extends React.Component {
             .catch(e => console.log(e));
     }
 
+    filterKeys = (keys) => {
+        let filter = ["image", "id", "dates", "status"];
+        filter.forEach(s => {
+            let idx = keys.indexOf(s);
+            keys.splice(idx, 1);
+        });
+        return keys;
+    };
+
+
     render() {
         const {classes} = this.props;
-        const {data, selected, rowsPerPage, page, totalElements,edit} = this.state;
-        return (
+        const {data, selected, rowsPerPage, page, totalElements, edit, add, addData} = this.state;
+        let keys = Object.keys(data[0]);
+        keys = this.filterKeys(keys);
+
+        const tableCell = (i, key, value) => edit === i ? (
+            <div className={classes.block} key={key}>
+                <Typography variant='title' className={classes.label}>{chinese(key)}{': '}</Typography>
+                <TextField key={key} value={value} onChange={this.updateTicketInfo(i, key)}
+                           className={classes.textField}
+                           id={key} name={key} margin="normal" type="text" required
+                />
+            </div>
+        ) : (
+            <div className={classes.block} key={key}>
+                <Typography variant='title' className={classes.label} color='primary'>{chinese(key)}{': '}</Typography>
+                <Typography className={classes.inline} variant="subheading" component="h3"
+                            color="default">{value}</Typography>
+            </div>
+        );
+
+        const addCell = (key, value) => (
+            <div className={classes.block} key={key}>
+                <Typography variant='title' className={classes.label}>{chinese(key)}{': '}</Typography>
+                <TextField key={key} value={value} onChange={this.AddTicketInfo(key)}
+                           className={classes.textField}
+                           id={key} name={key} margin="normal" type="text" required
+                />
+            </div>
+        );
+
+
+        let content =
             <Paper className={classes.root}>
                 <EnhancedTableToolbar numSelected={selected.length}/>
                 <div className={classes.tableWrapper}>
@@ -475,7 +937,7 @@ class ManageTicket extends React.Component {
                         />
                         <TableBody>
                             {data
-                                .map((n,i) => {
+                                .map((n, idx) => {
                                     const isSelected = this.isSelected(n.id);
                                     return (
                                         <TableRow
@@ -491,46 +953,46 @@ class ManageTicket extends React.Component {
                                                 <Checkbox checked={isSelected}/>
                                             </TableCell>
                                             <TableCell className={classes.info} component="th" scope="row"
-                                                       padding="none" onClick={() => this.detail(n.ticketId)}>
+                                                       padding="none">
                                                 <Grid container spacing={8} key={n.id}>
                                                     <Grid item xs={6}>
                                                         <img src={n.image} className={classes.image}
                                                              alt={n.title}/>
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Typography variant='subheading' component='h3' color='primary'
-                                                                    className={classes.title}>
-                                                            {`[${n.title}]`}
-                                                        </Typography>
-                                                        <Typography variant='caption' gutterBottom>
-                                                            {n.city}{' '}{n.venue}
-                                                        </Typography>
-                                                        <Typography variant='caption' color='inherit' gutterBottom>
-                                                            From{n.startDate}to{n.endDate}{' '}{n.time}
-                                                        </Typography>
+                                                        <div className={classes.wrapper}>
+                                                            <input accept="image/*" className={classes.input}
+                                                                   id="flat-button-file" type="file"
+                                                                   onChange={this.setImg}/>
+                                                            <label htmlFor="flat-button-file">
+                                                                <Button component="span" variant="contained"
+                                                                        className={classes.button}
+                                                                        onClick={()=>this.setState({idx:idx})}>
+                                                                    Upload Profile
+                                                                </Button>
+                                                            </label>
+                                                        </div>
                                                     </Grid>
                                                 </Grid>
                                             </TableCell>
-                                            <TableCell>{n.type}{':'}{n.intro}</TableCell>
-                                            <TableCell numeric>￥{n.lowprice}-￥{n.highprice}</TableCell>
-                                            <TableCell numeric>
-                                                           {n.stock}
-                                            </TableCell>
+                                            {
+                                                keys.map((s) => (
+                                                    tableCell(idx, s, n[s])
+                                                ))
+                                            }
                                             <TableCell numeric>
                                                 {
-                                                    edit === i ?<div>
+                                                    edit === idx ? <div>
                                                             <Button variant='fab' color='secondary'
-                                                                    onClick={() => this.toggleSave(i)}
+                                                                    onClick={() => this.toggleSave(idx)}
                                                                     className={classNames(classes.action, classes.button)}>
                                                                 <SaveIcon/>
                                                             </Button>
                                                             <Button variant='fab' color='primary'
-                                                                    onClick={() => this.toggleCancel(i)}
+                                                                    onClick={() => this.toggleCancel(idx)}
                                                                     className={classNames(classes.action, classes.button)}>
                                                                 <ClearIcon/>
                                                             </Button>
-                                                        </div>:
-                                                    <Button onClick={() => this.toggleEdit(i)}><EditIcon/></Button>
+                                                        </div> :
+                                                        <Button onClick={() => this.toggleEdit(idx)}><EditIcon/></Button>
                                                 }
                                                 <Button onClick={event => this.handleDelete(event, n.id)}>删除</Button>
                                             </TableCell>
@@ -567,8 +1029,80 @@ class ManageTicket extends React.Component {
                         </TableFooter>
                     </Table>
                 </div>
-            </Paper>
-        );
+            </Paper>;
+        if (add) {
+            content =
+                <Paper className={classes.root}>
+                    <div className={classes.tableWrapper}>
+                        <Table className={classes.table} aria-labelledby="tableTitle">
+                            <TableBody>
+                                {addData
+                                    .map((n) => {
+                                        return (
+                                            <TableRow
+                                                hover
+                                                tabIndex={-1}
+                                                key={n.id}
+                                            >
+                                                <TableCell className={classes.info} component="th" scope="row"
+                                                           padding="none">
+                                                    <Grid container spacing={8} key={n.id}>
+                                                        <Grid item xs={6}>
+                                                            <img src={n.image} className={classes.image}
+                                                                 alt={n.title}/>
+                                                        </Grid>
+                                                        <div className={classes.wrapper}>
+                                                            <input accept="image/*" className={classes.input}
+                                                                   id="flat-button-file" type="file"
+                                                                   onChange={this.setImgAdd()}/>
+                                                            <label htmlFor="flat-button-file">
+                                                                <Button component="span" variant="contained"
+                                                                        className={classes.button}>
+                                                                    Upload Profile
+                                                                </Button>
+                                                            </label>
+                                                        </div>
+                                                    </Grid>
+                                                </TableCell>
+                                                {
+                                                    keys.map((s) => (
+                                                        addCell(s, n[s])
+                                                    ))
+                                                }
+                                                <TableCell numeric>
+                                                    <div>
+                                                        <Button variant='fab' color='secondary'
+                                                                onClick={() => this.toggleSaveAdd()}
+                                                                className={classNames(classes.action, classes.button)}>
+                                                            <SaveIcon/>
+                                                        </Button>
+                                                        <Button variant='fab' color='primary'
+                                                                onClick={() => this.handleBack()}
+                                                                className={classNames(classes.action, classes.button)}>
+                                                            <ClearIcon/>
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell
+                                    >
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button onClick={() => this.handleBack()}>票品管理</Button>
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        </Table>
+                    </div>
+                </Paper>;
+        }
+
+        return content;
     }
 }
 

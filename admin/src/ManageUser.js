@@ -446,6 +446,9 @@ class ManageUser extends Component {
             .then((text) => {
                 text = JSON.parse(text);
                 console.log(text);
+                this.setState({
+                    selected : []
+                })
                 this.fetchUserFromBackend(this.state.page+1);
             })
     };

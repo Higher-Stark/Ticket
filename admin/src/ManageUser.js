@@ -321,6 +321,7 @@ class ManageUser extends Component {
             elementToModify:null,
             modifyPassword:null,
             modifyStatus:null,
+            deleteStatus:0,
         };
     }
 
@@ -415,6 +416,8 @@ class ManageUser extends Component {
         let storage = window.sessionStorage;
         let admin = JSON.parse(storage.getItem("admin"));
         let token = admin === null ? '' : admin.token;
+        if(this.state.selected.length == 0)
+            return;
         let s = `token=${token}&id=${this.state.selected[0]}`;
         console.log("the s "+s)
         console.log("current page " + this.state.page)
@@ -430,7 +433,11 @@ class ManageUser extends Component {
                 let errornum = response.headers.get('errornum');
                 console.log(errornum);
                 if (errornum === '0') {
-                    if (response.status !== 200) throw Error("Error !" + response);
+                    if (response.status !== 200){
+                        this.setState({
+                            deleteStatus : 1,
+                        })
+                    };
                     return response.text();
                 }
                 else if (errornum === '1') {
@@ -444,6 +451,8 @@ class ManageUser extends Component {
                 }
             })
             .then((text) => {
+                if(this.state.deleteStatus === 1)
+                    return;
                 text = JSON.parse(text);
                 console.log(text);
                 this.setState({

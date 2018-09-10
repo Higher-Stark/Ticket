@@ -13,7 +13,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import Report from './statistics.js';
 import ManagerUser from './ManageUser';
 import Report from './statistics.js';
 import ManageTicket from './ManageTicket.js';
@@ -215,9 +214,6 @@ class App extends Component {
                 <List component="nav">
                     <ListItem button onClick = {() => this.setState({page: 1})}>
                         <ListItemText primary="用户管理" />
-                    </ListItem>
-                    <ListItem button onClick={() => this.setState({page: 3})}>
-                        <ListItemText primary="票品管理"/>
                     </ListItem>
                     <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="销量统计" />

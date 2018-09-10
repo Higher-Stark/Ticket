@@ -377,7 +377,7 @@ class Report extends Component {
         super(props);
         this.state = {
             tab: 0,
-            date: (new Date()).Format("yyyy-mm-dd"),
+            date: (new Date()).Format("yyyy-MM-dd"),
             city: "",
             id: "",
             year: "",
@@ -388,10 +388,20 @@ class Report extends Component {
     }
 
     handleChange = (event, value) => {
-        this.setState({ tab : value });
+        this.setState({
+            tab : value,
+            date: (new Date()).Format("yyyy-MM-dd"),
+            city: "",
+            id: "",
+            year: "",
+            month: "",
+            week: 1,
+            data: null,
+        });
     };
 
     handleTextChange = name => event => {
+        console.log(name, event.target.value);
         this.setState({ [name]: event.target.value });
     };
 
@@ -411,15 +421,16 @@ class Report extends Component {
                 {method: 'GET'})
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                console.log(headers.get("errorNum"));
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -456,15 +467,16 @@ class Report extends Component {
             )
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                console.log(headers.get("errorNum"));
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -498,15 +510,16 @@ class Report extends Component {
             fetch(this.url + `DailyQueryByTicketidAndDate?token=${admin.token}&ticketid=${id}&date=${date}`)
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                console.log(headers.get("errorNum"));
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -554,15 +567,15 @@ class Report extends Component {
                 {method: 'GET'})
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -599,15 +612,15 @@ class Report extends Component {
             )
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -641,15 +654,15 @@ class Report extends Component {
             fetch(this.url + `WeeklyQueryByCityAndWeek?token=${admin.token}&year=${year}&month=${month}&week=${week}&city=${city}&pagenumber=1`)
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -698,15 +711,15 @@ class Report extends Component {
                 {method: 'GET'})
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -743,15 +756,15 @@ class Report extends Component {
             )
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -785,15 +798,15 @@ class Report extends Component {
             fetch(this.url + `MonthlyQueryByCityAndMonth?token=${admin.token}&year=${year}&month=${month}&city=${city}&pagenumber=1`)
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -842,15 +855,15 @@ class Report extends Component {
                 {method: 'GET'})
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -887,15 +900,15 @@ class Report extends Component {
             )
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:
@@ -929,15 +942,15 @@ class Report extends Component {
             fetch(this.url + `AnuuallyQueryByCityAndYear?token=${admin.token}&year=${year}&city=${city}&pagenumber=1`)
             .then(response => {
                 let headers = response.headers;
-                if (headers.get("errorNum") !== 0) {
+                if (headers.get("errorNum") !== "2") {
                     switch(headers.get("errorNum")) {
-                        case 1: 
+                        case "1":
                             alert("尚未登录");
                             break;
-                        case 2:
+                        case "0":
                             alert("身份不对应");
                             break;
-                        case 3:
+                        case "3":
                             alert("账户被冻结");
                             break;
                         default:

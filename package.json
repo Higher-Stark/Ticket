@@ -19,7 +19,7 @@
     "react-loading": "^2.0.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^1.1.5",
     "react-share-button": "0.0.2",
     "recompose": "^0.27.1",
     "social-share-react": "^1.1.0"

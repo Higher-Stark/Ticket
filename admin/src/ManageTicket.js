@@ -179,20 +179,16 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-    const {numSelected, classes} = props;
+    const { classes} = props;
 
     return (
         <Toolbar
             className={classNames(classes.root, {
-                [classes.highlight]: numSelected > 0,
+                [classes.highlight]: false,
             })}
         >
             <div className={classes.title}>
-                {numSelected > 0 ? (
-                    <Typography color="inherit" variant="subheading">
-                        {numSelected} selected
-                    </Typography>
-                ) : (
+                {(
                     <Typography variant="title" id="tableTitle">
                         票品管理
                     </Typography>
@@ -412,6 +408,7 @@ class ManageTicket extends React.Component {
             //console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
                 case '2' :
+                    alert('修改成功！');
                     return response.json();
                 case '1' : {
                     throw Error("You haven't signed in yet.");
@@ -452,7 +449,7 @@ class ManageTicket extends React.Component {
                 const {data} = this.state;
                 data[i] = newData;
                 this.setState({data});*/
-                alert('修改成功！');
+
             })
             .catch(e => {
                 alert(e.message);
@@ -547,6 +544,7 @@ class ManageTicket extends React.Component {
             //console.log(headers.get("errornum"));
             switch (headers.get("errornum")) {
                 case '2' :
+                    alert('添加成功！');
                     return response.json();
                 case '1' : {
                     throw Error("You haven't signed in yet.");
@@ -587,7 +585,6 @@ class ManageTicket extends React.Component {
                 const {data} = this.state;
                 data[i] = newData;
                 this.setState({data});*/
-                alert('添加成功！');
                 this.setState({add: false});
                 const {page} = this.state;
                 const url = `http://pipipan.cn:30005/Ticket/QueryShowPage?pagenumber=${Math.floor(page / 2) + 1}`;
@@ -651,6 +648,7 @@ class ManageTicket extends React.Component {
             let headers = response.headers;
             switch (headers.get("errornum")) {
                 case '2' :
+                    alert('修改成功！');
                     return response.json();
                 case '1' : {
                     throw Error("You haven't signed in yet.");
@@ -691,7 +689,7 @@ class ManageTicket extends React.Component {
                 const {data} = this.state;
                 data[i] = newData;
                 this.setState({data});*/
-                alert('修改成功！');
+
             })
             .catch(e => {
                 alert(e.message);
@@ -728,7 +726,7 @@ class ManageTicket extends React.Component {
         });
     };
 
-    handleDelete = (event, id) => {
+    handleDown = (event, id) => {
         const {rowsPerPage} = this.state;
         let newData = this.state.data.slice();
         let storage = window.sessionStorage;
@@ -745,6 +743,7 @@ class ManageTicket extends React.Component {
                     .then(headers => {
                         let errornum = headers.get('errornum');
                         if (errornum === '2') {
+                            alert('下架成功！');
                             return;
                         }
                         else if (errornum === '1') {
@@ -774,7 +773,6 @@ class ManageTicket extends React.Component {
                                 });
                             })
                             .catch(e => console.log(e));
-                        alert('删除成功！');
                     })
                     .catch(e => console.log(e));
                 break;
@@ -782,7 +780,7 @@ class ManageTicket extends React.Component {
         }
     };
 
-    handleDeleteSelected = () => {
+    handleDownSelected = () => {
         const {rowsPerPage} = this.state;
         let newSelected = this.state.selected.slice();
         let storage = window.sessionStorage;
@@ -795,6 +793,7 @@ class ManageTicket extends React.Component {
             .then(headers => {
                 let errornum = headers.get('errornum');
                 if (errornum === '2') {
+                    alert('下架成功！');
                     return;
                 }
                 else if (errornum === '1') {
@@ -824,7 +823,6 @@ class ManageTicket extends React.Component {
                         });
                     })
                     .catch(e => console.log(e));
-                alert('删除成功！');
             })
             .catch(e => console.log(e));
         this.setState({selected: []});
@@ -858,6 +856,7 @@ class ManageTicket extends React.Component {
                 });
             })
             .catch(e => console.log(e));
+        this.setState({selected:[]});
     };
 
     isSelected = id => this.state.selected.indexOf(id) !== -1;
@@ -994,7 +993,7 @@ class ManageTicket extends React.Component {
                                                         </div> :
                                                         <Button onClick={() => this.toggleEdit(idx)}><EditIcon/></Button>
                                                 }
-                                                <Button onClick={event => this.handleDelete(event, n.id)}>删除</Button>
+                                                <Button onClick={event => this.handleDown(event, n.id)}>下架</Button>
                                             </TableCell>
 
                                         </TableRow>
@@ -1005,8 +1004,8 @@ class ManageTicket extends React.Component {
                             <TableRow>
                                 <TableCell>
                                     <Button disabled={selected.length === 0}
-                                            onClick={event => this.handleDeleteSelected(event)}>
-                                        批量删除
+                                            onClick={event => this.handleDownSelected(event)}>
+                                        批量下架
                                     </Button>
                                 </TableCell>
                                 <TableCell

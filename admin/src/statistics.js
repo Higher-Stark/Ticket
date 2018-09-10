@@ -486,21 +486,22 @@ class Report extends Component {
                 return response.json();
             })
             .then(data => {
+                console.log(data);
                 let tmp = [];
-                let el = null;
-                for (el in data.content) {
+                for (let el of data.content) {
+                    console.log(el);
                     let sales = "";
-                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = el["priceAndAmount"].replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
                     let item = {
-                        id: el.ticketId,
-                        total: el.totalPrice,
+                        id: el["ticketId"],
+                        total: el["totalPrice"],
                         sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
-                    tmp.append(item);
+                    tmp.push(item);
                 }
                 this.setState({data: tmp});
             })

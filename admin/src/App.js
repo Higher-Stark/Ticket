@@ -255,23 +255,6 @@ class App extends Component {
             </div>
         );
 
-        const meaningless = (
-            <div id="content">
-                <Typography variant="subheading" color="primary">
-                    This is administration section
-                </Typography>
-                <Typography variant="caption" color="default">
-                    {"Page : "}{page}
-                </Typography>
-                <Typography variant="caption" color="default" gutterBottom>
-                    { JSON.stringify(admin) || 'Haven\'t login' }
-                </Typography>
-                <Button color="secondary" variant="outlined">
-                    Check
-                </Button>
-            </div>
-        );
-
         const manageUserPage = (
             <ManagerUser/>
         )

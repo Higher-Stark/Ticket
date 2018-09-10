@@ -169,7 +169,7 @@ class Homepage extends Component {
         })
             .then(response => {
                 if (response.status !== 200) throw Error("Error !" + response);
-                return response.text();
+                return response.json();
             })
             .then(data => {
                 console.log(data);
@@ -194,10 +194,36 @@ class Homepage extends Component {
                         });
                 }
                 else {
-                    this.setState({
-                        image: data
+                    console.log("enough");
+                    let batchid=[];
+                    for(let i =0;i<data.length;i++)
+                    {
+                        batchid.push(data[i])
+                    }
+                    console.log(batchid);
+                    console.log(`http://pipipan.cn:30005/Ticket/QueryByBatchIds?batchid=${data}`);
+                    fetch(`http://pipipan.cn:30005/Ticket/QueryByBatchIds?batchid=${data}`, {
+                        method: 'GET',
+                        headers: new Headers({
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }),
+                        credentials: "include"
                     })
-                    ;
+                        .then(response => {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.json();
+                        })
+                        .then(image => {
+                            let newImage=[];
+                            for(let i =0;i<image.length;i++)
+                            {
+                                if(image[i])
+                                    newImage.push(image[i])
+                            }
+                            this.setState({
+                                image: newImage
+                            });
+                        });
                 }
             });
     }

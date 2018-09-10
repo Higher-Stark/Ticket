@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
 import red from '@material-ui/core/colors/red';
 import lightGreen from '@material-ui/core/colors/lightGreen';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -91,6 +92,10 @@ const styles = theme => ({
         '&:hover': {
             textDecoration: 'underline',
         },
+        flex: '0 0 auto'
+    },
+    spacer: {
+        flex: '1 1 auto',
     },
     viceAppBar: {
         position: 'absolute',
@@ -119,16 +124,18 @@ const styles = theme => ({
         },
     },
     avatar: {
-        margin: theme.spacing.unit,
+        margin: `0 ${theme.spacing.unit}px`,
         background: 'rgba(255, 255, 240, 0.2)',
         color: 'inherit',
-        position: 'absolute',
-        right: theme.spacing.unit,
+        flex: '0 0 auto',
+    },
+    menuButton: {
+        marginLeft: -12,
+        marginRight: 20,
     },
     search: {
         margin: `0 ${theme.spacing.unit}px`,
-        position: 'absolute',
-        right: '64px',
+        flex: '0 0 auto',
     },
     content: {
         flexGrow: 1,
@@ -150,6 +157,7 @@ class PageRouter extends Component {
             search: null,
             classifyOpen: false,
             userOpen: false,
+            anchorEl: null,
         };
     }
 
@@ -160,9 +168,10 @@ class PageRouter extends Component {
         if (user !== null) this.setState({user});
     }
 
-    toggleUser = () => {
+    toggleUser = event => {
         this.setState({
             userOpen: true,
+            anchorEl: event.target,
         })
     };
 
@@ -211,10 +220,6 @@ class PageRouter extends Component {
         });
     };
 
-    mouseOverUser() {
-        console.log("Your Mouse is over User Icon Now");
-    }
-
     handleClose = () => {
         this.setState({
             userOpen: false,
@@ -222,10 +227,8 @@ class PageRouter extends Component {
     };
 
     render() {
-        //const {theme} = this.props;
         const {classes} = this.props;
-        const {user, classifyOpen, userOpen} = this.state;
-        //const {search} = this.state;
+        const {user, classifyOpen, userOpen, anchorEl} = this.state;
 
         const classify = [
             {label: '音乐会', icon: <MusicCircle style={listStyles.music}/>, to: '/category/concert'},
@@ -245,11 +248,13 @@ class PageRouter extends Component {
             if (user) {
                 return (
                     <div>
-                        <Avatar alt={user.username} src={user.avatar} className={classes.avatar}
-                                onClick={this.toggleUser} onMouseOver={this.mouseOverUser}
-                        />
+                        <IconButton className={classes.avatar}
+                                onClick={this.toggleUser}
+                        >
+                            <AccountCircle/>
+                        </IconButton>
                         <Menu open={userOpen} onClose={this.handleClose}
-                              anchorEl={null}
+                              anchorEl={anchorEl}
                               anchorOrigin={{
                                   vertical: 'top',
                                   horizontal: 'right',
@@ -328,6 +333,7 @@ class PageRouter extends Component {
                                     className={classes.navText}>
                             分类
                         </Typography>
+                        <div className={classes.spacer}/>
                         <TextField className={classes.search} id='search_input'
                                    label="Search"
                                    InputProps={{

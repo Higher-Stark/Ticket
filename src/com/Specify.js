@@ -675,6 +675,7 @@ class Specify extends Component {
             })
             .catch(e => console.log(e));
     };
+
     handleScriptCreate() {
         this.setState({scriptLoaded: false})
     };
@@ -689,13 +690,34 @@ class Specify extends Component {
         let map = new window.BMap.Map("bmap");
         myGeo.getPoint(detail.venue, function (point) {
             console.log(detail.venue, point);
-            if (!point) point={lng: 116.4074, lat: 39.9042};
+            if (!point) point = {lng: 116.4074, lat: 39.9042};
             map.centerAndZoom(point, 16);
             map.addOverlay(new window.BMap.Marker(point));
             let opts = {anchor: window.BMAP_ANCHOR_TOP_RIGHT};
             map.addControl(new window.BMap.NavigationControl(opts));
         }, detail.city)
     }
+
+    checkTime(stime) {
+        let date = new Date(stime);
+        let now = new Date();
+        let month = date.getMonth();
+        let year = date.getFullYear();
+        let day = date.getDate();
+        let nmonth = now.getMonth();
+        let nyear = now.getFullYear();
+        let nday = now.getDate();
+        if (year > nyear) {
+            return false;
+        } else if (year === nyear && month > nmonth) {
+            return false;
+        } else if (month === nmonth && day > nday) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
     render() {
         const {classes} = this.props;
@@ -741,12 +763,14 @@ class Specify extends Component {
                                                         className={classes.inline}>{'演出时间: '}</Typography>
                                             {
                                                 detail.dates.split(' , ').map((s, i) => {
+                                                    console.log(s);
                                                     return (
                                                         <Button variant={s === date ? "contained" : "outlined"}
                                                                 onClick={() => this.selectDate(s)}
                                                                 color='primary'
                                                                 className={classes.selectButton}
                                                                 key={i}
+                                                                disabled={this.checkTime(s)}
                                                         >
                                                             {locale(s)}{' '}{detail.time}
                                                         </Button>
@@ -817,7 +841,7 @@ class Specify extends Component {
                                 }
                                 <Script url={this.url.baidumap} onCreate={this.handleScriptCreate.bind(this)}
                                         onLoad={this.handleScriptLoad.bind(this)}
-                                        />
+                                />
                                 <div id='bmap' className={classes.bmap}>
                                 </div>
                             </Grid>
@@ -833,7 +857,8 @@ class Specify extends Component {
                         <Typography variant='title' component='h2'>{"分享到"}</Typography>
                     </Grid>
                     <Grid item xs={12} className={classes.grid}>
-                        <div className="bdsharebuttonbox" data-tag="share_1"> { /* eslint-disable-next-line to the line before.*/}
+                        <div className="bdsharebuttonbox"
+                             data-tag="share_1"> {/* eslint-disable-next-line to the line before.*/}
                             <a className="bds_qzone" data-cmd="qzone"/>
                             <a className="bds_tsina" data-cmd="tsina"/>
                             <a className="bds_sqq" data-cmd="sqq"/>

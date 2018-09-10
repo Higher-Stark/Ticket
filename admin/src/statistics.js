@@ -49,12 +49,14 @@ const rows = [
     { id: 'ticket_id', numeric: true, disablePadding: false, label: 'ID' },
     { id: 'name', numeric: false, disablePadding: true, label: '名称' },
     { id: 'city', numeric: false, disablePadding: true, label: '城市' },
-    { id: 'bottomPrice' ,numeric: true, disablePadding: false, label: '底价 (人民币)' },
-    { id: 'bottomSale', numeric: true, disablePadding: false, label: '售出票数', },
-    { id: 'topPrice', numeric: true, disablePadding: false, label: '顶价 (人民币)' },
-    { id: 'topSale', numeric: true, disablePadding: false, label: '售出票数' },
-    { id: 'rest', numeric: true, disablePadding: false, label: '余票' },
-    { id: 'total', numeric: true, disablePadding: false, label: '总票数' },
+    // { id: 'bottomPrice' ,numeric: true, disablePadding: false, label: '底价 (人民币)' },
+    // { id: 'bottomSale', numeric: true, disablePadding: false, label: '售出票数', },
+    // { id: 'topPrice', numeric: true, disablePadding: false, label: '顶价 (人民币)' },
+    // { id: 'topSale', numeric: true, disablePadding: false, label: '售出票数' },
+    { id: 'sales', numeric: false, disablePadding: true, label: '销售情况(价格：卖出票数)' },
+    // { id: 'rest', numeric: true, disablePadding: false, label: '余票' },
+    { id: 'total', numeric: true, disablePadding: false, label: '总利润' },
+    { id: 'rate', numeric: true, disablePadding: false, label: '上座率' },
 ];
 
 class EnhancedTableHead extends Component {
@@ -290,11 +292,10 @@ class EnhancedTable extends Component {
                                         <TableCell component="th" scope="row" padding="none">
                                             {n.city}
                                         </TableCell>
-                                        <TableCell numeric>{n.lowPrice}</TableCell>
-                                        <TableCell numeric>{n.lowSale}</TableCell>
-                                        <TableCell numeric>{n.highPrice}</TableCell>
-                                        <TableCell numeric>{n.highSale}</TableCell>
-                                        <TableCell numeric>{n.rest}</TableCell>
+                                        <TableCell component="th" scope="row" padding="none">
+                                            { n.sales }
+                                        </TableCell>
+                                        <TableCell numeric>{n.rate}</TableCell>
                                         <TableCell numeric>{n.total}</TableCell>
                                     </TableRow>
                                 )
@@ -431,10 +432,13 @@ class Report extends Component {
                 let tmp = [];
                 let el = null;
                 for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
@@ -471,17 +475,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -509,17 +517,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -563,10 +575,13 @@ class Report extends Component {
                 let tmp = [];
                 let el = null;
                 for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
@@ -603,17 +618,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -641,17 +660,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -696,10 +719,13 @@ class Report extends Component {
                 let tmp = [];
                 let el = null;
                 for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
@@ -736,17 +762,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -774,17 +804,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -829,10 +863,13 @@ class Report extends Component {
                 let tmp = [];
                 let el = null;
                 for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
@@ -869,17 +906,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));
@@ -907,17 +948,21 @@ class Report extends Component {
             })
             .then(data => {
                 let tmp = [];
-                data.map(el => {
+                let el = null;
+                for (el in data) {
+                    let sales = "";
+                    sales = el.priceAndAmount.replace(":", "<br/>");
+                    sales = sales.replace(" ", " : ");
                     let item = {
                         id: el.ticketId,
                         total: el.totalPrice,
-                        sales: el.priceAndAmount,
+                        sales: sales,
                         rate: el.rate,
                         city: el.city,
                         name: el.title,
                     };
                     tmp.append(item);
-                })
+                }
                 this.setState({data: tmp});
             })
             .catch(e => console.log(e));

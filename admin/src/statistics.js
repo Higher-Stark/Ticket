@@ -442,7 +442,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -488,7 +488,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -531,7 +531,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -587,7 +587,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -632,7 +632,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -674,7 +674,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -731,7 +731,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -776,7 +776,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -818,7 +818,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -875,7 +875,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -920,7 +920,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");
@@ -962,7 +962,7 @@ class Report extends Component {
             .then(data => {
                 let tmp = [];
                 let el = null;
-                for (el in data) {
+                for (el in data.content) {
                     let sales = "";
                     sales = el.priceAndAmount.replace(":", "<br/>");
                     sales = sales.replace(" ", " : ");

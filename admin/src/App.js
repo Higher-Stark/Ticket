@@ -138,7 +138,7 @@ class App extends Component {
         console.log(params);
         params = params.substring(0, params.length - 1);
 
-        const url = "http://pipipan.cn:30005/Ticket/AdminIn";
+        const url = "http://pipipan.cn:30004/Sign/AdminIn";
         console.log(url + "?" + params);
         fetch (url + "?" + params, {
             method: 'POST',
@@ -156,6 +156,9 @@ class App extends Component {
                         break;
                     case "UnActive":
                         alert("用户未激活，无需重新发送邮件");
+                        break;
+                    case "Wrong Authority":
+                        alert("无管理员权限");
                         break;
                     default:
                         let admin = {

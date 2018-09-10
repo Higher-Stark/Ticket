@@ -138,7 +138,7 @@ class App extends Component {
         console.log(params);
         params = params.substring(0, params.length - 1);
 
-        const url = "http://pipipan.cn:30004/Sign/In";
+        const url = "http://pipipan.cn:30005/Ticket/AdminIn";
         console.log(url + "?" + params);
         fetch (url + "?" + params, {
             method: 'POST',

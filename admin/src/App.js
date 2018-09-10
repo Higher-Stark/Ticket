@@ -14,7 +14,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import ManagerUser from './ManageUser';
-import EnhancedTable from './statistics.js';
+import Report from './statistics.js';
+import ManageTicket from './ManageTicket.js';
 
 const styles = theme => ({
     root: {
@@ -93,7 +94,7 @@ class App extends Component {
             console.log(admin);
             this.setState({
                 admin: admin,
-                page: 1,
+                page: 3,
             })
         }   
     }
@@ -128,7 +129,7 @@ class App extends Component {
             answer: verify,
             username: id,
             password: pwd,
-        }
+        };
         let params = "";
         let attr = null;
         for (attr in form) {
@@ -214,11 +215,11 @@ class App extends Component {
                     <ListItem button onClick = {() => this.setState({page: 1})}>
                         <ListItemText primary="用户管理" />
                     </ListItem>
-                    <ListItem button onClick={() => this.setState({page: 3})}>
-                        <ListItemText primary="票品管理"/>
-                    </ListItem>
                     <ListItem button onClick={() => this.setState({page: 2})}>
                         <ListItemText primary="销量统计" />
+                    </ListItem>
+                    <ListItem button onClick={() => this.setState({page: 3})}>
+                        <ListItemText primary="票品管理" />
                     </ListItem>
                     <Divider/>
                     <ListItem button onClick={this.logout}>
@@ -255,23 +256,6 @@ class App extends Component {
             </div>
         );
 
-        const meaningless = (
-            <div id="content">
-                <Typography variant="subheading" color="primary">
-                    This is administration section
-                </Typography>
-                <Typography variant="caption" color="default">
-                    {"Page : "}{page}
-                </Typography>
-                <Typography variant="caption" color="default" gutterBottom>
-                    { JSON.stringify(admin) || 'Haven\'t login' }
-                </Typography>
-                <Button color="secondary" variant="outlined">
-                    Check
-                </Button>
-            </div>
-        );
-
         const manageUserPage = (
             <ManagerUser/>
         )
@@ -288,11 +272,14 @@ class App extends Component {
                 content = manageUserPage;
                 break;
             case 2:
-                content = <EnhancedTable/>;
+                content = <Report/>;
+                break;
+            case 3:
+                content = <ManageTicket/>;
                 break;
             default: 
                 content = signin;
-        };
+        }
         if (!admin) content = signin;
 
         return (

@@ -109,12 +109,7 @@ const styles = theme => ({
 });
 
 
-const Img = [
-    {src: "http://image4.xishiqu.cn/upload/apic/920/180/920180606//DF7FD626-25DC-F101-6966-B2676DE254D6.jpg"},
-    {src: "http://image3.xishiqu.cn/upload/apic/920/180/920180601//DD80509A-A417-52C5-90EE-221798DDD239.jpg"},
-    {src: "http://image5.xishiqu.cn/upload/apic/920/180/920180706//B22F8B63-F36A-A1C5-DA7B-520A6A961D34.jpg"},
-    {src: "http://image.xishiqu.cn/upload/apic/920/180/920180629//96E3F75A-FE93-96BE-2FC1-BC8F3CF8F6D6.jpg"}
-];
+
 
 class Homepage extends Component {
     content = [];
@@ -126,6 +121,14 @@ class Homepage extends Component {
             page: 1,
             loading: false,
             firstLoad: false,
+            image: [
+                {image: ""},
+                {image: ""},
+                {image: ""},
+                {image: ""},
+                {image: ""},
+                {image: ""},
+            ],
         };
     }
 
@@ -149,7 +152,80 @@ class Homepage extends Component {
                     firstLoad: true,
                 })
             })
-            .catch(e => console.log(e))
+            .catch(e => console.log(e));
+        let storage = window.localStorage;
+        let user = storage.getItem("user");
+        user = JSON.parse(user);
+        let token = user === null ? '' : user.token;
+        let s = `token=${token}`;
+        console.log("http://pipipan.cn:30013/Recommand/QueryRecommendTicket?"+s);
+        fetch("http://pipipan.cn:30013/Recommand/QueryRecommendTicket", {
+            method: 'POST',
+            body: s,
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }),
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status !== 200) throw Error("Error !" + response);
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                if (data.length < 6) {
+                    console.log("not enough");
+                    fetch("http://pipipan.cn:30005/Ticket/QueryTopSixTicket", {
+                        method: 'GET',
+                        headers: new Headers({
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }),
+                        credentials: "include"
+                    })
+                        .then(response => {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.json();
+                        })
+                        .then(image => {
+                            this.setState({
+                                image: image
+                            })
+                            ;
+                        });
+                }
+                else {
+                    console.log("enough");
+                    let batchid=[];
+                    for(let i =0;i<data.length;i++)
+                    {
+                        batchid.push(data[i])
+                    }
+                    console.log(batchid);
+                    console.log(`http://pipipan.cn:30005/Ticket/QueryByBatchIds?batchid=${data}`);
+                    fetch(`http://pipipan.cn:30005/Ticket/QueryByBatchIds?batchid=${data}`, {
+                        method: 'GET',
+                        headers: new Headers({
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }),
+                        credentials: "include"
+                    })
+                        .then(response => {
+                            if (response.status !== 200) throw Error("Error !" + response);
+                            return response.json();
+                        })
+                        .then(image => {
+                            let newImage=[];
+                            for(let i =0;i<image.length;i++)
+                            {
+                                if(image[i])
+                                    newImage.push(image[i])
+                            }
+                            this.setState({
+                                image: newImage
+                            });
+                        });
+                }
+            });
     }
 
     load = () => {
@@ -175,7 +251,7 @@ class Homepage extends Component {
 
     render() {
         const {classes} = this.props;
-        const {items, loading, firstLoad} = this.state;
+        const {items, loading, firstLoad, image} = this.state;
 
         const loadingCircle = (
             <div>
@@ -190,7 +266,7 @@ class Homepage extends Component {
                 <div id="topAnchor"/>
                 <div className={classes.carousel}>
                     <Sliders
-                        images={Img}
+                        images={image}
                         speed={2}
                         delay={3}
                         autoPlay={true}
@@ -203,21 +279,21 @@ class Homepage extends Component {
                     </Typography>
                 </div>
                 {items === 0 ? loadingCircle : null}
-                    <div className={classes.contentWrapper}>
+                <div className={classes.contentWrapper}>
                     <div id='content' className={classes.content}>
                         <div className={classes.cards}>
-                        {
-                            this.content.slice(0, items).map((s, i) => {
-                                return (
-                                    <div className={classes.card} key={i}>
-                                        <Activity card={s}/>
-                                    </div>
-                                );
-                            })
-                        }
+                            {
+                                this.content.slice(0, items).map((s, i) => {
+                                    return (
+                                        <div className={classes.card} key={i}>
+                                            <Activity card={s}/>
+                                        </div>
+                                    );
+                                })
+                            }
                         </div>
                     </div>
-                    </div>
+                </div>
                 {firstLoad &&
                 (<div className={classes.wrapper}>
                     <div className={classes.block}>

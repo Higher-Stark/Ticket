@@ -333,7 +333,7 @@ class ManageUser extends Component {
     }
 
     fetchUserFromBackend = (pagenumber) => {
-        let storage = window.localStorage;
+        let storage = window.sessionStorage;
         let admin = JSON.parse(storage.getItem("admin"));
         if(admin === null)
             return;
@@ -412,7 +412,7 @@ class ManageUser extends Component {
     handleDelete = () => {
         console.log("delete");
         console.log(this.state.selected);
-        let storage = window.localStorage;
+        let storage = window.sessionStorage;
         let admin = JSON.parse(storage.getItem("admin"));
         let token = admin === null ? '' : admin.token;
         let s = `token=${token}&id=${this.state.selected[0]}`;
@@ -446,7 +446,11 @@ class ManageUser extends Component {
             .then((text) => {
                 text = JSON.parse(text);
                 console.log(text);
+                this.setState({
+                    selected : []
+                })
                 this.fetchUserFromBackend(this.state.page+1);
+                alert("删除成功!")
             })
     };
 
@@ -464,7 +468,7 @@ class ManageUser extends Component {
             }
         }
         if(!find){
-            let storage = window.localStorage;
+            let storage = window.sessionStorage;
             let admin = JSON.parse(storage.getItem("admin"));
             let token = admin === null ? '' : admin.token;
             let s = `token=${token}&id=${this.state.selected[0]}`;
@@ -536,7 +540,7 @@ class ManageUser extends Component {
                 this.handleClose();
             }
             else {
-                let storage = window.localStorage;
+                let storage = window.sessionStorage;
                 let admin = JSON.parse(storage.getItem("admin"));
                 let token = admin === null ? '' : admin.token;
                 let s = `token=${token}&id=${this.state.selected[0]}&status=${this.state.modifyStatus}`;
@@ -574,7 +578,7 @@ class ManageUser extends Component {
         }
         //change password
         if(this.state.modifyPassword != null && this.state.modifyPassword != this.state.elementToModify.password){
-            let storage = window.localStorage;
+            let storage = window.sessionStorage;
             let admin = JSON.parse(storage.getItem("admin"));
             let token = admin === null ? '' : admin.token;
             let s = `token=${token}&id=${this.state.selected[0]}&password=${this.state.modifyPassword}`;

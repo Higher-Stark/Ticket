@@ -212,7 +212,9 @@ class DetailModal extends Component {
 
     toggleMore = () => this.setState({open: ! this.state.open});
 
-    checkTime(stime) {
+    checkTime(stime,status) {
+        if(status===1)
+            return true;
         let date = new Date(stime);
         let now = new Date();
         let month = date.getMonth();
@@ -278,7 +280,7 @@ class DetailModal extends Component {
                                                     }}
                                                     color='primary'
                                                     className={classes.date}
-                                                    disabled={this.checkTime(s)}
+                                                    disabled={this.checkTime(s,card.status)}
                                                     key={i}
                                                     disableRipple
                                             >

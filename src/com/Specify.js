@@ -698,7 +698,9 @@ class Specify extends Component {
         }, detail.city)
     }
 
-    checkTime(stime) {
+    checkTime(stime,status) {
+        if(status===1)
+            return true;
         let date = new Date(stime);
         let now = new Date();
         let month = date.getMonth();
@@ -763,14 +765,15 @@ class Specify extends Component {
                                                         className={classes.inline}>{'演出时间: '}</Typography>
                                             {
                                                 detail.dates.split(' , ').map((s, i) => {
-                                                    console.log(s);
+                                                    //console.log(s);
+                                                    //console.log(detail);
                                                     return (
                                                         <Button variant={s === date ? "contained" : "outlined"}
                                                                 onClick={() => this.selectDate(s)}
                                                                 color='primary'
                                                                 className={classes.selectButton}
                                                                 key={i}
-                                                                disabled={this.checkTime(s)}
+                                                                disabled={this.checkTime(s,detail.status)}
                                                         >
                                                             {locale(s)}{' '}{detail.time}
                                                         </Button>

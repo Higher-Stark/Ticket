@@ -450,6 +450,7 @@ class ManageUser extends Component {
                     selected : []
                 })
                 this.fetchUserFromBackend(this.state.page+1);
+                alert("删除成功!")
             })
     };
 
